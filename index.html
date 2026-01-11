@@ -3,74 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCIENCE BATTLE ROYALE 60Q 🚀</title>
+    <title>CYBER SCIENCE BATTLE 60Q</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Anuphan:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Anuphan:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6c5ce7; --accent: #fdcb6e; --bg: #0984e3; --dark: #2d3436; --white: #ffffff; }
-        * { box-sizing: border-box; font-family: 'Fredoka', 'Anuphan', sans-serif; }
-        body { background: var(--bg); margin: 0; overflow: hidden; color: var(--dark); display: flex; align-items: center; justify-content: center; height: 100vh; }
+        :root { --neon: #00f2ff; --pink: #ff007f; --bg: #0a0b1e; --glass: rgba(255, 255, 255, 0.1); }
+        * { box-sizing: border-box; font-family: 'Orbitron', 'Anuphan', sans-serif; transition: 0.3s; }
+        body { background: var(--bg); color: white; margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         
-        .card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 4px solid var(--dark); border-radius: 30px; padding: 30px; width: 95%; max-width: 700px; text-align: center; box-shadow: 12px 12px 0 rgba(0,0,0,0.2); position: relative; max-height: 90vh; overflow-y: auto; }
-        .player-tag { background: var(--primary); color: white; padding: 8px 15px; border-radius: 15px; margin: 5px; display: inline-block; font-weight: bold; border: 2px solid var(--dark); }
-        
-        .btn-start { background: #00b894; color: white; border: 3px solid var(--dark); padding: 15px 40px; border-radius: 50px; font-size: 1.2rem; cursor: pointer; transition: 0.3s; font-weight: bold; }
-        .btn-start:disabled { background: #ccc; cursor: not-allowed; opacity: 0.7; }
-        
-        .ans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .ans-btn { padding: 20px; border: none; border-radius: 15px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; border-bottom: 5px solid rgba(0,0,0,0.2); }
-        .b0 { background: #e21b3c; } .b1 { background: #1368ce; } .b2 { background: #d89e00; } .b3 { background: #26890c; }
-        
-        .effect-shake { animation: shake 0.2s infinite; }
-        @keyframes shake { 0%{transform:translate(2px,2px)} 50%{transform:translate(-2px,-2px)} 100%{transform:translate(2px,2px)} }
-        .effect-blind { filter: brightness(0.1) blur(20px); }
-        .effect-flip { transform: rotate(180deg); }
+        /* Background Animation */
+        body::before { content: ""; position: absolute; width: 200%; height: 200%; background: radial-gradient(circle, #1a1b3a 0%, #0a0b1e 70%); animation: rotate 20s linear infinite; z-index: -1; }
+        @keyframes rotate { from {transform: rotate(0deg)} to {transform: rotate(360deg)} }
+
+        /* UI Containers */
+        .glass-panel { background: var(--glass); backdrop-filter: blur(15px); border: 2px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 40px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 0 30px rgba(0,242,255,0.2); position: relative; }
         .hidden { display: none !important; }
 
-        .winner-crown { font-size: 4rem; display: block; animation: bounce 1s infinite; }
-        @keyframes bounce { 0%, 100% {transform: translateY(0)} 50% {transform: translateY(-15px)} }
+        /* Inputs & Buttons */
+        input { background: rgba(0,0,0,0.5); border: 2px solid var(--neon); border-radius: 12px; padding: 15px; color: white; width: 100%; font-size: 1.1rem; margin-bottom: 20px; text-align: center; }
+        input:focus { outline: none; box-shadow: 0 0 15px var(--neon); }
+        .btn-neon { background: transparent; border: 2px solid var(--neon); color: var(--neon); padding: 15px 35px; border-radius: 50px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+        .btn-neon:hover { background: var(--neon); color: black; box-shadow: 0 0 20px var(--neon); }
+        .btn-neon:disabled { border-color: #555; color: #555; cursor: not-allowed; }
+
+        /* Lobby Style */
+        .player-card { background: rgba(0, 242, 255, 0.1); border-left: 5px solid var(--neon); padding: 10px; margin: 10px 0; border-radius: 8px; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from {opacity:0; transform: translateX(-20px)} to {opacity:1; transform: translateX(0)} }
         
-        #victim-list button { margin: 10px; padding: 10px 20px; background: #ff7675; color: white; border: 2px solid black; border-radius: 10px; cursor: pointer; }
+        /* Quiz HUD */
+        #progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); position: fixed; top: 0; }
+        #progress-bar { height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); width: 0%; }
+        .ans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .ans-btn { padding: 20px; border: 2px solid rgba(255,255,255,0.2); border-radius: 15px; background: rgba(255,255,255,0.05); color: white; cursor: pointer; font-weight: bold; }
+        .ans-btn:hover { border-color: var(--pink); background: rgba(255, 0, 127, 0.2); }
+
+        /* Effects */
+        .blind { filter: brightness(0.05) blur(20px); }
+        .shake { animation: shake 0.2s infinite; }
+        @keyframes shake { 0%{transform: translate(2px,2px)} 50%{transform: translate(-2px,-2px)} }
     </style>
 </head>
 <body>
 
-<audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
-<audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
+<audio id="snd-click" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 <audio id="snd-win" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
 
-<div id="view-lobby" class="card">
-    <h1 style="color: var(--primary);">SCIENCE BATTLE 60Q</h1>
-    <p id="status-msg" style="font-weight: bold; color: #d63031;">Join a room to start!</p>
-    <input type="text" id="name-in" placeholder="Your Name" style="width:60%; padding:12px; margin:5px; border-radius:10px; border:2px solid black;">
-    <input type="text" id="room-in" placeholder="Room ID" style="width:60%; padding:12px; margin:5px; border-radius:10px; border:2px solid black;">
-    <br><button class="btn-start" onclick="game.join()">JOIN</button>
-    <div id="player-list" style="margin: 20px 0;"></div>
-    <button id="start-btn" class="btn-start hidden" style="background:#6c5ce7" onclick="game.startReq()" disabled>START GAME (Min 3 players)</button>
+<div id="progress-container"><div id="progress-bar"></div></div>
+
+<div id="step-name" class="glass-panel">
+    <h1 style="color: var(--neon);">IDENTIFICATION</h1>
+    <p>Enter your pilot name to begin</p>
+    <input type="text" id="input-name" placeholder="PILOT NAME..." maxlength="12">
+    <button class="btn-neon" onclick="game.toStepRoom()">NEXT ></button>
 </div>
 
-<div id="view-quiz" class="card hidden">
-    <div id="progress" style="height:10px; background:var(--accent); width:0%; position:absolute; top:0; left:0;"></div>
-    <div id="q-num" style="font-weight: bold; margin-bottom: 10px;">Question 1/60</div>
-    <h2 id="q-text"></h2>
+<div id="step-room" class="glass-panel hidden">
+    <h1 style="color: var(--pink);">SECTOR LINK</h1>
+    <p>Enter 4-digit Room ID</p>
+    <input type="text" id="input-room" placeholder="ROOM CODE..." maxlength="4">
+    <button class="btn-neon" onclick="game.join()">SYNC ROOM</button>
+</div>
+
+<div id="step-lobby" class="glass-panel hidden">
+    <h1 id="lobby-title" style="color: var(--neon);">BATTLE LOBBY</h1>
+    <div id="player-count" style="margin-bottom: 20px; color: var(--pink);">Wait for pilots...</div>
+    <div id="player-list" style="max-height: 200px; overflow-y: auto;"></div>
+    <br>
+    <button id="start-btn" class="btn-neon hidden" onclick="game.startReq()" disabled>START MISSION</button>
+</div>
+
+<div id="step-quiz" class="glass-panel hidden" style="max-width: 700px;">
+    <div id="q-info" style="color: var(--neon);">QUESTION 01/60</div>
+    <h2 id="q-text" style="min-height: 80px; margin: 20px 0;"></h2>
     <div class="ans-grid" id="ans-grid"></div>
 </div>
 
-<div id="view-finish" class="card hidden">
-    <span class="winner-crown">👑</span>
-    <h1 id="winner-name">...</h1>
-    <h2>WINNER!</h2>
-    <div id="final-stats"></div>
-    <button class="btn-start" onclick="location.reload()">HOME</button>
+<div id="step-finish" class="glass-panel hidden">
+    <h1 style="color: var(--neon); font-size: 3rem;">CHAMPION</h1>
+    <h2 id="winner-name" style="color: var(--pink);">NAME</h2>
+    <div id="leaderboard" style="margin: 20px 0;"></div>
+    <button class="btn-neon" onclick="location.reload()">RE-SYNC</button>
 </div>
 
-<div id="sabotage-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; flex-direction:column; align-items:center; justify-content:center; color:white;">
-    <h2>⚡ CORRECT! ATTACK SOMEONE! ⚡</h2>
-    <div id="victim-list"></div>
+<div id="attack-ui" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; flex-direction:column; align-items:center; justify-content:center;">
+    <h1 style="color: var(--pink);">SELECT TARGET</h1>
+    <div id="target-list"></div>
 </div>
 
 <script>
+// --- FIREBASE CONFIG (YOUR API) ---
 const firebaseConfig = {
     apiKey: "AIzaSyAVAd78Y9OUKFdfkPsV96uj2IjFwWu1rAc",
     authDomain: "mark-d1f3f.firebaseapp.com",
@@ -84,159 +106,182 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 const questions = [
-    {q: "Which simple machine has a fulcrum?", a: ["Pulley", "Lever", "Wedge", "Screw"], c: 1},
-    {q: "Energy due to motion is...", a: ["Potential", "Thermal", "Kinetic", "Solar"], c: 2},
-    {q: "What unit measures Force?", a: ["Watt", "Joule", "Newton", "Gram"], c: 2},
-    {q: "A wheelbarrow is which class of lever?", a: ["1st", "2nd", "3rd", "None"], c: 1},
-    {q: "Inclined plane wrapped around a cylinder is a...", a: ["Wedge", "Screw", "Lever", "Axle"], c: 1},
-    {q: "Rate of doing work is called...", a: ["Force", "Energy", "Power", "Mass"], c: 2},
-    {q: "Unit of Work is...", a: ["Newton", "Joule", "Watt", "Pascal"], c: 1},
-    {q: "A pair of scissors is which class of lever?", a: ["1st", "2nd", "3rd", "4th"], c: 0},
-    {q: "Stored energy is called...", a: ["Kinetic", "Potential", "Light", "Sound"], c: 1},
-    {q: "Fixed pulley changes the ___ of force.", a: ["Amount", "Direction", "Mass", "Speed"], c: 1},
-    {q: "Formula for Potential Energy is...", a: ["1/2mv^2", "mgh", "Fd", "P/t"], c: 1},
-    {q: "Formula for Kinetic Energy is...", a: ["mgh", "Fd", "1/2mv^2", "ma"], c: 2},
-    {q: "Tweezers are which class of lever?", a: ["1st", "2nd", "3rd", "None"], c: 2},
-    {q: "Mechanical Advantage of 1 means...", a: ["Easier", "Harder", "No change in force", "Broken"], c: 2},
-    {q: "A knife is an example of a...", a: ["Lever", "Pulley", "Wedge", "Screw"], c: 2},
-    {q: "Friction converts Kinetic energy into...", a: ["Solar", "Heat", "Nuclear", "Potential"], c: 1},
-    {q: "Standard gravity on Earth is ___ m/s².", a: ["1.6", "5.0", "9.8", "12.0"], c: 2},
-    {q: "Fishing rod is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
-    {q: "Work = Force x ___.", a: ["Time", "Mass", "Distance", "Velocity"], c: 2},
-    {q: "1 Watt is equal to 1 ___ per second.", a: ["Newton", "Joule", "Gram", "Meter"], c: 1},
-    {q: "Nutcracker is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 1},
-    {q: "A slide is which simple machine?", a: ["Wedge", "Inclined Plane", "Lever", "Pulley"], c: 1},
-    {q: "Total mechanical energy is PE + ___.", a: ["Heat", "KE", "Light", "Sound"], c: 1},
-    {q: "Efficiency is always less than ___ percent.", a: ["50", "90", "100", "200"], c: 2},
-    {q: "Human elbow is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
-    {q: "Energy cannot be created or ___.", a: ["Used", "Moved", "Destroyed", "Stored"], c: 2},
-    {q: "Unit of Power is...", a: ["Newton", "Joule", "Watt", "Volt"], c: 2},
-    {q: "A flag pole uses a ___ pulley.", a: ["Movable", "Fixed", "Compound", "Broken"], c: 1},
-    {q: "Wedge is used to ___ objects.", a: ["Join", "Rotate", "Split", "Lift"], c: 2},
-    {q: "Broom is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
-    {q: "Screw is an inclined plane wrapped in a ___.", a: ["Circle", "Square", "Spiral", "Triangle"], c: 2},
-    {q: "MA stands for Mechanical ___.", a: ["Amount", "Advantage", "Action", "Ability"], c: 1},
-    {q: "Bottle opener is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 1},
-    {q: "A door knob is a ___.", a: ["Pulley", "Wedge", "Wheel and Axle", "Screw"], c: 2},
-    {q: "Staircase is an ___.", a: ["Inclined Plane", "Lever", "Wedge", "Pulley"], c: 0},
-    {q: "Hammer pulling a nail is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 0},
-    {q: "Elastic PE is found in a ___.", a: ["Food", "Battery", "Spring", "Sun"], c: 2},
-    {q: "If mass increases, PE ___.", a: ["Decreases", "Increases", "Stays same", "Zero"], c: 1},
-    {q: "Chemical energy is in ___.", a: ["Springs", "Height", "Batteries", "Speed"], c: 2},
-    {q: "Seesaw is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 0},
+    {q: "What is the point where a lever rotates?", a: ["Effort", "Load", "Fulcrum", "Arm"], c: 2},
+    {q: "Fixed pulley helps change the ___ of force.", a: ["Amount", "Direction", "Speed", "Mass"], c: 1},
+    {q: "What unit measures Force?", a: ["Joule", "Watt", "Newton", "Pascal"], c: 2},
+    {q: "A wheelbarrow is which class of lever?", a: ["1st Class", "2nd Class", "3rd Class", "None"], c: 1},
+    {q: "Energy of motion is called ___.", a: ["Potential", "Kinetic", "Solar", "Nuclear"], c: 1},
+    {q: "Rate of doing work is...", a: ["Power", "Force", "Speed", "Energy"], c: 0},
+    {q: "Inclined plane wrapped around a cylinder is a ___.", a: ["Wedge", "Screw", "Lever", "Pulley"], c: 1},
+    {q: "1 Joule per second is equal to 1 ___.", a: ["Watt", "Newton", "Volt", "Pascal"], c: 0},
+    {q: "Staircase is an example of an ___.", a: ["Inclined Plane", "Lever", "Screw", "Wedge"], c: 0},
+    {q: "Scissors are which class of lever?", a: ["1st Class", "2nd Class", "3rd Class", "None"], c: 0},
+    {q: "Stored energy due to position is ___.", a: ["Kinetic", "Potential", "Heat", "Sound"], c: 1},
+    {q: "Efficiency is always less than ___%.", a: ["50", "90", "100", "200"], c: 2},
+    {q: "Unit of Power is named after ___.", a: ["Joule", "Newton", "Watt", "Pascal"], c: 2},
     {q: "Force = Mass x ___.", a: ["Time", "Speed", "Acceleration", "Work"], c: 2},
-    {q: "1 HP is approx ___ Watts.", a: ["500", "746", "1000", "1200"], c: 1},
+    {q: "Tweezers are which class of lever?", a: ["1st Class", "2nd Class", "3rd Class", "None"], c: 2},
+    {q: "Knife or Axe is an example of a ___.", a: ["Lever", "Screw", "Wedge", "Pulley"], c: 2},
+    {q: "Work = Force x ___.", a: ["Time", "Distance", "Mass", "Power"], c: 1},
+    {q: "Elastic energy is found in a ___.", a: ["Battery", "Food", "Stretched Band", "Sun"], c: 2},
+    {q: "MA stands for Mechanical ___.", a: ["Amount", "Advantage", "Action", "Ability"], c: 1},
+    {q: "A door knob is a ___ and axle.", a: ["Pulley", "Wedge", "Wheel", "Screw"], c: 2},
+    {q: "Broom is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "Nutcracker is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 1},
+    {q: "Fixed pulley MA is equal to ___.", a: ["0", "1", "2", "3"], c: 1},
+    {q: "Formula mgh is for ___ energy.", a: ["Kinetic", "Potential", "Thermal", "Light"], c: 1},
+    {q: "Chemical energy is stored in ___.", a: ["Springs", "Height", "Batteries/Food", "Speed"], c: 2},
+    {q: "Human elbow is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "Friction converts Kinetic energy into ___.", a: ["Light", "Heat", "Nuclear", "Gravity"], c: 1},
+    {q: "1 Horsepower is approx ___ Watts.", a: ["500", "746", "1000", "1200"], c: 1},
+    {q: "Solar panels convert light to ___ energy.", a: ["Chemical", "Mechanical", "Electrical", "Sound"], c: 2},
+    {q: "A slide is which simple machine?", a: ["Wedge", "Inclined Plane", "Lever", "Pulley"], c: 1},
+    {q: "Seesaw is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 0},
+    {q: "Energy cannot be destroyed, only ___.", a: ["Used", "Transformed", "Deleted", "Fixed"], c: 1},
+    {q: "Standard unit of Work is ___.", a: ["Newton", "Joule", "Watt", "Pascal"], c: 1},
+    {q: "A zipper is which machine?", a: ["Wedge", "Pulley", "Lever", "Screw"], c: 0},
+    {q: "Fishing rod is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "Movable pulley reduces ___ needed.", a: ["Distance", "Force", "Time", "Mass"], c: 1},
+    {q: "Total energy = KE + ___.", a: ["Heat", "PE", "Light", "Sound"], c: 1},
+    {q: "Bottle opener is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 1},
+    {q: "Hammer pulling a nail is ___ class.", a: ["1st", "2nd", "3rd", "None"], c: 0},
+    {q: "Crane uses ___ to lift heavy loads.", a: ["Screws", "Wedges", "Pulleys", "Levers"], c: 2},
+    {q: "If mass increases, KE ___.", a: ["Decreases", "Increases", "Stays same", "Zero"], c: 1},
+    {q: "Ramp is also called ___.", a: ["Inclined Plane", "Lever", "Screw", "Wedge"], c: 0},
+    {q: "Machine efficiency is ___ work / ___ work.", a: ["In/Out", "Out/In", "Force/Mass", "Time/Dist"], c: 1},
     {q: "Which has a sharp edge?", a: ["Screw", "Wedge", "Pulley", "Lever"], c: 1},
-    {q: "Ideal machine has ___ friction.", a: ["High", "Low", "Zero", "Some"], c: 2},
-    {q: "Solar panels make ___ energy.", a: ["Heat", "Nuclear", "Electrical", "Sound"], c: 2},
-    {q: "Object on a hill has ___ energy.", a: ["KE", "PE", "Sound", "Light"], c: 1},
-    {q: "Speeding car has ___ energy.", a: ["PE", "KE", "Nuclear", "Elastic"], c: 1},
-    {q: "Crane uses ___ to lift.", a: ["Wedges", "Pulleys", "Screws", "Magnets"], c: 1},
-    {q: "Output work / Input work is ___.", a: ["Power", "Advantage", "Efficiency", "Force"], c: 2},
-    {q: "Fulcrum in middle = ___ class.", a: ["1st", "2nd", "3rd", "4th"], c: 0},
-    {q: "Load in middle = ___ class.", a: ["1st", "2nd", "3rd", "None"], c: 1},
-    {q: "Effort in middle = ___ class.", a: ["1st", "2nd", "3rd", "None"], c: 2},
-    {q: "A ramp reduces the ___ needed.", a: ["Distance", "Force", "Work", "Time"], c: 1},
-    {q: "Joule is N x ___.", a: ["Sec", "Kg", "Meter", "Watt"], c: 2},
-    {q: "Law of conservation of ___.", a: ["Mass", "Force", "Energy", "Speed"], c: 2},
-    {q: "MA of single fixed pulley is ___.", a: ["0", "1", "2", "Infinity"], c: 1},
+    {q: "Fulcrum in center = ___ class.", a: ["1st", "2nd", "3rd", "None"], c: 0},
+    {q: "Load in center = ___ class.", a: ["1st", "2nd", "3rd", "None"], c: 1},
+    {q: "Effort in center = ___ class.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "Gravity on earth is ___ m/s².", a: ["1.6", "9.8", "12.0", "5.0"], c: 1},
+    {q: "A drill bit is a ___.", a: ["Wedge", "Screw", "Lever", "Pulley"], c: 1},
+    {q: "Ideal machines have zero ___.", a: ["Force", "Friction", "Mass", "Work"], c: 1},
+    {q: "Joule is Newton x ___.", a: ["Seconds", "Kilograms", "Meters", "Watts"], c: 2},
+    {q: "Object on a high shelf has ___ PE.", a: ["Low", "High", "Zero", "Negative"], c: 1},
+    {q: "Speeding train has high ___ energy.", a: ["Potential", "Kinetic", "Elastic", "Nuclear"], c: 1},
+    {q: "Power is measured in ___.", a: ["J", "N", "W", "Pa"], c: 2},
+    {q: "Law of ___ of energy.", a: ["Creation", "Destruction", "Conservation", "Rotation"], c: 2},
     {q: "Pliers are ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 0},
-    {q: "Zipper uses a ___.", a: ["Lever", "Wedge", "Pulley", "Screw"], c: 1},
-    {q: "Engine is a ___ machine.", a: ["Simple", "Complex", "Natural", "Manual"], c: 1},
-    {q: "Food contains ___ PE.", a: ["Elastic", "Chemical", "Gravitational", "Nuclear"], c: 1}
+    {q: "Food contains ___ potential energy.", a: ["Elastic", "Chemical", "Gravitational", "Solar"], c: 1},
+    {q: "Moving a box up a ramp takes ___ force.", a: ["More", "Less", "Equal", "Zero"], c: 1},
+    {q: "An engine is a ___ machine.", a: ["Simple", "Complex", "Natural", "Manual"], c: 1},
+    {q: "A shovel is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2}
 ];
 
 const game = {
     user: '', room: '', score: 0, qIdx: 0,
+    toStepRoom() {
+        this.user = document.getElementById('input-name').value.trim();
+        if(!this.user) return alert("ENTER PILOT NAME!");
+        document.getElementById('snd-click').play();
+        document.getElementById('step-name').classList.add('hidden');
+        document.getElementById('step-room').classList.remove('hidden');
+    },
     join() {
-        this.user = document.getElementById('name-in').value.trim();
-        this.room = document.getElementById('room-in').value.trim();
-        if(!this.user || !this.room) return alert("Enter name and room!");
-        db.ref(`battle/${this.room}/players/${this.user}`).set({ score: 0 });
+        this.room = document.getElementById('input-room').value.trim();
+        if(!this.room) return alert("ENTER ROOM ID!");
+        
+        // Anti-Duplicate Check
+        db.ref(`battle/${this.room}/players/${this.user}`).once('value', snap => {
+            if(snap.exists()) return alert("NAME ALREADY TAKEN IN THIS SECTOR!");
+            
+            db.ref(`battle/${this.room}/players/${this.user}`).set({ score: 0 });
+            document.getElementById('snd-click').play();
+            document.getElementById('step-room').classList.add('hidden');
+            document.getElementById('step-lobby').classList.remove('hidden');
+            this.syncLobby();
+        });
+    },
+    syncLobby() {
         db.ref(`battle/${this.room}/status`).on('value', snap => {
             if(snap.val() === 'playing') this.start();
         });
         db.ref(`battle/${this.room}/players`).on('value', snap => {
             const list = document.getElementById('player-list');
+            const countUI = document.getElementById('player-count');
             list.innerHTML = ''; let count = 0;
             for(let p in snap.val()) {
-                list.innerHTML += `<span class="player-tag">👤 ${p}</span>`;
+                list.innerHTML += `<div class="player-card">CONNECTED: ${p}</div>`;
                 count++;
             }
+            countUI.innerText = `PILOTS: ${count}/3`;
             if(this.user.toLowerCase() === 'mark') {
                 const btn = document.getElementById('start-btn');
                 btn.classList.remove('hidden');
-                btn.disabled = (count < 3);
-                document.getElementById('status-msg').innerText = count < 3 ? `Waiting for 3 players (${count}/3)...` : "Ready to Start!";
+                btn.disabled = count < 3;
+                if(count >= 3) countUI.innerText = "READY FOR DEPLOYMENT";
             }
         });
         db.ref(`battle/${this.room}/effects/${this.user}`).on('value', snap => {
-            if(snap.val()) this.beAttacked(snap.val().type);
+            if(snap.val()) this.applyDebuff(snap.val().type);
         });
     },
     startReq() { db.ref(`battle/${this.room}/status`).set('playing'); },
     start() {
-        document.getElementById('view-lobby').classList.add('hidden');
-        document.getElementById('view-quiz').classList.remove('hidden');
+        document.getElementById('step-lobby').classList.add('hidden');
+        document.getElementById('step-quiz').classList.remove('hidden');
         this.render();
     },
     render() {
         if(this.qIdx >= 60) return this.finish();
         const q = questions[this.qIdx];
-        document.getElementById('q-num').innerText = `Question ${this.qIdx+1}/60`;
+        document.getElementById('q-info').innerText = `MISSION PROGRESS: ${this.qIdx+1}/60`;
         document.getElementById('q-text').innerText = q.q;
-        document.getElementById('progress').style.width = ((this.qIdx/60)*100) + "%";
+        document.getElementById('progress-bar').style.width = (this.qIdx/60*100) + "%";
         const grid = document.getElementById('ans-grid'); grid.innerHTML = '';
         q.a.forEach((txt, i) => {
-            const btn = document.createElement('button');
-            btn.className = `ans-btn b${i}`; btn.innerText = txt;
-            btn.onclick = () => this.check(i); grid.appendChild(btn);
+            const b = document.createElement('button');
+            b.className = 'ans-btn'; b.innerText = txt;
+            b.onclick = () => this.check(i); grid.appendChild(b);
         });
     },
     check(i) {
         if(i === questions[this.qIdx].c) {
-            this.score += 1000; document.getElementById('snd-correct').play();
+            this.score += 1000;
             db.ref(`battle/${this.room}/players/${this.user}/score`).set(this.score);
-            this.openSabotage();
+            this.showAttackUI();
         } else {
-            document.getElementById('snd-wrong').play();
             this.qIdx++; this.render();
         }
     },
-    openSabotage() {
-        const modal = document.getElementById('sabotage-modal'); modal.style.display = 'flex';
-        const list = document.getElementById('victim-list'); list.innerHTML = '';
+    showAttackUI() {
+        const ui = document.getElementById('attack-ui');
+        ui.style.display = 'flex';
+        const list = document.getElementById('target-list');
+        list.innerHTML = '';
         db.ref(`battle/${this.room}/players`).once('value', snap => {
-            for(let p in snap.val()) {
+            for(let p in snap.val()){
                 if(p === this.user) continue;
-                const b = document.createElement('button'); b.innerText = p;
+                const b = document.createElement('button');
+                b.className = 'btn-neon'; b.style.margin = '10px';
+                b.innerText = `STRIKE ${p}`;
                 b.onclick = () => {
-                    const type = ['blind', 'shake', 'flip'][Math.floor(Math.random()*3)];
+                    const type = ['blind', 'shake'][Math.floor(Math.random()*2)];
                     db.ref(`battle/${this.room}/effects/${p}`).set({ type });
-                    modal.style.display = 'none'; this.qIdx++; this.render();
+                    ui.style.display = 'none'; this.qIdx++; this.render();
                 };
                 list.appendChild(b);
             }
-            if(list.innerHTML === '') { setTimeout(()=> {modal.style.display='none'; this.qIdx++; this.render();}, 500); }
+            if(list.innerHTML === '') setTimeout(()=>{ui.style.display='none'; this.qIdx++; this.render();}, 500);
         });
     },
-    beAttacked(type) {
-        const ui = document.getElementById('view-quiz');
-        ui.classList.add(`effect-${type}`);
+    applyDebuff(t) {
+        const quiz = document.getElementById('step-quiz');
+        quiz.classList.add(t);
         setTimeout(() => {
-            ui.classList.remove('effect-blind', 'effect-shake', 'effect-flip');
+            quiz.classList.remove('blind', 'shake');
             db.ref(`battle/${this.room}/effects/${this.user}`).remove();
         }, 4000);
     },
     finish() {
-        document.getElementById('view-quiz').classList.add('hidden');
-        document.getElementById('view-finish').classList.remove('hidden');
+        document.getElementById('step-quiz').classList.add('hidden');
+        document.getElementById('step-finish').classList.remove('hidden');
         document.getElementById('snd-win').play();
         db.ref(`battle/${this.room}/players`).orderByChild('score').once('value', snap => {
-            let res = []; snap.forEach(s => res.push({n: s.key, s: s.val().score}));
-            res.reverse();
-            document.getElementById('winner-name').innerText = res[0].n;
-            document.getElementById('final-stats').innerHTML = res.map(x => `<div>${x.n}: ${x.s} pts</div>`).join('');
+            let arr = []; snap.forEach(s => arr.push({n: s.key, s: s.val().score}));
+            arr.reverse();
+            document.getElementById('winner-name').innerText = arr[0].n;
+            document.getElementById('leaderboard').innerHTML = arr.map(x => `<div>${x.n}: ${x.s} PTS</div>`).join('');
         });
     }
 };
