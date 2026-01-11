@@ -3,253 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GARTIC EXAM PARTY - 75 QUESTIONS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;700&family=Fredoka+One&display=swap" rel="stylesheet">
+    <title>SCIENCE BATTLE ROYALE 60Q</title>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Anuphan:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #ffce00; --s: #ff9f43; --bg: #6c5ce7; --white: #ffffff; --dark: #2d3436; }
-        * { box-sizing: border-box; font-family: 'Anuphan', sans-serif; }
+        :root { --primary: #6c5ce7; --bg: #00b894; --dark: #2d3436; --red: #ff7675; }
+        * { box-sizing: border-box; font-family: 'Fredoka', 'Anuphan', sans-serif; }
         body { background: var(--bg); margin: 0; overflow: hidden; color: var(--dark); }
-        
-        /* Gartic Phone Lobby Style */
-        .lobby-screen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .gartic-card { background: #fff; border: 8px solid var(--dark); border-radius: 40px; width: 90%; max-width: 500px; padding: 40px; text-align: center; box-shadow: 15px 15px 0 rgba(0,0,0,0.2); }
-        .avatar-preview { width: 140px; height: 140px; background: #eee; border: 5px solid var(--dark); border-radius: 20px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .avatar-img { width: 100%; height: 100%; }
-        
-        .gartic-input { width: 100%; padding: 15px; border: 4px solid var(--dark); border-radius: 15px; font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; outline: none; }
-        .btn-start { background: #00b894; color: white; border: 4px solid var(--dark); padding: 12px 25px; border-radius: 50px; font-size: 1.1rem; font-family: 'Fredoka One'; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 var(--dark); margin: 5px; }
-        .btn-start:hover { transform: scale(1.05); }
-
-        /* Kahoot Quiz Style */
-        .quiz-container { height: 100vh; display: flex; flex-direction: column; background: #f1f2f6; transition: 0.3s; }
-        .q-header { padding: 20px; background: white; display: flex; justify-content: space-between; border-bottom: 4px solid #ddd; font-weight: 700; font-size: 1.2rem; }
-        .q-box { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .q-text { font-size: 1.8rem; font-weight: 700; margin-bottom: 30px; max-width: 800px; }
-        
-        .ans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 900px; }
-        .ans-btn { height: 100px; border: none; border-radius: 15px; color: white; font-size: 1.4rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.1s; border-bottom: 5px solid rgba(0,0,0,0.2); }
-        .ans-btn:active { transform: translateY(4px); border-bottom: none; }
+        .container { height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; border: 4px solid var(--dark); border-radius: 25px; padding: 25px; width: 100%; max-width: 600px; text-align: center; box-shadow: 8px 8px 0 rgba(0,0,0,0.1); position: relative; }
+        .player-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 10px; margin: 15px 0; }
+        .p-icon img { width: 45px; border-radius: 50%; border: 2px solid var(--dark); }
+        .ans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .ans-btn { padding: 20px; border: none; border-radius: 15px; color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; border-bottom: 5px solid rgba(0,0,0,0.2); }
         .b0 { background: #e21b3c; } .b1 { background: #1368ce; } .b2 { background: #d89e00; } .b3 { background: #26890c; }
-
-        /* Prank Animations */
-        @keyframes shake { 0%, 100% { transform: translate(0,0); } 10%, 30%, 50%, 70%, 90% { transform: translate(-10px, 0); } 20%, 40%, 60%, 80% { transform: translate(10px, 0); } }
-        .shake-effect { animation: shake 0.5s; }
-        .blackout-effect { filter: brightness(0); }
-        .prank-msg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem; z-index: 9999; pointer-events: none; display: none; }
-
+        #sabotage-menu { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        #side-rank { position: fixed; left: 10px; top: 10px; width: 160px; background: rgba(255,255,255,0.9); border: 2px solid var(--dark); border-radius: 15px; padding: 10px; font-size: 0.8rem; z-index: 50; }
+        .effect-shake { animation: shake 0.2s infinite; }
+        @keyframes shake { 0% {transform: translate(2px,2px)} 50% {transform: translate(-2px,-2px)} 100% {transform: translate(2px,2px)} }
+        .effect-blind { filter: brightness(0.1) blur(15px); }
+        .effect-flip { transform: rotate(180deg); }
         .hidden { display: none !important; }
+        .btn-main { background: var(--primary); color: white; border: 3px solid var(--dark); padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div id="prank-msg" class="prank-msg">😜 GET PRANKED!</div>
+<div id="side-rank" class="hidden"><strong>LIVE RANK 🏆</strong><div id="rank-content"></div></div>
 
-<div id="lobby" class="lobby-screen">
-    <div class="gartic-card">
-        <h1 style="font-family: 'Fredoka One'; color: var(--bg); font-size: 2.5rem; margin-bottom: 10px;">GARTIC EXAM</h1>
-        <div class="avatar-preview">
-            <img id="avatar-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=1" class="avatar-img">
-        </div>
-        <input type="text" id="username" class="gartic-input" placeholder="ใส่ชื่อเล่นของคุณ...">
-        <div style="display: flex; flex-wrap: wrap; justify-content: center;">
-            <button class="btn-start" style="background:#4361ee;" onclick="startGame(0)">SCIENCE (ENG)</button>
-            <button class="btn-start" style="background:#ff9f43;" onclick="startGame(1)">ENGLISH</button>
-            <button class="btn-start" style="background:#00b894;" onclick="startGame(2)">การงานอาชีพ</button>
-        </div>
+<div class="container">
+    <div id="view-lobby" class="card">
+        <h1 style="color: var(--primary);">SCIENCE BATTLE 🧪</h1>
+        <img id="my-avatar" style="width: 80px;">
+        <input type="text" id="name-in" placeholder="ชื่อเล่น..." style="width:80%; padding:10px; margin:10px;">
+        <input type="text" id="room-in" placeholder="รหัสห้อง 4 หลัก" style="width:80%; padding:10px;">
+        <br><button class="btn-main" onclick="game.join()">เข้าห้อง</button>
+        <div class="player-grid" id="player-list"></div>
+        <button id="start-btn" class="btn-main hidden" style="background:var(--red)" onclick="game.startReq()">START GAME</button>
+    </div>
+
+    <div id="view-quiz" class="card hidden">
+        <div id="progress" style="height:8px; background:var(--primary); width:0%; position:absolute; top:0; left:0;"></div>
+        <h2 id="q-text" style="margin: 20px 0;"></h2>
+        <div class="ans-grid" id="ans-grid"></div>
+    </div>
+
+    <div id="view-result" class="card hidden">
+        <h1>จบเกม!</h1>
+        <div id="final-leaderboard"></div>
+        <button class="btn-main" onclick="location.reload()">เล่นใหม่</button>
     </div>
 </div>
 
-<div id="quiz" class="quiz-container hidden">
-    <div class="q-header">
-        <div id="q-count">1 / 25</div>
-        <div id="combo-ui" style="color: #ff4757;">COMBO: 0 🔥</div>
-        <div id="q-score">SCORE: 0</div>
-    </div>
-    <div class="q-box" id="game-area">
-        <div class="q-text" id="q-text">Loading question...</div>
-        <div class="ans-grid" id="ans-grid"></div>
-    </div>
+<div id="sabotage-menu">
+    <h1 id="sabotage-title">แกล้งใครดี?</h1>
+    <div id="victim-grid" class="player-grid"></div>
 </div>
 
 <script>
-const subjects = [
-    { 
-        name: "Science (Eng)", 
-        questions: [
-            {q: "What is the unit of Work in the SI system?", a: ["Newton", "Joule", "Watt", "Pascal"], c: 1},
-            {q: "Which formula is used to calculate Work?", a: ["W = mgh", "W = Fs", "P = W/t", "F = ma"], c: 1},
-            {q: "Power is defined as the rate of doing...?", a: ["Force", "Energy", "Work", "Speed"], c: 2},
-            {q: "The unit of Power is?", a: ["Joule", "Newton", "Watt", "Kilogram"], c: 2},
-            {q: "A boy pushes a wall with 100N but it doesn't move. Work is?", a: ["100 J", "0 J", "1000 J", "Undefined"], c: 1},
-            {q: "Energy of an object due to its motion is?", a: ["Potential", "Kinetic", "Chemical", "Nuclear"], c: 1},
-            {q: "Energy of an object due to its position/height is?", a: ["Kinetic", "Potential", "Sound", "Light"], c: 1},
-            {q: "The Law of Conservation of Energy states energy cannot be...?", a: ["Changed", "Transferred", "Destroyed", "Stored"], c: 2},
-            {q: "Which is a Class 1 lever?", a: ["Wheelbarrow", "Nutcracker", "Scissors", "Fishing rod"], c: 2},
-            {q: "In a Class 2 lever, what is in the middle?", a: ["Fulcrum", "Load", "Effort", "Gravity"], c: 1},
-            {q: "Tweezers and Tongs are which class of lever?", a: ["Class 1", "Class 2", "Class 3", "Class 4"], c: 2},
-            {q: "A fixed pulley helps you by...?", a: ["Reducing force", "Changing direction", "Increasing work", "Multiplying mass"], c: 1},
-            {q: "Which machine is two inclined planes joined together?", a: ["Screw", "Wedge", "Lever", "Pulley"], c: 1},
-            {q: "Stairs are an example of which simple machine?", a: ["Lever", "Pulley", "Inclined Plane", "Wedge"], c: 2},
-            {q: "Mechanical Advantage (MA) is calculated by...?", a: ["Output/Input", "Input/Output", "Force x Distance", "Mass x Gravity"], c: 0},
-            {q: "Which tool uses the Wheel and Axle principle?", a: ["Hammer", "Screwdriver", "Axe", "Ladder"], c: 1},
-            {q: "A screw is an inclined plane wrapped around a...?", a: ["Circle", "Square", "Cylinder", "Triangle"], c: 2},
-            {q: "As an object falls, its Potential Energy changes to...?", a: ["Heat", "Kinetic", "Chemical", "Sound"], c: 1},
-            {q: "Work is done only when force and movement are...?", a: ["Opposite", "Perpendicular", "Parallel", "Static"], c: 2},
-            {q: "If you double the speed, Kinetic Energy increases by...?", a: ["2 times", "3 times", "4 times", "8 times"], c: 2},
-            {q: "Efficiency of a machine is always less than...?", a: ["50%", "100%", "150%", "200%"], c: 1},
-            {q: "Which is NOT a simple machine?", a: ["Pulley", "Lever", "Engine", "Wedge"], c: 2},
-            {q: "Unit of Force is?", a: ["Watt", "Newton", "Joule", "Gram"], c: 1},
-            {q: "The pivot point of a lever is called?", a: ["Effort", "Load", "Fulcrum", "Base"], c: 2},
-            {q: "What is the G value on Earth?", a: ["9.8 m/s²", "1.6 m/s²", "100 m/s²", "0 m/s²"], c: 0}
-        ]
-    },
-    {
-        name: "English",
-        questions: [
-            {q: "I have ____ my homework already.", a: ["do", "did", "done", "doing"], c: 2},
-            {q: "She ____ to the market yesterday.", a: ["go", "goes", "went", "gone"], c: 2},
-            {q: "____ you ever been to Japan?", a: ["Do", "Did", "Has", "Have"], c: 3},
-            {q: "This is the ____ book I have ever read.", a: ["good", "better", "best", "goodest"], c: 2},
-            {q: "They ____ playing football now.", a: ["is", "am", "are", "was"], c: 2},
-            {q: "He ____ like coffee.", a: ["don't", "doesn't", "isn't", "hasn't"], c: 1},
-            {q: "We have lived here ____ 2010.", a: ["for", "since", "yet", "already"], c: 1},
-            {q: "Listen! The baby ____.", a: ["cries", "cried", "is crying", "cry"], c: 2},
-            {q: "If it ____, I will stay at home.", a: ["rain", "rains", "raining", "rained"], c: 1},
-            {q: "You ____ smoke in the hospital.", a: ["should", "must", "mustn't", "can"], c: 2},
-            {q: "What is the opposite of 'Beautiful'?", a: ["Pretty", "Ugly", "Nice", "Clean"], c: 1},
-            {q: "Which one is a fruit?", a: ["Carrot", "Cabbage", "Durian", "Potato"], c: 2},
-            {q: "____ sugar do you want?", a: ["How many", "How much", "How long", "How often"], c: 1},
-            {q: "I am interested ____ learning English.", a: ["on", "at", "in", "with"], c: 2},
-            {q: "The cat is sleeping ____ the table.", a: ["under", "between", "at", "to"], c: 0},
-            {q: "Which word is a noun?", a: ["Run", "Happiness", "Quickly", "Beautiful"], c: 1},
-            {q: "A person who treats sick people is a...?", a: ["Teacher", "Doctor", "Pilot", "Chef"], c: 1},
-            {q: "____ is your name?", a: ["What", "Where", "Who", "How"], c: 0},
-            {q: "They ____ breakfast at 7 AM every day.", a: ["has", "have", "having", "had"], c: 1},
-            {q: "Look at ____ clouds!", a: ["this", "that", "these", "it"], c: 2},
-            {q: "Can you speak ____?", a: ["slow", "slowly", "slowing", "slowest"], c: 1},
-            {q: "He is afraid ____ spiders.", a: ["of", "at", "to", "with"], c: 0},
-            {q: "I ____ a new car last week.", a: ["buy", "bought", "buys", "buying"], c: 1},
-            {q: "Which is a plural noun?", a: ["Child", "Foot", "Mice", "Tooth"], c: 2},
-            {q: "Happy New Year! ____ you.", a: ["Same to", "Same with", "Like", "And"], c: 0}
-        ]
-    },
-    {
-        name: "การงานอาชีพ",
-        questions: [
-            {q: "การจัดสวนแบบประดิษฐ์เน้นสิ่งใด?", a: ["ความเป็นป่า", "ความสมมาตรและระเบียบ", "ความรก", "ธรรมชาติเดิมๆ"], c: 1},
-            {q: "ปุ๋ยชนิดใดได้จากมูลสัตว์?", a: ["ปุ๋ยเคมี", "ปุ๋ยคอก", "ปุ๋ยพืชสด", "ปุ๋ยหมัก"], c: 1},
-            {q: "การขยายพันธุ์พืชแบบใดได้ต้นเหมือนแม่เดิมทุกประการ?", a: ["เพาะเมล็ด", "ตอนกิ่ง", "ใช้ลมเป่า", "ทิ้งไว้เฉยๆ"], c: 1},
-            {q: "เครื่องมือใดใช้พรวนดินในกระถาง?", a: ["จอบ", "ส้อมพรวน", "พลั่วพลาม", "เลื่อย"], c: 1},
-            {q: "พืชในข้อใดเหมาะกับสวนหิน?", a: ["บัว", "ตะบองเพชร", "มะพร้าว", "กุหลาบ"], c: 1},
-            {q: "ห้องครัวควรอยู่ทิศใดของบ้านเพื่อระบายกลิ่น?", a: ["ทิศเหนือ", "ทิศตะวันออก", "ทิศตะวันตก/ใต้", "กลางบ้าน"], c: 2},
-            {q: "การซ่อมแซมเสื้อผ้าที่ชายลุ่ยควรใช้วิธีใด?", a: ["เย็บด้นถอยหลัง", "สอย", "เนา", "ชุน"], c: 1},
-            {q: "วัสดุใดช่วยถนอมอาหารประเภทไข่ได้นานที่สุด?", a: ["แช่น้ำ", "ทำไข่เค็ม", "วางทิ้งไว้", "ใส่ถุงพลาสติก"], c: 1},
-            {q: "การบัญชีครัวเรือนมีประโยชน์อย่างไร?", a: ["ทำให้รวย", "รู้รายรับ-รายจ่าย", "ไม่ต้องทำงาน", "อวดเพื่อน"], c: 1},
-            {q: "น้ำยาซักผ้าขาวควรใช้กับผ้าสีอะไร?", a: ["สีแดง", "สีดำ", "สีขาว", "ทุกสี"], c: 2},
-            {q: "ม่าน Blackout มีคุณสมบัติเด่นอย่างไร?", a: ["โปร่งแสง", "กันแสงแดดได้ดีมาก", "ราคาถูกที่สุด", "ลายการ์ตูน"], c: 1},
-            {q: "อุปกรณ์ใดใช้ตัดกิ่งไม้ขนาดใหญ่?", a: ["กรรไกรตัดหญ้า", "เลื่อยตัดกิ่ง", "มีดทำครัว", "คัตเตอร์"], c: 1},
-            {q: "มารยาทในการรับประทานอาหารข้อใดถูกต้อง?", a: ["เคี้ยวเสียงดัง", "ใช้ช้อนกลาง", "เล่นมือถือ", "คุยขณะเคี้ยว"], c: 1},
-            {q: "การจัดบ้านสไตล์มินิมอลเน้นอะไร?", a: ["ของเยอะๆ", "น้อยแต่มาก เรียบง่าย", "เน้นสีทอง", "ของโบราณ"], c: 1},
-            {q: "ปุ๋ยยูเรียให้ธาตุอาหารหลักชนิดใด?", a: ["ไนโตรเจน", "ฟอสฟอรัส", "โพแทสเซียม", "แคลเซียม"], c: 0},
-            {q: "การล้างแก้วน้ำควรเริ่มจากส่วนใด?", a: ["ก้นแก้ว", "ขอบแก้วและภายใน", "หูแก้ว", "แล้วแต่ชอบ"], c: 1},
-            {q: "พืชผักสวนครัวชนิดใดปลูกง่ายที่สุดในกระถาง?", a: ["ทุเรียน", "กะเพรา", "ขนุน", "ยางพารา"], c: 1},
-            {q: "สัญลักษณ์รีไซเคิลหมายถึงอะไร?", a: ["ห้ามใช้", "นำกลับมาใช้ใหม่ได้", "ขยะอันตราย", "ทิ้งลงแม่น้ำ"], c: 1},
-            {q: "การเลือกเสื้อผ้าคนรูปร่างอ้วนควรใส่ลายแบบใด?", a: ["ลายขวาง", "ลายแนวตั้ง", "ลายดอกใหญ่", "สีขาวจ้า"], c: 1},
-            {q: "ความปลอดภัยในการใช้เครื่องใช้ไฟฟ้าคือ?", a: ["มือเปียกจับได้", "ถอดปลั๊กเมื่อเลิกใช้", "ใช้สายไฟที่ขาด", "เปิดทิ้งไว้ทั้งคืน"], c: 1},
-            {q: "ผ้าไหมควรซักแบบใด?", a: ["ปั่นเครื่องแรงๆ", "ซักมือเบาๆ", "ขยี้แรงๆ", "ซักรวมกับยีนส์"], c: 1},
-            {q: "ขั้นตอนแรกของการซ่อมแซมอุปกรณ์คือ?", a: ["ลงมือทำ", "หาสาเหตุการชำรุด", "ซื้อใหม่", "จ้างช่าง"], c: 1},
-            {q: "อาหารแปรรูปในข้อใดเก็บได้นานที่สุด?", a: ["นมสด", "ผลไม้อบแห้ง", "ขนมปัง", "แกงเขียวหวาน"], c: 1},
-            {q: "ทิศตะวันออกของบ้านเหมาะกับการปลูกต้นไม้ประเภทใด?", a: ["ไม้ประดับชอบแสงเช้า", "ไม้ใหญ่ทึบ", "ไม่ต้องปลูก", "พืชทะเลทราย"], c: 0},
-            {q: "ประโยชน์สูงสุดของการจัดสวนคือ?", a: ["ความสวยงามและร่มรื่น", "อวดเพื่อนบ้าน", "ขายต้นไม้", "ให้สัตว์มาอยู่"], c: 0}
-        ]
-    }
+const firebaseConfig = {
+    apiKey: "AIzaSyAVAd78Y9OUKFdfkPsV96uj2IjFwWu1rAc",
+    authDomain: "mark-d1f3f.firebaseapp.com",
+    databaseURL: "https://mark-d1f3f-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "mark-d1f3f",
+    storageBucket: "mark-d1f3f.firebasestorage.app",
+    messagingSenderId: "937114827864",
+    appId: "1:937114827864:web:24906a17f19c510714de2d"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const questions = [
+    {q: "1. Which simple machine is used in a see-saw?", a: ["Lever", "Pulley", "Screw", "Wedge"], c: 0},
+    {q: "2. Kinetic energy is defined as the energy of ____.", a: ["Position", "Motion", "Storage", "Heat"], c: 1},
+    {q: "3. What is the standard unit of Power?", a: ["Joule", "Newton", "Watt", "Pascal"], c: 2},
+    {q: "4. Potential Energy (PE) is calculated by ____.", a: ["mgh", "1/2 mv^2", "F x s", "P/t"], c: 0},
+    {q: "5. A fixed pulley helps change the ____ of force.", a: ["Amount", "Mass", "Direction", "Speed"], c: 2},
+    {q: "6. Which is an example of a second-class lever?", a: ["Scissors", "Tweezers", "Wheelbarrow", "Fishing rod"], c: 2},
+    {q: "7. Mechanical Advantage (MA) equals Output Force divided by ____.", a: ["Input Force", "Distance", "Time", "Gravity"], c: 0},
+    {q: "8. A knife or an axe is an example of a ____.", a: ["Lever", "Screw", "Wedge", "Pulley"], c: 2},
+    {q: "9. Work is done only when there is ____.", a: ["Force", "Mass", "Displacement", "Time"], c: 2},
+    {q: "10. Efficiency of a real machine is always ____ 100%.", a: ["Equal to", "More than", "Less than", "Exactly"], c: 2},
+    {q: "11. 1 Joule per second is equal to 1 ____.", a: ["Watt", "Newton", "Volt", "Ampere"], c: 0},
+    {q: "12. The formula for Kinetic Energy is ____.", a: ["mgh", "1/2 mv^2", "m x v", "F/A"], c: 1},
+    {q: "13. A ramp is also known as an ____.", a: ["Inclined Plane", "Lever", "Pulley", "Wedge"], c: 0},
+    {q: "14. A screw is essentially an inclined plane wrapped around a ____.", a: ["Square", "Circle", "Cylinder", "Triangle"], c: 2},
+    {q: "15. The point where a lever rotates is called the ____.", a: ["Effort", "Load", "Fulcrum", "Arm"], c: 2},
+    {q: "16. If you lift a 10N object 2 meters, the work done is ____ Joules.", a: ["5", "10", "20", "40"], c: 2},
+    {q: "17. Power is the rate of doing ____.", a: ["Force", "Work", "Mass", "Energy"], c: 1},
+    {q: "18. A flag pole uses which type of machine?", a: ["Lever", "Fixed Pulley", "Screw", "Wedge"], c: 1},
+    {q: "19. Which has more KE: a car at 20m/s or at 40m/s?", a: ["20m/s", "40m/s", "Same", "Zero"], c: 1},
+    {q: "20. Gravity on Earth is approximately ____ m/s^2.", a: ["1.6", "5.0", "9.8", "12.0"], c: 2},
+    {q: "21. A bottle opener is a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 1},
+    {q: "22. Human elbow is an example of a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "23. Energy cannot be created or destroyed, only ____.", a: ["Used up", "Transformed", "Deleted", "Fixed"], c: 1},
+    {q: "24. A door handle is a type of ____.", a: ["Pulley", "Wedge", "Wheel and Axle", "Screw"], c: 2},
+    {q: "25. Which is NOT a simple machine?", a: ["Lever", "Engine", "Pulley", "Wedge"], c: 1},
+    {q: "26. Friction usually converts KE into ____ energy.", a: ["Chemical", "Potential", "Thermal (Heat)", "Nuclear"], c: 2},
+    {q: "27. Work = Force x Distance. If Distance is 0, Work is ____.", a: ["Max", "Positive", "Zero", "Negative"], c: 2},
+    {q: "28. A staircase is an example of an ____.", a: ["Inclined Plane", "Lever", "Screw", "Wedge"], c: 0},
+    {q: "29. Scissors are a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 0},
+    {q: "30. Tweezers are a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "31. Unit of Force is named after ____.", a: ["Joule", "Watt", "Newton", "Einstein"], c: 2},
+    {q: "32. Elastic PE is stored in a ____.", a: ["Battery", "Food", "Stretched Rubber Band", "Rock"], c: 2},
+    {q: "33. If you double the mass, the PE ____.", a: ["Doubles", "Triples", "Half", "Stays same"], c: 0},
+    {q: "34. 1 Horsepower (HP) is about ____ Watts.", a: ["500", "746", "1000", "1200"], c: 1},
+    {q: "35. A fishing rod is a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "36. The faster an object moves, the more ____ it has.", a: ["PE", "KE", "Mass", "Gravity"], c: 1},
+    {q: "37. Ideal Mechanical Advantage (IMA) ignores ____.", a: ["Force", "Distance", "Friction", "Mass"], c: 2},
+    {q: "38. Chemical energy is stored in ____.", a: ["Springs", "Food/Fuel", "Height", "Motion"], c: 1},
+    {q: "39. A Nutcracker is a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 1},
+    {q: "40. A zipper uses which simple machine?", a: ["Wedge", "Pulley", "Lever", "Screw"], c: 0},
+    {q: "41. What is the PE of a 2kg book 3m high? (g=10)", a: ["6J", "20J", "30J", "60J"], c: 3},
+    {q: "42. A crane uses a ____ system to lift heavy loads.", a: ["Screw", "Block and Tackle (Pulleys)", "Lever", "Wedge"], c: 1},
+    {q: "43. If velocity doubles, KE increases by ____ times.", a: ["2", "4", "8", "16"], c: 1},
+    {q: "44. Pushing a wall and it doesn't move. Work = ____.", a: ["Positive", "Negative", "Zero", "Max"], c: 2},
+    {q: "45. A hammer pulling a nail is a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 0},
+    {q: "46. Lever where Fulcrum is between Effort and Load is ____.", a: ["1st class", "2nd class", "3rd class", "None"], c: 0},
+    {q: "47. Broom is a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "48. A drill bit is an example of a ____.", a: ["Lever", "Screw", "Wedge", "Pulley"], c: 1},
+    {q: "49. Total Mechanical Energy = ____ + ____.", a: ["PE + Heat", "KE + PE", "Force + Speed", "Mass + Gravity"], c: 1},
+    {q: "50. Law of Conservation of Energy says energy is ____.", a: ["Always lost", "Constant", "Always increasing", "Zero"], c: 1},
+    {q: "51. An object on a shelf has ____ energy.", a: ["Kinetic", "Potential", "Light", "Sound"], c: 1},
+    {q: "52. Rolling a ball down a hill, PE changes to ____.", a: ["KE", "Chemical", "Nuclear", "Mass"], c: 0},
+    {q: "53. What is the unit of Mass?", a: ["Newton", "Joule", "Kilogram", "Watt"], c: 2},
+    {q: "54. A slide at the park is an ____.", a: ["Wedge", "Inclined Plane", "Screw", "Lever"], c: 1},
+    {q: "55. Which machine has a sharp edge?", a: ["Lever", "Pulley", "Wedge", "Screw"], c: 2},
+    {q: "56. Work is measured in N-m, also called ____.", a: ["Watt", "Joule", "Pascal", "Volt"], c: 1},
+    {q: "57. A car engine is a ____ machine.", a: ["Simple", "Complex", "Natural", "Manual"], c: 1},
+    {q: "58. MA of a single fixed pulley is ____.", a: ["1", "2", "3", "0"], c: 0},
+    {q: "59. Moving a heavy box up a ramp requires ____ force than lifting it.", a: ["More", "Less", "Same", "Zero"], c: 1},
+    {q: "60. Solar panels convert light into ____ energy.", a: ["Kinetic", "Potential", "Electrical", "Mechanical"], c: 2}
 ];
 
-let currentSubject = [];
-let qIdx = 0;
-let score = 0;
-let combo = 0;
-
-// Gartic Avatar Randomizer
-setInterval(() => {
-    if(!document.getElementById('lobby').classList.contains('hidden')) {
-        document.getElementById('avatar-img').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${Math.random()}`;
+const game = {
+    user: '', room: '', score: 0, qIdx: 0, seed: Math.floor(Math.random()*1000),
+    join() {
+        this.user = document.getElementById('name-in').value;
+        this.room = document.getElementById('room-in').value;
+        if(!this.user || !this.room) return alert("กรอกชื่อและห้อง!");
+        db.ref(`battle/${this.room}/players/${this.user}`).set({ score: 0, avatar: this.seed });
+        db.ref(`battle/${this.room}/status`).on('value', snap => {
+            if(this.user.toLowerCase() === 'mark') document.getElementById('start-btn').classList.remove('hidden');
+            if(snap.val() === 'playing') this.start();
+        });
+        db.ref(`battle/${this.room}/players`).on('value', snap => {
+            const list = document.getElementById('player-list');
+            const side = document.getElementById('rank-content');
+            list.innerHTML = ''; side.innerHTML = '';
+            let arr = [];
+            for(let p in snap.val()){
+                list.innerHTML += `<div class="p-icon"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${snap.val()[p].avatar}"><br>${p}</div>`;
+                arr.push({n:p, s:snap.val()[p].score});
+            }
+            arr.sort((a,b)=>b.s-a.s).forEach((x,i)=>side.innerHTML += `<div>#${i+1} ${x.n}: ${x.s}</div>`);
+        });
+        db.ref(`battle/${this.room}/effects/${this.user}`).on('value', snap => {
+            if(snap.val()) this.applyEff(snap.val().type);
+        });
+    },
+    startReq() { db.ref(`battle/${this.room}/status`).set('playing'); },
+    start() {
+        document.getElementById('view-lobby').classList.add('hidden');
+        document.getElementById('view-quiz').classList.remove('hidden');
+        document.getElementById('side-rank').classList.remove('hidden');
+        this.render();
+    },
+    render() {
+        if(this.qIdx >= questions.length) return this.finish();
+        const q = questions[this.qIdx];
+        document.getElementById('q-text').innerText = q.q;
+        document.getElementById('progress').style.width = (this.qIdx/questions.length*100)+"%";
+        const grid = document.getElementById('ans-grid'); grid.innerHTML = '';
+        q.a.forEach((t, i) => {
+            const b = document.createElement('button'); b.className = `ans-btn b${i}`; b.innerText = t;
+            b.onclick = () => this.check(i); grid.appendChild(b);
+        });
+    },
+    check(i) {
+        if(i === questions[this.qIdx].c) {
+            this.score += 1000; db.ref(`battle/${this.room}/players/${this.user}/score`).set(this.score);
+            this.sabotageMenu();
+        } else { this.qIdx++; this.render(); }
+    },
+    sabotageMenu() {
+        const m = document.getElementById('sabotage-menu'); m.style.display = 'flex';
+        const g = document.getElementById('victim-grid'); g.innerHTML = '';
+        db.ref(`battle/${this.room}/players`).once('value', snap => {
+            for(let p in snap.val()){
+                if(p === this.user) continue;
+                const d = document.createElement('div'); d.className='p-icon';
+                d.innerHTML = `<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${snap.val()[p].avatar}"><br>${p}`;
+                d.onclick = () => {
+                    const type = ['blind', 'shake', 'flip'][Math.floor(Math.random()*3)];
+                    db.ref(`battle/${this.room}/effects/${p}`).set({type});
+                    m.style.display = 'none'; this.qIdx++; this.render();
+                };
+                g.appendChild(d);
+            }
+            if(g.innerHTML==='') { setTimeout(()=>{m.style.display='none'; this.qIdx++; this.render();}, 800); }
+        });
+    },
+    applyEff(t) {
+        const q = document.getElementById('view-quiz');
+        if(t==='blind') q.classList.add('effect-blind');
+        if(t==='shake') q.classList.add('effect-shake');
+        if(t==='flip') q.classList.add('effect-flip');
+        setTimeout(()=>{
+            q.classList.remove('effect-blind','effect-shake','effect-flip');
+            db.ref(`battle/${this.room}/effects/${this.user}`).remove();
+        }, 4000);
+    },
+    finish() {
+        document.getElementById('view-quiz').classList.add('hidden');
+        document.getElementById('view-result').classList.remove('hidden');
+        db.ref(`battle/${this.room}/players`).once('value', snap => {
+            const f = document.getElementById('final-leaderboard');
+            let a = []; snap.forEach(s=>a.push({n:s.key, s:s.val().score}));
+            a.sort((x,y)=>y.s-x.s).forEach((p,i)=>f.innerHTML += `<div>#${i+1} ${p.n} - ${p.s} PT</div>`);
+        });
     }
-}, 3000);
-
-function startGame(subIdx) {
-    const name = document.getElementById('username').value;
-    if(!name) { alert("Please enter your name!"); return; }
-    
-    currentSubject = subjects[subIdx].questions;
-    qIdx = 0; score = 0; combo = 0;
-    
-    document.getElementById('lobby').classList.add('hidden');
-    document.getElementById('quiz').classList.remove('hidden');
-    renderQuestion();
-}
-
-function renderQuestion() {
-    const q = currentSubject[qIdx];
-    document.getElementById('q-count').innerText = `${qIdx + 1} / 25`;
-    document.getElementById('q-text').innerText = q.q;
-    
-    const grid = document.getElementById('ans-grid');
-    grid.innerHTML = '';
-    
-    q.a.forEach((text, i) => {
-        const btn = document.createElement('button');
-        btn.className = `ans-btn b${i}`;
-        btn.innerText = text;
-        btn.onclick = () => checkAnswer(i);
-        grid.appendChild(btn);
-    });
-}
-
-function checkAnswer(idx) {
-    const correct = currentSubject[qIdx].c;
-    const quizScreen = document.getElementById('quiz');
-    
-    if(idx === correct) {
-        score += 1000 + (combo * 100);
-        combo++;
-        if(combo >= 3) {
-            triggerPrank();
-        }
-    } else {
-        combo = 0;
-    }
-    
-    document.getElementById('q-score').innerText = `SCORE: ${score}`;
-    document.getElementById('combo-ui').innerText = `COMBO: ${combo} 🔥`;
-    
-    qIdx++;
-    if(qIdx < currentSubject.length) {
-        renderQuestion();
-    } else {
-        alert(`GAME OVER! ${document.getElementById('username').value}\nTOTAL SCORE: ${score}`);
-        location.reload();
-    }
-}
-
-function triggerPrank() {
-    const pranks = ['shake', 'blackout', 'ghost'];
-    const p = pranks[Math.floor(Math.random() * pranks.length)];
-    const quizScreen = document.getElementById('quiz');
-    const msg = document.getElementById('prank-msg');
-
-    if(p === 'shake') {
-        quizScreen.classList.add('shake-effect');
-        setTimeout(() => quizScreen.classList.remove('shake-effect'), 500);
-    } else if(p === 'blackout') {
-        quizScreen.classList.add('blackout-effect');
-        setTimeout(() => quizScreen.classList.remove('blackout-effect'), 1000);
-    } else {
-        msg.style.display = 'block';
-        setTimeout(() => msg.style.display = 'none', 1000);
-    }
-}
+};
+document.getElementById('my-avatar').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${game.seed}`;
 </script>
-
 </body>
 </html>
+
