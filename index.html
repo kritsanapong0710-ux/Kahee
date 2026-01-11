@@ -1,64 +1,73 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCIENCE BATTLE ROYALE 60Q</title>
+    <title>SCIENCE BATTLE ROYALE 60Q 🚀</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Anuphan:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Anuphan:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6c5ce7; --bg: #00b894; --dark: #2d3436; --red: #ff7675; }
+        :root { --primary: #6c5ce7; --accent: #fdcb6e; --bg: #0984e3; --dark: #2d3436; --white: #ffffff; }
         * { box-sizing: border-box; font-family: 'Fredoka', 'Anuphan', sans-serif; }
-        body { background: var(--bg); margin: 0; overflow: hidden; color: var(--dark); }
-        .container { height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .card { background: white; border: 4px solid var(--dark); border-radius: 25px; padding: 25px; width: 100%; max-width: 600px; text-align: center; box-shadow: 8px 8px 0 rgba(0,0,0,0.1); position: relative; }
-        .player-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 10px; margin: 15px 0; }
-        .p-icon img { width: 45px; border-radius: 50%; border: 2px solid var(--dark); }
-        .ans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .ans-btn { padding: 20px; border: none; border-radius: 15px; color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; border-bottom: 5px solid rgba(0,0,0,0.2); }
+        body { background: var(--bg); margin: 0; overflow: hidden; color: var(--dark); display: flex; align-items: center; justify-content: center; height: 100vh; }
+        
+        .card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 4px solid var(--dark); border-radius: 30px; padding: 30px; width: 95%; max-width: 700px; text-align: center; box-shadow: 12px 12px 0 rgba(0,0,0,0.2); position: relative; max-height: 90vh; overflow-y: auto; }
+        .player-tag { background: var(--primary); color: white; padding: 8px 15px; border-radius: 15px; margin: 5px; display: inline-block; font-weight: bold; border: 2px solid var(--dark); }
+        
+        .btn-start { background: #00b894; color: white; border: 3px solid var(--dark); padding: 15px 40px; border-radius: 50px; font-size: 1.2rem; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        .btn-start:disabled { background: #ccc; cursor: not-allowed; opacity: 0.7; }
+        
+        .ans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .ans-btn { padding: 20px; border: none; border-radius: 15px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; border-bottom: 5px solid rgba(0,0,0,0.2); }
         .b0 { background: #e21b3c; } .b1 { background: #1368ce; } .b2 { background: #d89e00; } .b3 { background: #26890c; }
-        #sabotage-menu { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        #side-rank { position: fixed; left: 10px; top: 10px; width: 160px; background: rgba(255,255,255,0.9); border: 2px solid var(--dark); border-radius: 15px; padding: 10px; font-size: 0.8rem; z-index: 50; }
+        
         .effect-shake { animation: shake 0.2s infinite; }
-        @keyframes shake { 0% {transform: translate(2px,2px)} 50% {transform: translate(-2px,-2px)} 100% {transform: translate(2px,2px)} }
-        .effect-blind { filter: brightness(0.1) blur(15px); }
+        @keyframes shake { 0%{transform:translate(2px,2px)} 50%{transform:translate(-2px,-2px)} 100%{transform:translate(2px,2px)} }
+        .effect-blind { filter: brightness(0.1) blur(20px); }
         .effect-flip { transform: rotate(180deg); }
         .hidden { display: none !important; }
-        .btn-main { background: var(--primary); color: white; border: 3px solid var(--dark); padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; }
+
+        .winner-crown { font-size: 4rem; display: block; animation: bounce 1s infinite; }
+        @keyframes bounce { 0%, 100% {transform: translateY(0)} 50% {transform: translateY(-15px)} }
+        
+        #victim-list button { margin: 10px; padding: 10px 20px; background: #ff7675; color: white; border: 2px solid black; border-radius: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div id="side-rank" class="hidden"><strong>LIVE RANK 🏆</strong><div id="rank-content"></div></div>
+<audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+<audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
+<audio id="snd-win" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
 
-<div class="container">
-    <div id="view-lobby" class="card">
-        <h1 style="color: var(--primary);">SCIENCE BATTLE 🧪</h1>
-        <img id="my-avatar" style="width: 80px;">
-        <input type="text" id="name-in" placeholder="ชื่อเล่น..." style="width:80%; padding:10px; margin:10px;">
-        <input type="text" id="room-in" placeholder="รหัสห้อง 4 หลัก" style="width:80%; padding:10px;">
-        <br><button class="btn-main" onclick="game.join()">เข้าห้อง</button>
-        <div class="player-grid" id="player-list"></div>
-        <button id="start-btn" class="btn-main hidden" style="background:var(--red)" onclick="game.startReq()">START GAME</button>
-    </div>
-
-    <div id="view-quiz" class="card hidden">
-        <div id="progress" style="height:8px; background:var(--primary); width:0%; position:absolute; top:0; left:0;"></div>
-        <h2 id="q-text" style="margin: 20px 0;"></h2>
-        <div class="ans-grid" id="ans-grid"></div>
-    </div>
-
-    <div id="view-result" class="card hidden">
-        <h1>จบเกม!</h1>
-        <div id="final-leaderboard"></div>
-        <button class="btn-main" onclick="location.reload()">เล่นใหม่</button>
-    </div>
+<div id="view-lobby" class="card">
+    <h1 style="color: var(--primary);">SCIENCE BATTLE 60Q</h1>
+    <p id="status-msg" style="font-weight: bold; color: #d63031;">Join a room to start!</p>
+    <input type="text" id="name-in" placeholder="Your Name" style="width:60%; padding:12px; margin:5px; border-radius:10px; border:2px solid black;">
+    <input type="text" id="room-in" placeholder="Room ID" style="width:60%; padding:12px; margin:5px; border-radius:10px; border:2px solid black;">
+    <br><button class="btn-start" onclick="game.join()">JOIN</button>
+    <div id="player-list" style="margin: 20px 0;"></div>
+    <button id="start-btn" class="btn-start hidden" style="background:#6c5ce7" onclick="game.startReq()" disabled>START GAME (Min 3 players)</button>
 </div>
 
-<div id="sabotage-menu">
-    <h1 id="sabotage-title">แกล้งใครดี?</h1>
-    <div id="victim-grid" class="player-grid"></div>
+<div id="view-quiz" class="card hidden">
+    <div id="progress" style="height:10px; background:var(--accent); width:0%; position:absolute; top:0; left:0;"></div>
+    <div id="q-num" style="font-weight: bold; margin-bottom: 10px;">Question 1/60</div>
+    <h2 id="q-text"></h2>
+    <div class="ans-grid" id="ans-grid"></div>
+</div>
+
+<div id="view-finish" class="card hidden">
+    <span class="winner-crown">👑</span>
+    <h1 id="winner-name">...</h1>
+    <h2>WINNER!</h2>
+    <div id="final-stats"></div>
+    <button class="btn-start" onclick="location.reload()">HOME</button>
+</div>
+
+<div id="sabotage-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; flex-direction:column; align-items:center; justify-content:center; color:white;">
+    <h2>⚡ CORRECT! ATTACK SOMEONE! ⚡</h2>
+    <div id="victim-list"></div>
 </div>
 
 <script>
@@ -75,157 +84,162 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 const questions = [
-    {q: "1. Which simple machine is used in a see-saw?", a: ["Lever", "Pulley", "Screw", "Wedge"], c: 0},
-    {q: "2. Kinetic energy is defined as the energy of ____.", a: ["Position", "Motion", "Storage", "Heat"], c: 1},
-    {q: "3. What is the standard unit of Power?", a: ["Joule", "Newton", "Watt", "Pascal"], c: 2},
-    {q: "4. Potential Energy (PE) is calculated by ____.", a: ["mgh", "1/2 mv^2", "F x s", "P/t"], c: 0},
-    {q: "5. A fixed pulley helps change the ____ of force.", a: ["Amount", "Mass", "Direction", "Speed"], c: 2},
-    {q: "6. Which is an example of a second-class lever?", a: ["Scissors", "Tweezers", "Wheelbarrow", "Fishing rod"], c: 2},
-    {q: "7. Mechanical Advantage (MA) equals Output Force divided by ____.", a: ["Input Force", "Distance", "Time", "Gravity"], c: 0},
-    {q: "8. A knife or an axe is an example of a ____.", a: ["Lever", "Screw", "Wedge", "Pulley"], c: 2},
-    {q: "9. Work is done only when there is ____.", a: ["Force", "Mass", "Displacement", "Time"], c: 2},
-    {q: "10. Efficiency of a real machine is always ____ 100%.", a: ["Equal to", "More than", "Less than", "Exactly"], c: 2},
-    {q: "11. 1 Joule per second is equal to 1 ____.", a: ["Watt", "Newton", "Volt", "Ampere"], c: 0},
-    {q: "12. The formula for Kinetic Energy is ____.", a: ["mgh", "1/2 mv^2", "m x v", "F/A"], c: 1},
-    {q: "13. A ramp is also known as an ____.", a: ["Inclined Plane", "Lever", "Pulley", "Wedge"], c: 0},
-    {q: "14. A screw is essentially an inclined plane wrapped around a ____.", a: ["Square", "Circle", "Cylinder", "Triangle"], c: 2},
-    {q: "15. The point where a lever rotates is called the ____.", a: ["Effort", "Load", "Fulcrum", "Arm"], c: 2},
-    {q: "16. If you lift a 10N object 2 meters, the work done is ____ Joules.", a: ["5", "10", "20", "40"], c: 2},
-    {q: "17. Power is the rate of doing ____.", a: ["Force", "Work", "Mass", "Energy"], c: 1},
-    {q: "18. A flag pole uses which type of machine?", a: ["Lever", "Fixed Pulley", "Screw", "Wedge"], c: 1},
-    {q: "19. Which has more KE: a car at 20m/s or at 40m/s?", a: ["20m/s", "40m/s", "Same", "Zero"], c: 1},
-    {q: "20. Gravity on Earth is approximately ____ m/s^2.", a: ["1.6", "5.0", "9.8", "12.0"], c: 2},
-    {q: "21. A bottle opener is a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 1},
-    {q: "22. Human elbow is an example of a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
-    {q: "23. Energy cannot be created or destroyed, only ____.", a: ["Used up", "Transformed", "Deleted", "Fixed"], c: 1},
-    {q: "24. A door handle is a type of ____.", a: ["Pulley", "Wedge", "Wheel and Axle", "Screw"], c: 2},
-    {q: "25. Which is NOT a simple machine?", a: ["Lever", "Engine", "Pulley", "Wedge"], c: 1},
-    {q: "26. Friction usually converts KE into ____ energy.", a: ["Chemical", "Potential", "Thermal (Heat)", "Nuclear"], c: 2},
-    {q: "27. Work = Force x Distance. If Distance is 0, Work is ____.", a: ["Max", "Positive", "Zero", "Negative"], c: 2},
-    {q: "28. A staircase is an example of an ____.", a: ["Inclined Plane", "Lever", "Screw", "Wedge"], c: 0},
-    {q: "29. Scissors are a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 0},
-    {q: "30. Tweezers are a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
-    {q: "31. Unit of Force is named after ____.", a: ["Joule", "Watt", "Newton", "Einstein"], c: 2},
-    {q: "32. Elastic PE is stored in a ____.", a: ["Battery", "Food", "Stretched Rubber Band", "Rock"], c: 2},
-    {q: "33. If you double the mass, the PE ____.", a: ["Doubles", "Triples", "Half", "Stays same"], c: 0},
-    {q: "34. 1 Horsepower (HP) is about ____ Watts.", a: ["500", "746", "1000", "1200"], c: 1},
-    {q: "35. A fishing rod is a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
-    {q: "36. The faster an object moves, the more ____ it has.", a: ["PE", "KE", "Mass", "Gravity"], c: 1},
-    {q: "37. Ideal Mechanical Advantage (IMA) ignores ____.", a: ["Force", "Distance", "Friction", "Mass"], c: 2},
-    {q: "38. Chemical energy is stored in ____.", a: ["Springs", "Food/Fuel", "Height", "Motion"], c: 1},
-    {q: "39. A Nutcracker is a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 1},
-    {q: "40. A zipper uses which simple machine?", a: ["Wedge", "Pulley", "Lever", "Screw"], c: 0},
-    {q: "41. What is the PE of a 2kg book 3m high? (g=10)", a: ["6J", "20J", "30J", "60J"], c: 3},
-    {q: "42. A crane uses a ____ system to lift heavy loads.", a: ["Screw", "Block and Tackle (Pulleys)", "Lever", "Wedge"], c: 1},
-    {q: "43. If velocity doubles, KE increases by ____ times.", a: ["2", "4", "8", "16"], c: 1},
-    {q: "44. Pushing a wall and it doesn't move. Work = ____.", a: ["Positive", "Negative", "Zero", "Max"], c: 2},
-    {q: "45. A hammer pulling a nail is a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 0},
-    {q: "46. Lever where Fulcrum is between Effort and Load is ____.", a: ["1st class", "2nd class", "3rd class", "None"], c: 0},
-    {q: "47. Broom is a ____ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
-    {q: "48. A drill bit is an example of a ____.", a: ["Lever", "Screw", "Wedge", "Pulley"], c: 1},
-    {q: "49. Total Mechanical Energy = ____ + ____.", a: ["PE + Heat", "KE + PE", "Force + Speed", "Mass + Gravity"], c: 1},
-    {q: "50. Law of Conservation of Energy says energy is ____.", a: ["Always lost", "Constant", "Always increasing", "Zero"], c: 1},
-    {q: "51. An object on a shelf has ____ energy.", a: ["Kinetic", "Potential", "Light", "Sound"], c: 1},
-    {q: "52. Rolling a ball down a hill, PE changes to ____.", a: ["KE", "Chemical", "Nuclear", "Mass"], c: 0},
-    {q: "53. What is the unit of Mass?", a: ["Newton", "Joule", "Kilogram", "Watt"], c: 2},
-    {q: "54. A slide at the park is an ____.", a: ["Wedge", "Inclined Plane", "Screw", "Lever"], c: 1},
-    {q: "55. Which machine has a sharp edge?", a: ["Lever", "Pulley", "Wedge", "Screw"], c: 2},
-    {q: "56. Work is measured in N-m, also called ____.", a: ["Watt", "Joule", "Pascal", "Volt"], c: 1},
-    {q: "57. A car engine is a ____ machine.", a: ["Simple", "Complex", "Natural", "Manual"], c: 1},
-    {q: "58. MA of a single fixed pulley is ____.", a: ["1", "2", "3", "0"], c: 0},
-    {q: "59. Moving a heavy box up a ramp requires ____ force than lifting it.", a: ["More", "Less", "Same", "Zero"], c: 1},
-    {q: "60. Solar panels convert light into ____ energy.", a: ["Kinetic", "Potential", "Electrical", "Mechanical"], c: 2}
+    {q: "Which simple machine has a fulcrum?", a: ["Pulley", "Lever", "Wedge", "Screw"], c: 1},
+    {q: "Energy due to motion is...", a: ["Potential", "Thermal", "Kinetic", "Solar"], c: 2},
+    {q: "What unit measures Force?", a: ["Watt", "Joule", "Newton", "Gram"], c: 2},
+    {q: "A wheelbarrow is which class of lever?", a: ["1st", "2nd", "3rd", "None"], c: 1},
+    {q: "Inclined plane wrapped around a cylinder is a...", a: ["Wedge", "Screw", "Lever", "Axle"], c: 1},
+    {q: "Rate of doing work is called...", a: ["Force", "Energy", "Power", "Mass"], c: 2},
+    {q: "Unit of Work is...", a: ["Newton", "Joule", "Watt", "Pascal"], c: 1},
+    {q: "A pair of scissors is which class of lever?", a: ["1st", "2nd", "3rd", "4th"], c: 0},
+    {q: "Stored energy is called...", a: ["Kinetic", "Potential", "Light", "Sound"], c: 1},
+    {q: "Fixed pulley changes the ___ of force.", a: ["Amount", "Direction", "Mass", "Speed"], c: 1},
+    {q: "Formula for Potential Energy is...", a: ["1/2mv^2", "mgh", "Fd", "P/t"], c: 1},
+    {q: "Formula for Kinetic Energy is...", a: ["mgh", "Fd", "1/2mv^2", "ma"], c: 2},
+    {q: "Tweezers are which class of lever?", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "Mechanical Advantage of 1 means...", a: ["Easier", "Harder", "No change in force", "Broken"], c: 2},
+    {q: "A knife is an example of a...", a: ["Lever", "Pulley", "Wedge", "Screw"], c: 2},
+    {q: "Friction converts Kinetic energy into...", a: ["Solar", "Heat", "Nuclear", "Potential"], c: 1},
+    {q: "Standard gravity on Earth is ___ m/s².", a: ["1.6", "5.0", "9.8", "12.0"], c: 2},
+    {q: "Fishing rod is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "Work = Force x ___.", a: ["Time", "Mass", "Distance", "Velocity"], c: 2},
+    {q: "1 Watt is equal to 1 ___ per second.", a: ["Newton", "Joule", "Gram", "Meter"], c: 1},
+    {q: "Nutcracker is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 1},
+    {q: "A slide is which simple machine?", a: ["Wedge", "Inclined Plane", "Lever", "Pulley"], c: 1},
+    {q: "Total mechanical energy is PE + ___.", a: ["Heat", "KE", "Light", "Sound"], c: 1},
+    {q: "Efficiency is always less than ___ percent.", a: ["50", "90", "100", "200"], c: 2},
+    {q: "Human elbow is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "Energy cannot be created or ___.", a: ["Used", "Moved", "Destroyed", "Stored"], c: 2},
+    {q: "Unit of Power is...", a: ["Newton", "Joule", "Watt", "Volt"], c: 2},
+    {q: "A flag pole uses a ___ pulley.", a: ["Movable", "Fixed", "Compound", "Broken"], c: 1},
+    {q: "Wedge is used to ___ objects.", a: ["Join", "Rotate", "Split", "Lift"], c: 2},
+    {q: "Broom is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "Screw is an inclined plane wrapped in a ___.", a: ["Circle", "Square", "Spiral", "Triangle"], c: 2},
+    {q: "MA stands for Mechanical ___.", a: ["Amount", "Advantage", "Action", "Ability"], c: 1},
+    {q: "Bottle opener is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 1},
+    {q: "A door knob is a ___.", a: ["Pulley", "Wedge", "Wheel and Axle", "Screw"], c: 2},
+    {q: "Staircase is an ___.", a: ["Inclined Plane", "Lever", "Wedge", "Pulley"], c: 0},
+    {q: "Hammer pulling a nail is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 0},
+    {q: "Elastic PE is found in a ___.", a: ["Food", "Battery", "Spring", "Sun"], c: 2},
+    {q: "If mass increases, PE ___.", a: ["Decreases", "Increases", "Stays same", "Zero"], c: 1},
+    {q: "Chemical energy is in ___.", a: ["Springs", "Height", "Batteries", "Speed"], c: 2},
+    {q: "Seesaw is a ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 0},
+    {q: "Force = Mass x ___.", a: ["Time", "Speed", "Acceleration", "Work"], c: 2},
+    {q: "1 HP is approx ___ Watts.", a: ["500", "746", "1000", "1200"], c: 1},
+    {q: "Which has a sharp edge?", a: ["Screw", "Wedge", "Pulley", "Lever"], c: 1},
+    {q: "Ideal machine has ___ friction.", a: ["High", "Low", "Zero", "Some"], c: 2},
+    {q: "Solar panels make ___ energy.", a: ["Heat", "Nuclear", "Electrical", "Sound"], c: 2},
+    {q: "Object on a hill has ___ energy.", a: ["KE", "PE", "Sound", "Light"], c: 1},
+    {q: "Speeding car has ___ energy.", a: ["PE", "KE", "Nuclear", "Elastic"], c: 1},
+    {q: "Crane uses ___ to lift.", a: ["Wedges", "Pulleys", "Screws", "Magnets"], c: 1},
+    {q: "Output work / Input work is ___.", a: ["Power", "Advantage", "Efficiency", "Force"], c: 2},
+    {q: "Fulcrum in middle = ___ class.", a: ["1st", "2nd", "3rd", "4th"], c: 0},
+    {q: "Load in middle = ___ class.", a: ["1st", "2nd", "3rd", "None"], c: 1},
+    {q: "Effort in middle = ___ class.", a: ["1st", "2nd", "3rd", "None"], c: 2},
+    {q: "A ramp reduces the ___ needed.", a: ["Distance", "Force", "Work", "Time"], c: 1},
+    {q: "Joule is N x ___.", a: ["Sec", "Kg", "Meter", "Watt"], c: 2},
+    {q: "Law of conservation of ___.", a: ["Mass", "Force", "Energy", "Speed"], c: 2},
+    {q: "MA of single fixed pulley is ___.", a: ["0", "1", "2", "Infinity"], c: 1},
+    {q: "Pliers are ___ class lever.", a: ["1st", "2nd", "3rd", "None"], c: 0},
+    {q: "Zipper uses a ___.", a: ["Lever", "Wedge", "Pulley", "Screw"], c: 1},
+    {q: "Engine is a ___ machine.", a: ["Simple", "Complex", "Natural", "Manual"], c: 1},
+    {q: "Food contains ___ PE.", a: ["Elastic", "Chemical", "Gravitational", "Nuclear"], c: 1}
 ];
 
 const game = {
-    user: '', room: '', score: 0, qIdx: 0, seed: Math.floor(Math.random()*1000),
+    user: '', room: '', score: 0, qIdx: 0,
     join() {
-        this.user = document.getElementById('name-in').value;
-        this.room = document.getElementById('room-in').value;
-        if(!this.user || !this.room) return alert("กรอกชื่อและห้อง!");
-        db.ref(`battle/${this.room}/players/${this.user}`).set({ score: 0, avatar: this.seed });
+        this.user = document.getElementById('name-in').value.trim();
+        this.room = document.getElementById('room-in').value.trim();
+        if(!this.user || !this.room) return alert("Enter name and room!");
+        db.ref(`battle/${this.room}/players/${this.user}`).set({ score: 0 });
         db.ref(`battle/${this.room}/status`).on('value', snap => {
-            if(this.user.toLowerCase() === 'mark') document.getElementById('start-btn').classList.remove('hidden');
             if(snap.val() === 'playing') this.start();
         });
         db.ref(`battle/${this.room}/players`).on('value', snap => {
             const list = document.getElementById('player-list');
-            const side = document.getElementById('rank-content');
-            list.innerHTML = ''; side.innerHTML = '';
-            let arr = [];
-            for(let p in snap.val()){
-                list.innerHTML += `<div class="p-icon"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${snap.val()[p].avatar}"><br>${p}</div>`;
-                arr.push({n:p, s:snap.val()[p].score});
+            list.innerHTML = ''; let count = 0;
+            for(let p in snap.val()) {
+                list.innerHTML += `<span class="player-tag">👤 ${p}</span>`;
+                count++;
             }
-            arr.sort((a,b)=>b.s-a.s).forEach((x,i)=>side.innerHTML += `<div>#${i+1} ${x.n}: ${x.s}</div>`);
+            if(this.user.toLowerCase() === 'mark') {
+                const btn = document.getElementById('start-btn');
+                btn.classList.remove('hidden');
+                btn.disabled = (count < 3);
+                document.getElementById('status-msg').innerText = count < 3 ? `Waiting for 3 players (${count}/3)...` : "Ready to Start!";
+            }
         });
         db.ref(`battle/${this.room}/effects/${this.user}`).on('value', snap => {
-            if(snap.val()) this.applyEff(snap.val().type);
+            if(snap.val()) this.beAttacked(snap.val().type);
         });
     },
     startReq() { db.ref(`battle/${this.room}/status`).set('playing'); },
     start() {
         document.getElementById('view-lobby').classList.add('hidden');
         document.getElementById('view-quiz').classList.remove('hidden');
-        document.getElementById('side-rank').classList.remove('hidden');
         this.render();
     },
     render() {
-        if(this.qIdx >= questions.length) return this.finish();
+        if(this.qIdx >= 60) return this.finish();
         const q = questions[this.qIdx];
+        document.getElementById('q-num').innerText = `Question ${this.qIdx+1}/60`;
         document.getElementById('q-text').innerText = q.q;
-        document.getElementById('progress').style.width = (this.qIdx/questions.length*100)+"%";
+        document.getElementById('progress').style.width = ((this.qIdx/60)*100) + "%";
         const grid = document.getElementById('ans-grid'); grid.innerHTML = '';
-        q.a.forEach((t, i) => {
-            const b = document.createElement('button'); b.className = `ans-btn b${i}`; b.innerText = t;
-            b.onclick = () => this.check(i); grid.appendChild(b);
+        q.a.forEach((txt, i) => {
+            const btn = document.createElement('button');
+            btn.className = `ans-btn b${i}`; btn.innerText = txt;
+            btn.onclick = () => this.check(i); grid.appendChild(btn);
         });
     },
     check(i) {
         if(i === questions[this.qIdx].c) {
-            this.score += 1000; db.ref(`battle/${this.room}/players/${this.user}/score`).set(this.score);
-            this.sabotageMenu();
-        } else { this.qIdx++; this.render(); }
+            this.score += 1000; document.getElementById('snd-correct').play();
+            db.ref(`battle/${this.room}/players/${this.user}/score`).set(this.score);
+            this.openSabotage();
+        } else {
+            document.getElementById('snd-wrong').play();
+            this.qIdx++; this.render();
+        }
     },
-    sabotageMenu() {
-        const m = document.getElementById('sabotage-menu'); m.style.display = 'flex';
-        const g = document.getElementById('victim-grid'); g.innerHTML = '';
+    openSabotage() {
+        const modal = document.getElementById('sabotage-modal'); modal.style.display = 'flex';
+        const list = document.getElementById('victim-list'); list.innerHTML = '';
         db.ref(`battle/${this.room}/players`).once('value', snap => {
-            for(let p in snap.val()){
+            for(let p in snap.val()) {
                 if(p === this.user) continue;
-                const d = document.createElement('div'); d.className='p-icon';
-                d.innerHTML = `<img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${snap.val()[p].avatar}"><br>${p}`;
-                d.onclick = () => {
+                const b = document.createElement('button'); b.innerText = p;
+                b.onclick = () => {
                     const type = ['blind', 'shake', 'flip'][Math.floor(Math.random()*3)];
-                    db.ref(`battle/${this.room}/effects/${p}`).set({type});
-                    m.style.display = 'none'; this.qIdx++; this.render();
+                    db.ref(`battle/${this.room}/effects/${p}`).set({ type });
+                    modal.style.display = 'none'; this.qIdx++; this.render();
                 };
-                g.appendChild(d);
+                list.appendChild(b);
             }
-            if(g.innerHTML==='') { setTimeout(()=>{m.style.display='none'; this.qIdx++; this.render();}, 800); }
+            if(list.innerHTML === '') { setTimeout(()=> {modal.style.display='none'; this.qIdx++; this.render();}, 500); }
         });
     },
-    applyEff(t) {
-        const q = document.getElementById('view-quiz');
-        if(t==='blind') q.classList.add('effect-blind');
-        if(t==='shake') q.classList.add('effect-shake');
-        if(t==='flip') q.classList.add('effect-flip');
-        setTimeout(()=>{
-            q.classList.remove('effect-blind','effect-shake','effect-flip');
+    beAttacked(type) {
+        const ui = document.getElementById('view-quiz');
+        ui.classList.add(`effect-${type}`);
+        setTimeout(() => {
+            ui.classList.remove('effect-blind', 'effect-shake', 'effect-flip');
             db.ref(`battle/${this.room}/effects/${this.user}`).remove();
         }, 4000);
     },
     finish() {
         document.getElementById('view-quiz').classList.add('hidden');
-        document.getElementById('view-result').classList.remove('hidden');
-        db.ref(`battle/${this.room}/players`).once('value', snap => {
-            const f = document.getElementById('final-leaderboard');
-            let a = []; snap.forEach(s=>a.push({n:s.key, s:s.val().score}));
-            a.sort((x,y)=>y.s-x.s).forEach((p,i)=>f.innerHTML += `<div>#${i+1} ${p.n} - ${p.s} PT</div>`);
+        document.getElementById('view-finish').classList.remove('hidden');
+        document.getElementById('snd-win').play();
+        db.ref(`battle/${this.room}/players`).orderByChild('score').once('value', snap => {
+            let res = []; snap.forEach(s => res.push({n: s.key, s: s.val().score}));
+            res.reverse();
+            document.getElementById('winner-name').innerText = res[0].n;
+            document.getElementById('final-stats').innerHTML = res.map(x => `<div>${x.n}: ${x.s} pts</div>`).join('');
         });
     }
 };
-document.getElementById('my-avatar').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${game.seed}`;
 </script>
 </body>
 </html>
