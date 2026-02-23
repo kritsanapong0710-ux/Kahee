@@ -3,400 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Studies Original Quiz (Final Version)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Social Studies Quiz Practice</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2563eb; /* สีน้ำเงินหลัก */
-            --secondary-color: #f1f5f9; /* สีพื้นหลังอ่อน */
-            --success-color: #22c55e; /* สีเขียว (ถูก) */
-            --error-color: #ef4444; /* สีแดง (ผิด) */
-            --text-color: #334155;
+            --primary-color: #4a90e2;
+            --secondary-color: #f39c12;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
         }
 
+        * { box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+
         body {
-            font-family: 'Prompt', sans-serif;
-            background-color: var(--secondary-color);
+            background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
+            background: var(--card-bg);
             width: 100%;
             max-width: 800px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            overflow: hidden;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             position: relative;
         }
 
-        /* Header & Progress Bar */
+        h1 { text-align: center; color: var(--primary-color); margin-bottom: 30px; }
+
+        /* Timer & Progress */
         .quiz-header {
-            padding: 20px 30px;
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .progress-container {
-            height: 8px;
-            background-color: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: var(--primary-color);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* Quiz Content */
-        .quiz-content {
-            padding: 30px;
-        }
-
-        .question-text {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .options-list {
-            display: grid;
-            gap: 12px;
-        }
-
-        .option-btn {
-            padding: 16px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            background: white;
-            color: var(--text-color);
-            font-size: 1.1rem;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: 'Prompt', sans-serif;
-        }
-
-        .option-btn:hover:not(.disabled) {
-            background-color: #f8fafc;
-            border-color: #cbd5e1;
-        }
-
-        .option-btn.selected {
-            border-color: var(--primary-color);
-            background-color: #eff6ff;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        
-        /* Footer Buttons */
-        .quiz-footer {
-            padding: 20px 30px;
-            border-top: 1px solid #e2e8f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #f8fafc;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
+            margin-bottom: 20px;
             font-weight: 600;
+        }
+
+        .timer { color: var(--danger-color); font-size: 1.2rem; }
+
+        .progress-bar {
+            height: 10px;
+            background: #eee;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Question Area */
+        .question-box { display: none; }
+        .question-box.active { display: block; animation: fadeIn 0.5s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-text { font-size: 1.3rem; margin-bottom: 20px; font-weight: 600; }
+
+        .options { display: grid; gap: 12px; }
+
+        .option-btn {
+            padding: 15px 20px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            background: none;
             cursor: pointer;
-            border: none;
-            transition: background 0.2s;
-            font-family: 'Prompt', sans-serif;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.2s;
         }
 
-        .btn-confirm {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        .btn-confirm:hover { background-color: #1d4ed8; }
-        .btn-confirm:disabled {
-            background-color: #94a3b8;
-            cursor: not-allowed;
-        }
+        .option-btn:hover { background: #f8f9fa; border-color: var(--primary-color); }
+        .option-btn.selected { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-        .btn-exit {
-            background-color: transparent;
-            color: #64748b;
-            border: 2px solid #cbd5e1;
+        /* Result Area */
+        #result-area { display: none; text-align: center; }
+        .score-circle {
+            width: 150px; height: 150px;
+            border-radius: 50%;
+            border: 8px solid var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            margin: 20px auto;
+            font-weight: bold;
         }
-        .btn-exit:hover { background-color: #e2e8f0; color: #334155; }
-
-
-        /* --- Results View Styles --- */
-        #results-view {
-            display: none; /* ซ่อนไว้ก่อน */
-            padding: 30px;
-        }
-
-        .score-summary {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .score-summary h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--primary-color); }
-        .score-summary p { font-size: 1.2rem; color: #64748b; }
 
         .review-item {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 6px solid #ccc;
+            text-align: left;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f9f9f9;
+            border-left: 5px solid #ccc;
         }
+        .review-item.wrong { border-left-color: var(--danger-color); }
         .review-item.correct { border-left-color: var(--success-color); }
-        .review-item.incorrect { border-left-color: var(--error-color); }
 
-        .review-q { font-weight: 600; margin-bottom: 15px; font-size: 1.1rem; }
+        .explanation { font-size: 0.9rem; color: #666; margin-top: 5px; font-style: italic; }
 
-        .review-option {
-            padding: 10px 15px;
-            margin-bottom: 5px;
-            border-radius: 8px;
-            font-size: 1rem;
-            background: white;
-            border: 1px solid #e2e8f0;
+        button.start-btn, button.next-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: background 0.3s;
         }
-        /* review-user-selected: สิ่งที่ผู้ใช้ตอบ */
-        .review-user-selected { background-color: #fee2e2; border-color: var(--error-color); color: #991b1b; }
-        /* review-correct-answer: คำตอบที่ถูกต้อง */
-        .review-correct-answer { background-color: #dcfce7; border-color: var(--success-color); color: #166534; font-weight: 600;}
-        /* ถ้าตอบถูก ให้ช่องที่เลือกเป็นสีเขียวไปเลย */
-        .review-item.correct .review-user-selected { background-color: #dcfce7; border-color: var(--success-color); color: #166534; }
 
+        button:disabled { background: #ccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="quiz-view">
+    <div id="start-screen">
+        <h1>แบบฝึกหัดวิชาสังคมศึกษา</h1>
+        <p style="text-align:center">รวบรวมข้อสอบประวัติศาสตร์ การเมือง และสถาบันทางสังคม</p>
+        <button class="start-btn" onclick="startQuiz()">เริ่มทำข้อสอบ</button>
+    </div>
+
+    <div id="quiz-screen" style="display:none">
         <div class="quiz-header">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="margin:0; color: var(--primary-color);">Social Studies Exam</h2>
-                <span id="question-counter" style="color: #64748b; font-weight: 600;">Question 1 / 29</span>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
+            <span id="question-number">ข้อที่ 1/31</span>
+            <span class="timer">เวลา: <span id="time-left">00:00</span></span>
         </div>
-
-        <div class="quiz-content">
-            <div class="question-text" id="question-text">Loading question...</div>
-            <div class="options-list" id="options-container">
-                </div>
-        </div>
-
-        <div class="quiz-footer">
-            <button class="btn btn-exit" onclick="exitQuiz()">ออก (Exit)</button>
-            <button class="btn btn-confirm" id="confirm-btn" onclick="confirmAnswer()" disabled>ยืนยันคำตอบ (Confirm)</button>
-        </div>
-    </div>
-
-    <div id="results-view">
-        <div class="score-summary">
-            <h1>ผลการทดสอบ</h1>
-            <p>คุณทำได้ <span id="final-score" style="font-weight:bold; color:var(--primary-color); font-size:1.5em;"></span> คะแนน (จาก 29 ข้อ)</p>
-        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
         
-        <h3 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">เฉลยละเอียด (Detailed Review)</h3>
-        <div id="review-container">
-            </div>
-
-        <div style="text-align: center; margin-top: 30px;">
-             <button class="btn btn-confirm" onclick="location.reload()" style="padding: 15px 40px; font-size: 1.1rem;">ทำข้อสอบอีกครั้ง (Restart)</button>
-        </div>
+        <div id="question-container"></div>
+        
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()" disabled>ถัดไป</button>
     </div>
 
+    <div id="result-area">
+        <h1>สรุปคะแนน</h1>
+        <div class="score-circle" id="final-score">0/31</div>
+        <div id="review-list"></div>
+        <button class="start-btn" onclick="location.reload()">ทำใหม่อีกครั้ง</button>
+    </div>
 </div>
 
 <script>
-    // Database ข้อสอบ 29 ข้อ (Original ที่คัดมาแล้ว)
-    const questionsData = [
-        { q: "Once a law has been approved by the House of Representatives, who is it sent to?", o: ["The King", "The Prime Minister", "The Senate", "The Thai people"], a: 2 },
-        { q: "The Senate must debate and approve a law within how many days?", o: ["30 days", "7 days", "60 days", "20 days"], a: 2 },
-        { q: "During the FIRST READING, the bill is:", o: ["Approved immediately", "Debated in detail", "Sent to King", "Voted on to be considered"], a: 3 },
-        { q: "What is 'Royal Endorsement'?", o: ["MPs voting", "The King signing the bill", "Police enforcement", "Public protest"], a: 1 },
-        { q: "Where is the law officially printed?", o: ["Newspapers", "School books", "The Royal Gazette", "Facebook"], a: 2 },
-        { q: "Which step involves detailed examination by a committee?", o: ["2nd Reading", "Committee Review", "1st Reading", "Senate Approval"], a: 1 },
-        { q: "Which step involves debating in detail and suggesting changes?", o: ["3rd Reading", "2nd Reading", "Proposal", "Royal Endorsement"], a: 1 },
-        { q: "The final version of the bill is voted on in which step?", o: ["1st Reading", "Committee Review", "3rd Reading", "Publication"], a: 2 },
-        { q: "When the bill is officially introduced by an MP, it is called:", o: ["Proposal of a Bill", "Senate Approval", "2nd Reading", "Royal Endorsement"], a: 0 },
-        { q: "When was the first constitution of Thailand signed?", o: ["10th Dec 1932", "24th June 1932", "10th Feb 2014"], a: 0 },
-        { q: "How many constitutions has Thailand had since 1932?", o: ["15", "20", "25", "35"], a: 1 },
-        { q: "In 1973, why were 13 people arrested?", o: ["Theft", "Asking for a constitution", "Tax evasion"], a: 1 },
-        { q: "NPKC led a coup in 1991 against which PM?", o: ["Chatichai", "Thaksin", "Suchinda"], a: 0 },
-        { q: "Who was ousted in the 2006 Coup?", o: ["Suchinda", "Thaksin Shinawatra", "Prayut"], a: 1 },
-        { q: "What is a social institution?", o: ["Party place", "System to organize society", "Group of friends"], a: 1 },
-        { q: "Which is an example of a social institution?", o: ["Family", "School", "Government", "All of the above"], a: 3 },
-        { q: "Which institution creates and enforces laws?", o: ["Family", "Government", "Religion", "Education"], a: 1 },
-        { q: "Why is family important?", o: ["Makes money", "Provides love & teaches values", "Builds hospitals"], a: 1 },
-        { q: "Which satisfies need for belief and teaches right/wrong?", o: ["Economic", "Religious", "Emotional", "Family"], a: 1 },
-        { q: "What does 'Mesopotamia' mean?", o: ["Land of gold", "Land between rivers", "Great empire"], a: 1 },
-        { q: "Mesopotamia was between which rivers?", o: ["Indus/Ganges", "Tigris/Euphrates", "Yellow/Yangtze"], a: 1 },
-        { q: "Mesopotamia modern location includes:", o: ["Thailand/Laos", "Iraq/Iran/Syria/Turkey", "India/Pakistan"], a: 1 },
-        { q: "Where was Indus (Harappan) civilization found?", o: ["Nile", "Indus/Ganges Rivers", "Yellow River"], a: 1 },
-        { q: "Ancient China was located along which river?", o: ["Mekong", "Indus", "Yellow River (Huang He)"], a: 2 },
-        { q: "What is a 'Ziggurat'?", o: ["A king", "A religious structure", "A type of food"], a: 1 },
-        { q: "Which religion began in East Asia?", o: ["Christianity", "Buddhism and Hindu", "Hebrew"], a: 1 },
-        { q: "What is the book of Hinduism called?", o: ["The Bible", "The Veda", "The Koran"], a: 1 },
-        { q: "What is the royal ploughing ceremony?", o: ["Birth ceremony", "Crowning ceremony", "Start of planting season"], a: 2 },
-        { q: "When do Christians get baptised?", o: ["When they die", "At Christmas", "When they are born"], a: 2 }
+    const questions = [
+        { q: "Once a law has been approved by the House of Representatives, who is the law sent to?", options: ["The King", "The Prime Minister", "The Senate", "The Thai people"], correct: 2, exp: "หลังจากสภาผู้แทนราษฎรเห็นชอบ ร่างกฎหมายจะถูกส่งต่อไปยัง 'วุฒิสภา' (The Senate) เพื่อพิจารณา" },
+        { q: "The Senate must debate and approve a law (not a financial law) within how many days?", options: ["Thirty days", "Seven days", "Sixty days", "Twenty days"], correct: 2, exp: "วุฒิสภาต้องพิจารณาร่างกฎหมายทั่วไปให้เสร็จภายใน 60 วัน" },
+        { q: "During the first reading, a new law or act is ______ by members of the House.", options: ["Approved and sent to the PM", "Debated by the House", "Given to the PM for King's approval", "Voted on to see if the law should be considered"], correct: 3, exp: "วาระแรกคือการรับหลักการ เพื่อลงมติว่าจะพิจารณาร่างกฎหมายนี้ต่อไปหรือไม่" },
+        { q: "If the House votes to consider the law, it is submitted to a committee who will:", options: ["Review and submit a report to the House", "Debated and sent to the PM", "Debated and amended if needed", "Review and submit a report to the Senate"], correct: 0, exp: "คณะกรรมาธิการจะพิจารณารายละเอียดและทำรายงานเสนอต่อสภา" },
+        { q: "Why did they change the system of governance to a constitutional monarchy?", options: ["The people were happy with the old system", "A small group of generals wanted to modernize Thailand", "The president wanted to change it", "Foreign countries forced Thailand"], correct: 1, exp: "คณะราษฎรต้องการเปลี่ยนแปลงการปกครองให้ทันสมัยและเป็นสากล" },
+        { q: "When was the first constitution of Thailand signed?", options: ["10th December 1932", "10th February 2014", "31st January 2013", "21st June 1983"], correct: 0, exp: "10 ธันวาคม พ.ศ. 2475 คือวันรัฐธรรมนูญ" },
+        { q: "What was the result of Black May in 1992?", options: ["People were happy", "Changed back to absolute monarchy", "Protests led to many deaths", "Changed to communism"], correct: 2, exp: "พฤษภาทมิฬคือการประท้วงรัฐบาลที่บานปลายเป็นความรุนแรงและการสูญเสีย" },
+        { q: "How many people were arrested during the 1973 Uprising protests?", options: ["14", "24", "31", "13"], correct: 3, exp: "การจับกุม 13 ขบวนการเรียกร้องรัฐธรรมนูญเป็นชนวนเหตุของเหตุการณ์ 14 ตุลา 2516" },
+        { q: "What does NPKC stand for?", options: ["National Police Keeper Council", "National Peace Keeping Council", "National Council for Peace and Order", "National Peoples council"], correct: 1, exp: "รสช. ย่อมาจาก National Peace Keeping Council (คณะรักษาความสงบเรียบร้อยแห่งชาติ)" },
+        { q: "Who was the prime minister who was ousted/arrested during the 2006 Coup?", options: ["Thaksin Shinawatra", "Sonthai Boonyaratglin", "Sujinda Kraprayoon", "Phraya Manapakorn"], correct: 0, exp: "คุณทักษิณ ชินวัตร ถูกรัฐประหารในปี 2549 ขณะอยู่ต่างประเทศ" },
+        { q: "How many constitutions have there been since 1932?", options: ["25", "35", "41", "20"], correct: 3, exp: "ประเทศไทยมีรัฐธรรมนูญมาแล้วทั้งหมด 20 ฉบับ (ถึงปัจจุบัน)" },
+        { q: "Which of the following is incorrect about culture?", options: ["Culture can change", "Culture cannot change", "Culture includes language", "Culture includes food and music"], correct: 1, exp: "วัฒนธรรมเป็นสิ่งที่เปลี่ยนแปรได้เสมอ (Dynamic)" },
+        { q: "How important is coronation day?", options: ["Not important", "Important for PM", "The prince is crowned King", "Important for school director"], correct: 2, exp: "พระราชพิธีบรมราชาภิเษกคือการสถาปนาพระมหากษัตริย์อย่างเป็นทางการ" },
+        { q: "What is the royal ploughing ceremony?", options: ["Birth ceremony", "Crowning ceremony", "Start of school year", "Start of the planting/harvest season"], correct: 3, exp: "พระราชพิธีพืชมงคลจรดพระนังคัลแรกนาขวัญจัดขึ้นเพื่อความเป็นสิริมงคลในการเริ่มฤดูทำนา" },
+        { q: "Where was the Mesopotamian civilization found?", options: ["Indus and Ganges", "Amazon and Nile", "Tigris and Euphrates", "Yellow and Yangtze"], correct: 2, exp: "เมโสโปเตเมียตั้งอยู่ระหว่างแม่น้ำไทกริสและยูเฟรทีส" },
+        { q: "When do Christians get baptised?", options: ["When they die", "At Christmas", "When they are born", "In Wet season"], correct: 2, exp: "ศีลล้างบาปมักทำตั้งแต่ยังเป็นทารกในหลายนิกาย" },
+        { q: "Society are a group of people who:", options: ["Do not share traditions", "Share traditions, interests and culture", "Do not protect each other", "Hurt people"], correct: 1, exp: "สังคมคือกลุ่มคนที่ใช้ชีวิตร่วมกันและมีวัฒนธรรมร่วมกัน" },
+        { q: "Social Institutions are people who come together to perform tasks:", options: ["Society doesn't need", "The society needs", "Only rich people need", "Only poor people need"], correct: 1, exp: "สถาบันทางสังคมสร้างขึ้นเพื่อตอบสนองความต้องการพื้นฐานของสังคม" },
+        { q: "Which is an example of an educational institution?", options: ["Temple", "Government", "Church", "School"], correct: 3, exp: "โรงเรียนคือสถาบันทางการศึกษาโดยตรง" },
+        { q: "Social Institutions help us deal with problems, both ____ and as a society.", options: ["Society", "Personal", "Peaceful"], correct: 1, exp: "ช่วยแก้ปัญหาทั้งในระดับส่วนตัว (เช่น ครอบครัว) และระดับสังคม" },
+        { q: "Which functions do Social Institutions satisfy?", options: ["Need for killing", "Love and attention", "Need to fight", "Never get married"], correct: 1, exp: "สถาบันครอบครัวตอบสนองความต้องการด้านความรักและการเอาใจใส่" },
+        { q: "What is a social institution?", options: ["Party place", "System that organizes society", "Group of friends", "A law"], correct: 1, exp: "สถาบันทางสังคมคือระบบระเบียบที่จัดระเบียบความสัมพันธ์ของคน" },
+        { q: "Which is an example of a social institution?", options: ["Family", "School", "Hospital", "All of the above"], correct: 3, exp: "ทั้งหมดที่กล่าวมาล้วนเป็นสถาบันทางสังคม" },
+        { q: "Which social institution creates and enforces laws?", options: ["Family", "Government", "Religion", "Education"], correct: 1, exp: "สถาบันการเมืองการปกครอง (Government) มีหน้าที่ออกและบังคับใช้กฎหมาย" },
+        { q: "Why is the family considered important?", options: ["Makes money", "Provides love and teaches values", "Builds schools", "Creates jobs"], correct: 1, exp: "ครอบครัวเป็นหน่วยพื้นฐานที่ขัดเกลาค่านิยมและความรัก" },
+        { q: "Where did Thailand get its culture from?", options: ["America", "England", "India", "Indonesia"], correct: 2, exp: "ไทยได้รับอิทธิพลอย่างมากจากอินเดีย (ศาสนา, ภาษา, ประเพณี)" },
+        { q: "Which religion began in East Asia?", options: ["Christianity", "Buddhism and Hindu", "Hebrew", "Communism"], correct: 1, exp: "ในบริบทข้อสอบนี้ พุทธและฮินดู (ถึงแม้จะเกิดในเอเชียใต้) แต่มักถูกรวมในหมวดนี้" },
+        { q: "Where does Mesopotamia come from?", options: ["North America", "South America", "Arab countries", "Antarctica"], correct: 2, exp: "ปัจจุบันอยู่ในแถบประเทศอิรัก/ประเทศกลุ่มอาหรับ" },
+        { q: "Where was the Indus civilization found?", options: ["Chao Phraya", "Indus and Ganges Rivers", "Yellow and Yangtze", "Tigris and Euphrates"], correct: 1, exp: "อารยธรรมลุ่มแม่น้ำสินธุอยู่ในแถบแม่น้ำสินธุและคงคา" },
+        { q: "Where was the Mesopotamian civilization found?", options: ["Indus", "Amazon", "Tigris and Euphrates", "Yellow"], correct: 2, exp: "คำถามซ้ำ (ไทกริส-ยูเฟรทีส)" },
+        { q: "What is the book of Hinduism called?", options: ["The Bible", "The Veda", "The Koran", "The Dhamma"], correct: 1, exp: "พระเวท (The Veda) คือคัมภีร์ที่เก่าแก่ที่สุดของศาสนาฮินดู" }
     ];
 
-    let currentQuestionIndex = 0;
+    let currentQuestion = 0;
     let score = 0;
-    let selectedOptionIndex = null; // เก็บตัวเลือกที่ user จิ้มไว้ก่อนกดยืนยัน
-    let userAnswers = []; // เก็บประวัติการตอบเพื่อใช้ในหน้าเฉลย
+    let timer;
+    let timeLeft = 0;
+    let userAnswers = [];
 
-    const quizView = document.getElementById('quiz-view');
-    const resultsView = document.getElementById('results-view');
-    const questionText = document.getElementById('question-text');
-    const optionsContainer = document.getElementById('options-container');
-    const confirmBtn = document.getElementById('confirm-btn');
-    const progressBar = document.getElementById('progress-bar');
-    const questionCounter = document.getElementById('question-counter');
-
-    // เริ่มต้นโหลดข้อสอบ
-    loadQuestion();
-
-    function loadQuestion() {
-        // รีเซ็ตสถานะสำหรับข้อใหม่
-        selectedOptionIndex = null;
-        confirmBtn.disabled = true;
-        optionsContainer.innerHTML = '';
-
-        const currentQData = questionsData[currentQuestionIndex];
-        
-        // อัปเดต UI
-        questionText.innerText = `${currentQuestionIndex + 1}. ${currentQData.q}`;
-        questionCounter.innerText = `Question ${currentQuestionIndex + 1} / ${questionsData.length}`;
-        
-        // อัปเดต Progress Bar
-        const progressPercent = ((currentQuestionIndex) / questionsData.length) * 100;
-        progressBar.style.width = `${progressPercent}%`;
-
-        // สร้างปุ่มตัวเลือก
-        currentQData.o.forEach((option, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = option;
-            btn.onclick = () => selectOption(index, btn);
-            optionsContainer.appendChild(btn);
-        });
+    function startQuiz() {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+        startTimer();
+        showQuestion();
     }
 
-    // ฟังก์ชันเมื่อผู้ใช้จิ้มเลือกข้อ (ยังไม่ยืนยัน)
-    function selectOption(index, btnElement) {
-        // ลบ class selected ออกจากปุ่มอื่นๆ
-        const allOptions = optionsContainer.querySelectorAll('.option-btn');
-        allOptions.forEach(opt => opt.classList.remove('selected'));
-
-        // เพิ่ม class selected ให้ปุ่มที่เลือก
-        btnElement.classList.add('selected');
-        selectedOptionIndex = index;
-        
-        // เปิดใช้งานปุ่มยืนยัน
-        confirmBtn.disabled = false;
+    function startTimer() {
+        timer = setInterval(() => {
+            timeLeft++;
+            let mins = Math.floor(timeLeft / 60);
+            let secs = timeLeft % 60;
+            document.getElementById('time-left').innerText = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }, 1000);
     }
 
-    // ฟังก์ชันเมื่อกดปุ่ม "ยืนยันคำตอบ"
-    function confirmAnswer() {
-        if (selectedOptionIndex === null) return;
-
-        const currentQData = questionsData[currentQuestionIndex];
-        const isCorrect = selectedOptionIndex === currentQData.a;
+    function showQuestion() {
+        const container = document.getElementById('question-container');
+        const q = questions[currentQuestion];
         
-        if (isCorrect) {
+        document.getElementById('question-number').innerText = `ข้อที่ ${currentQuestion + 1}/${questions.length}`;
+        document.getElementById('progress-fill').style.width = `${((currentQuestion) / questions.length) * 100}%`;
+
+        let html = `
+            <div class="question-box active">
+                <div class="question-text">${q.q}</div>
+                <div class="options">
+                    ${q.options.map((opt, i) => `
+                        <button class="option-btn" onclick="selectOption(${i})">${opt}</button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        container.innerHTML = html;
+        document.getElementById('next-btn').disabled = true;
+    }
+
+    function selectOption(index) {
+        const btns = document.querySelectorAll('.option-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        btns[index].classList.add('selected');
+        
+        userAnswers[currentQuestion] = index;
+        document.getElementById('next-btn').disabled = false;
+    }
+
+    function nextQuestion() {
+        if (userAnswers[currentQuestion] === questions[currentQuestion].correct) {
             score++;
         }
 
-        // บันทึกประวัติการตอบ
-        userAnswers.push({
-            question: currentQData.q,
-            options: currentQData.o,
-            correctIndex: currentQData.a,
-            userSelectedIndex: selectedOptionIndex,
-            isCorrect: isCorrect
-        });
-
-        // ไปข้อถัดไป หรือ จบการสอบ
-        currentQuestionIndex++;
-        if (currentQuestionIndex < questionsData.length) {
-            loadQuestion();
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            showQuestion();
         } else {
-            showResults();
+            showResult();
         }
     }
 
-    // แสดงหน้าผลลัพธ์และเฉลยละเอียด
-    function showResults() {
-        quizView.style.display = 'none';
-        resultsView.style.display = 'block';
+    function showResult() {
+        clearInterval(timer);
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-area').style.display = 'block';
+        document.getElementById('final-score').innerText = `${score}/${questions.length}`;
 
-        document.getElementById('final-score').innerText = score;
-
-        const reviewContainer = document.getElementById('review-container');
-        reviewContainer.innerHTML = ''; // เคลียร์ของเก่า
-
-        // วนลูปสร้างเฉลยทีละข้อ
-        userAnswers.forEach((answerData, index) => {
-            const reviewItem = document.createElement('div');
-            reviewItem.className = `review-item ${answerData.isCorrect ? 'correct' : 'incorrect'}`;
-
-            const questionTitle = document.createElement('div');
-            questionTitle.className = 'review-q';
-            questionTitle.innerHTML = `ข้อที่ ${index + 1}: ${answerData.question} ${answerData.isCorrect ? '<span style="color:var(--success-color); float:right;">✅ ถูกต้อง</span>' : '<span style="color:var(--error-color); float:right;">❌ ผิด</span>'}`;
-            reviewItem.appendChild(questionTitle);
-
-            // สร้างรายการตัวเลือกในส่วนเฉลย
-            answerData.options.forEach((opt, optIdx) => {
-                const optDiv = document.createElement('div');
-                optDiv.className = 'review-option';
-                optDiv.innerText = opt;
-
-                // ไฮไลท์คำตอบที่ผู้ใช้เลือก
-                if (optIdx === answerData.userSelectedIndex) {
-                    optDiv.classList.add('review-user-selected');
-                    // ถ้าผิด ให้เขียนบอกด้วยว่า "คุณตอบข้อนี้"
-                    if (!answerData.isCorrect) {
-                       optDiv.innerHTML += ' <i>(ที่คุณตอบ)</i>';
-                    }
-                }
-                
-                // ไฮไลท์คำตอบที่ถูกต้อง (ถ้าข้อนั้นผู้ใช้ตอบผิด)
-                if (optIdx === answerData.correctIndex && !answerData.isCorrect) {
-                     optDiv.classList.add('review-correct-answer');
-                     optDiv.innerHTML += ' <i>(คำตอบที่ถูก)</i>';
-                }
-
-                reviewItem.appendChild(optDiv);
-            });
-
-            reviewContainer.appendChild(reviewItem);
+        const reviewList = document.getElementById('review-list');
+        let reviewHtml = '<h3>เฉลยคำตอบ</h3>';
+        
+        questions.forEach((q, i) => {
+            const isCorrect = userAnswers[i] === q.correct;
+            reviewHtml += `
+                <div class="review-item ${isCorrect ? 'correct' : 'wrong'}">
+                    <strong>ข้อที่ ${i+1}: ${q.q}</strong><br>
+                    ตอบ: ${q.options[userAnswers[i]]} ${isCorrect ? '✅' : '❌'}<br>
+                    ${!isCorrect ? `<span>ที่ถูกต้องคือ: ${q.options[q.correct]}</span><br>` : ''}
+                    <div class="explanation">คำอธิบาย: ${q.exp}</div>
+                </div>
+            `;
         });
+        reviewList.innerHTML = reviewHtml;
     }
-
-    function exitQuiz() {
-        if(confirm("ต้องการออกจากห้องสอบหรือไม่? ข้อมูลการทำข้อสอบจะไม่ถูกบันทึก")) {
-            // ในสภาพแวดล้อมจริงอาจจะ redirect ไปหน้าอื่น
-            window.location.reload(); // รีโหลดหน้าเว็บเพื่อนับหนึ่งใหม่
-        }
-    }
-
 </script>
+
 </body>
 </html>
