@@ -2,436 +2,116 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Physic-Mon Red: Vertical</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Studies Original Quiz</title>
     <style>
-        body {
-            background-color: #202020;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: 'Press Start 2P', cursive;
-            touch-action: none; /* ป้องกันการซูมเวลากดปุ่ม */
-            overflow: hidden;
-        }
-
-        /* ตัวเครื่อง Game Boy */
-        #gameboy {
-            width: 320px;
-            height: 600px;
-            background-color: #c0392b; /* สีแดง Pokemon Red */
-            border-radius: 10px 10px 40px 10px;
-            box-shadow: -5px 5px 15px rgba(0,0,0,0.5);
-            padding: 20px;
-            box-sizing: border-box;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* หน้าจอ */
-        #screen-border {
-            width: 260px;
-            height: 240px;
-            background-color: #555;
-            border-radius: 10px 10px 30px 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        #game-canvas {
-            background-color: #9bbc0f; /* สีจอ Gameboy Original */
-            image-rendering: pixelated;
-            border: 2px solid #333;
-        }
-
-        /* UI ปุ่มควบคุม */
-        #controls {
-            width: 100%;
-            height: 200px;
-            position: relative;
-        }
-
-        .d-pad {
-            position: absolute;
-            left: 20px;
-            top: 40px;
-            width: 100px;
-            height: 100px;
-        }
-
-        .d-btn {
-            position: absolute;
-            background: #333;
-            cursor: pointer;
-        }
-        .d-btn:active { background: #111; }
-        .up { top: 0; left: 35px; width: 30px; height: 35px; }
-        .down { bottom: 0; left: 35px; width: 30px; height: 35px; }
-        .left { top: 35px; left: 0; width: 35px; height: 30px; }
-        .right { top: 35px; right: 0; width: 35px; height: 30px; }
-        .center-pad { top: 35px; left: 35px; width: 30px; height: 30px; background: #333; position: absolute;}
-
-        .action-btns {
-            position: absolute;
-            right: 10px;
-            top: 60px;
-            display: flex;
-            gap: 15px;
-            transform: rotate(-20deg);
-        }
-
-        .a-btn, .b-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: #333;
-            color: #555;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 10px;
-            cursor: pointer;
-            box-shadow: 2px 2px 0px black;
-        }
-        .a-btn:active, .b-btn:active { transform: translate(2px, 2px); box-shadow: none; }
-
-        /* UI Battle Overlay */
-        #battle-overlay {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 250px;
-            height: 230px;
-            background: white;
-            border: 4px solid #333;
-            display: none;
-            z-index: 10;
-            flex-direction: column;
-            padding: 5px;
-            box-sizing: border-box;
-            font-size: 10px;
-        }
-
-        .battle-top { height: 80px; position: relative; border-bottom: 2px solid #000; margin-bottom: 5px; }
-        .quiz-box { flex: 1; background: #eee; padding: 5px; overflow-y: auto; }
-        .choice-btn {
-            display: block; width: 100%; background: #fff; border: 1px solid #000;
-            margin-bottom: 3px; padding: 5px; text-align: left; cursor: pointer; font-size: 8px; font-family: 'Press Start 2P';
-        }
-        .choice-btn:hover { background: #333; color: white; }
-
-        /* Start Screen */
-        #start-screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); color: white; z-index: 20;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-        }
-        input { font-family: 'Press Start 2P'; padding: 10px; margin-top: 10px; text-align: center;}
+        body { font-family: 'Arial', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .quiz-card { background: white; width: 100%; max-width: 800px; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { color: #1a73e8; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        .q-container { margin-bottom: 30px; display: none; }
+        .q-container.active { display: block; }
+        .question { font-size: 1.3em; font-weight: bold; margin-bottom: 20px; color: #333; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option-btn { padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; background: none; cursor: pointer; text-align: left; font-size: 1.1em; transition: 0.3s; }
+        .option-btn:hover { background-color: #f8f9fa; border-color: #1a73e8; }
+        .footer { margin-top: 40px; display: flex; justify-content: space-between; align-items: center; }
+        .exit-btn { padding: 10px 25px; background: #ea4335; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .score-board { text-align: center; display: none; }
+        .progress { color: #666; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="gameboy">
-    <div style="color: #888; font-size: 10px; width: 90%; margin-bottom: 5px;">
-        <span style="float:left;">POWER</span>
-        <span style="float:right;">BATTERY</span>
-    </div>
-
-    <div id="screen-border">
-        <canvas id="game-canvas" width="160" height="144"></canvas>
-        
-        <div id="battle-overlay">
-            <div class="battle-top">
-                <div style="float:left;">
-                    <b>YOU</b><br>HP:<span id="p-hp">100</span>
-                </div>
-                <div style="float:right; text-align:right;">
-                    <b>WILD MON</b><br>HP:<span id="m-hp">100</span>
-                </div>
-                <div style="clear:both; text-align:center; margin-top:10px;">
-                    <div style="font-size: 30px;">👾 VS 🤠</div>
-                </div>
-            </div>
-            <div class="quiz-box">
-                <div id="q-text" style="margin-bottom:5px;">Loading...</div>
-                <div id="choices"></div>
-            </div>
-        </div>
-    </div>
-
-    <div style="color: gold; font-style: italic; font-weight: bold; margin-bottom: 10px;">Nintendo GAME BOY</div>
-
-    <div id="controls">
-        <div class="d-pad">
-            <div class="center-pad"></div>
-            <div class="d-btn up" onclick="move('up')"></div>
-            <div class="d-btn down" onclick="move('down')"></div>
-            <div class="d-btn left" onclick="move('left')"></div>
-            <div class="d-btn right" onclick="move('right')"></div>
-        </div>
-        <div class="action-btns">
-            <div class="b-btn" onclick="cancel()">B</div>
-            <div class="a-btn" onclick="interact()">A</div>
-        </div>
-    </div>
-
-    <div id="start-screen">
-        <h1 style="color:yellow; text-shadow: 2px 2px red;">PHYSIC<br>VERSION</h1>
-        <p style="font-size: 8px; margin-top:20px;">Use D-PAD to Walk<br>Find questions in grass!</p>
-        <input type="text" id="p-name" placeholder="YOUR NAME">
-        <button onclick="initGame()" style="margin-top:10px; padding:10px; font-family:'Press Start 2P';">START</button>
+<div class="quiz-card" id="quiz-box">
+    <h1>Social Studies Final Exam (29 Questions)</h1>
+    <div id="questions-area"></div>
+    
+    <div class="footer">
+        <div class="progress" id="progress-text">Question 1 of 29</div>
+        <button class="exit-btn" onclick="exitApp()">EXIT</button>
     </div>
 </div>
 
+<div class="quiz-card score-board" id="score-box">
+    <h1>Exam Finished!</h1>
+    <p style="font-size: 2em;">Your Score: <span id="final-score"></span> / 29</p>
+    <button onclick="location.reload()" style="padding: 15px 30px; background: #34a853; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1.2em;">Restart Exam</button>
+</div>
+
 <script>
-    // --- FIREBASE CONFIG ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyAVAd78Y9OUKFdfkPsV96uj2IjFwWu1rAc",
-        authDomain: "mark-d1f3f.firebaseapp.com",
-        databaseURL: "https://mark-d1f3f-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "mark-d1f3f",
-        storageBucket: "mark-d1f3f.firebasestorage.app",
-        messagingSenderId: "937114827864",
-        appId: "1:937114827864:web:24906a17f19c510714de2d"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // --- GAME ENGINE ---
-    const canvas = document.getElementById('game-canvas');
-    const ctx = canvas.getContext('2d');
-    const TILE_SIZE = 16; // 16x16 pixels like Gameboy
-    const COLS = 10;
-    const ROWS = 9;
-
-    let player = { x: 5, y: 5, name: "", hp: 100, score: 0 };
-    let otherPlayers = {};
-    let isBattle = false;
-    let enemyHP = 100;
-
-    // 0 = พื้นเรียบ, 1 = หญ้า (เจอศัตรู), 2 = กำแพง
-    // Map ง่ายๆ 10x9
-    const mapData = [
-        [2,2,2,2,2,2,2,2,2,2],
-        [2,0,0,0,0,0,0,0,0,2],
-        [2,0,1,1,1,1,1,1,0,2],
-        [2,0,1,1,1,1,1,1,0,2],
-        [2,0,1,1,1,1,1,1,0,2],
-        [2,0,1,1,1,1,1,1,0,2],
-        [2,0,0,0,0,0,0,0,0,2],
-        [2,0,0,0,0,0,0,0,0,2],
-        [2,2,2,2,2,2,2,2,2,2]
-    ];
-
-    // Questions (60 English Questions Sample - shortened for code limit but expandable)
     const questions = [
-        { q: "Formula for Kinetic Energy?", a: ["mgh", "1/2 mv^2", "ma"], c: 1 },
-        { q: "Unit of Force?", a: ["Joule", "Watt", "Newton"], c: 2 },
-        { q: "A lever rotates around a?", a: ["Fulcrum", "Load", "Effort"], c: 0 },
-        { q: "Potential Energy depends on?", a: ["Speed", "Height", "Time"], c: 1 },
-        { q: "Energy cannot be created or...?", a: ["Moved", "Destroyed", "Stored"], c: 1 },
-        { q: "What is 'g' on Earth?", a: ["9.8", "10.5", "5.5"], c: 0 },
-        { q: "Machine that is an inclined plane?", a: ["Screw", "Pulley", "Wheel"], c: 0 },
-        { q: "Work = Force x ...?", a: ["Time", "Distance", "Mass"], c: 1 },
-        { q: "Power is measured in?", a: ["Joules", "Watts", "Newtons"], c: 1 },
-        { q: "Elastic PE is found in?", a: ["Spring", "Rock", "Water"], c: 0 }
-        // ...Add more here
+        { q: "Once a law has been approved by the House of Representatives, who is it sent to?", o: ["The King", "The Prime Minister", "The Senate", "The Thai people"], a: 2 },
+        { q: "The Senate must debate and approve a law within how many days?", o: ["30 days", "7 days", "60 days", "20 days"], a: 2 },
+        { q: "During the FIRST READING, the bill is:", o: ["Approved immediately", "Debated in detail", "Sent to King", "Voted on to be considered"], a: 3 },
+        { q: "What is 'Royal Endorsement'?", o: ["MPs voting", "The King signing the bill", "Police enforcement", "Public protest"], a: 1 },
+        { q: "Where is the law officially printed?", o: ["Newspapers", "School books", "The Royal Gazette", "Facebook"], a: 2 },
+        { q: "Which step involves detailed examination by a committee?", o: ["2nd Reading", "Committee Review", "1st Reading", "Senate Approval"], a: 1 },
+        { q: "Which step involves debating in detail and suggesting changes?", o: ["3rd Reading", "2nd Reading", "Proposal", "Royal Endorsement"], a: 1 },
+        { q: "The final version of the bill is voted on in which step?", o: ["1st Reading", "Committee Review", "3rd Reading", "Publication"], a: 2 },
+        { q: "When the bill is officially introduced by an MP, it is called:", o: ["Proposal of a Bill", "Senate Approval", "2nd Reading", "Royal Endorsement"], a: 0 },
+        { q: "When was the first constitution of Thailand signed?", o: ["10th Dec 1932", "24th June 1932", "10th Feb 2014"], a: 0 },
+        { q: "How many constitutions has Thailand had since 1932?", o: ["15", "20", "25", "35"], a: 1 },
+        { q: "In 1973, why were 13 people arrested?", o: ["Theft", "Asking for a constitution", "Tax evasion"], a: 1 },
+        { q: "NPKC led a coup in 1991 against which PM?", o: ["Chatichai", "Thaksin", "Suchinda"], a: 0 },
+        { q: "Who was ousted in the 2006 Coup?", o: ["Suchinda", "Thaksin Shinawatra", "Prayut"], a: 1 },
+        { q: "What is a social institution?", o: ["Party place", "System to organize society", "Group of friends"], a: 1 },
+        { q: "Which is an example of a social institution?", o: ["Family", "School", "Government", "All of the above"], a: 3 },
+        { q: "Which institution creates and enforces laws?", o: ["Family", "Government", "Religion", "Education"], a: 1 },
+        { q: "Why is family important?", o: ["Makes money", "Provides love & teaches values", "Builds hospitals"], a: 1 },
+        { q: "Which satisfies need for belief and teaches right/wrong?", o: ["Economic", "Religious", "Emotional", "Family"], a: 1 },
+        { q: "What does 'Mesopotamia' mean?", o: ["Land of gold", "Land between rivers", "Great empire"], a: 1 },
+        { q: "Mesopotamia was between which rivers?", o: ["Indus/Ganges", "Tigris/Euphrates", "Yellow/Yangtze"], a: 1 },
+        { q: "Mesopotamia modern location includes:", o: ["Thailand/Laos", "Iraq/Iran/Syria/Turkey", "India/Pakistan"], a: 1 },
+        { q: "Where was Indus (Harappan) civilization found?", o: ["Nile", "Indus/Ganges Rivers", "Yellow River"], a: 1 },
+        { q: "Ancient China was located along which river?", o: ["Mekong", "Indus", "Yellow River (Huang He)"], a: 2 },
+        { q: "What is a 'Ziggurat'?", o: ["A king", "A religious structure", "A type of food"], a: 1 },
+        { q: "Which religion began in East Asia?", o: ["Christianity", "Buddhism and Hindu", "Hebrew"], a: 1 },
+        { q: "What is the book of Hinduism called?", o: ["The Bible", "The Veda", "The Koran"], a: 1 },
+        { q: "What is the royal ploughing ceremony?", o: ["Birth ceremony", "Crowning ceremony", "Start of planting season"], a: 2 },
+        { q: "When do Christians get baptised?", o: ["When they die", "At Christmas", "When they are born"], a: 2 }
     ];
 
-    function initGame() {
-        const name = document.getElementById('p-name').value;
-        if(!name) return alert("ENTER NAME!");
-        player.name = name;
-        
-        document.getElementById('start-screen').style.display = 'none';
-        
-        // Listen to others
-        db.ref('players').on('value', snap => {
-            otherPlayers = snap.val() || {};
-            draw();
-        });
+    let currentIdx = 0;
+    let score = 0;
 
-        // Add keyboard support
-        window.addEventListener('keydown', (e) => {
-            if(isBattle) return;
-            if(e.key === 'ArrowUp') move('up');
-            if(e.key === 'ArrowDown') move('down');
-            if(e.key === 'ArrowLeft') move('left');
-            if(e.key === 'ArrowRight') move('right');
-        });
+    const questionsArea = document.getElementById('questions-area');
+    questions.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = `q-container ${index === 0 ? 'active' : ''}`;
+        div.id = `q-${index}`;
+        div.innerHTML = `
+            <div class="question">${index + 1}. ${item.q}</div>
+            <div class="options">
+                ${item.o.map((opt, i) => `<button class="option-btn" onclick="nextQ(${index}, ${i})">${opt}</button>`).join('')}
+            </div>
+        `;
+        questionsArea.appendChild(div);
+    });
 
-        updateDB();
-        draw();
-    }
-
-    function move(dir) {
-        if(isBattle) return;
-
-        let newX = player.x;
-        let newY = player.y;
-
-        if(dir === 'up') newY--;
-        if(dir === 'down') newY++;
-        if(dir === 'left') newX--;
-        if(dir === 'right') newX++;
-
-        // Collision Check
-        if(mapData[newY][newX] !== 2) {
-            player.x = newX;
-            player.y = newY;
-            updateDB();
-            draw();
-            checkEncounter();
-        }
-    }
-
-    function checkEncounter() {
-        // ถ้าเหยียบหญ้า (เบอร์ 1) มีโอกาส 30% เจอ Monster
-        if(mapData[player.y][player.x] === 1) {
-            if(Math.random() < 0.3) {
-                startBattle();
-            }
-        }
-    }
-
-    function updateDB() {
-        db.ref('players/' + player.name).update({
-            x: player.x,
-            y: player.y,
-            score: player.score
-        });
-        db.ref('players/' + player.name).onDisconnect().remove();
-    }
-
-    // --- DRAWING SYSTEM (No external images) ---
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // 1. Draw Map
-        for(let r=0; r<ROWS; r++) {
-            for(let c=0; c<COLS; c++) {
-                let tile = mapData[r][c];
-                if(tile === 2) { // Wall/Tree
-                    ctx.fillStyle = "#2d5016"; // Dark Green
-                    ctx.fillRect(c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                    ctx.fillStyle = "#1e3c0e";
-                    ctx.fillRect(c*TILE_SIZE+4, r*TILE_SIZE+4, 8, 8); 
-                } else if (tile === 1) { // Grass
-                    ctx.fillStyle = "#8bac0f"; // Light Green
-                    ctx.fillRect(c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                    // Draw grass blades
-                    ctx.fillStyle = "#306230";
-                    ctx.fillRect(c*TILE_SIZE+2, r*TILE_SIZE+10, 2, 4);
-                    ctx.fillRect(c*TILE_SIZE+8, r*TILE_SIZE+5, 2, 4);
-                    ctx.fillRect(c*TILE_SIZE+12, r*TILE_SIZE+11, 2, 4);
-                } else { // Floor
-                    ctx.fillStyle = "#9bbc0f"; // Background Color
-                    ctx.fillRect(c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                }
-            }
-        }
-
-        // 2. Draw Others (Ghost)
-        for(let key in otherPlayers) {
-            if(key === player.name) continue;
-            let p = otherPlayers[key];
-            drawChar(p.x, p.y, "#555"); // Grey color for friends
-        }
-
-        // 3. Draw Player
-        drawChar(player.x, player.y, "#ff0000"); // Red color for you
-    }
-
-    function drawChar(x, y, color) {
-        // Pixel Art Style Character (Simple Box with Hat)
-        let px = x * TILE_SIZE;
-        let py = y * TILE_SIZE;
-        
-        ctx.fillStyle = color;
-        ctx.fillRect(px+4, py+2, 8, 12); // Body
-        ctx.fillStyle = "#fff"; // Face
-        ctx.fillRect(px+5, py+4, 6, 4);
-        ctx.fillStyle = "#000"; // Hat Rim
-        ctx.fillRect(px+4, py+4, 8, 2);
-    }
-
-    // --- BATTLE SYSTEM ---
-    function startBattle() {
-        isBattle = true;
-        document.getElementById('battle-overlay').style.display = 'flex';
-        enemyHP = 100;
-        updateBattleUI();
-        loadQuestion();
-    }
-
-    function loadQuestion() {
-        const q = questions[Math.floor(Math.random() * questions.length)];
-        document.getElementById('q-text').innerText = q.q;
-        const box = document.getElementById('choices');
-        box.innerHTML = "";
-        
-        q.a.forEach((ans, i) => {
-            const btn = document.createElement('div');
-            btn.className = "choice-btn";
-            btn.innerText = "> " + ans;
-            btn.onclick = () => answer(i, q.c);
-            box.appendChild(btn);
-        });
-    }
-
-    function answer(pick, correct) {
-        if(pick === correct) {
-            enemyHP -= 50;
-            if(enemyHP <= 0) {
-                alert("Wild Physics Fainted! You won!");
-                player.score += 10;
-                endBattle();
-            } else {
-                updateBattleUI();
-            }
+    function nextQ(qIdx, selectedIdx) {
+        if (selectedIdx === questions[qIdx].a) score++;
+        document.getElementById(`q-${qIdx}`).classList.remove('active');
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            document.getElementById(`q-${currentIdx}`).classList.add('active');
+            document.getElementById('progress-text').innerText = `Question ${currentIdx + 1} of ${questions.length}`;
         } else {
-            player.hp -= 20;
-            alert("Ouch! You took damage!");
-            if(player.hp <= 0) {
-                alert("You blacked out... (Respawn)");
-                player.hp = 100;
-                player.score = 0;
-                endBattle();
-            }
-            updateBattleUI();
+            showScore();
         }
     }
 
-    function updateBattleUI() {
-        document.getElementById('m-hp').innerText = enemyHP;
-        document.getElementById('p-hp').innerText = player.hp;
+    function showScore() {
+        document.getElementById('quiz-box').style.display = 'none';
+        document.getElementById('score-box').style.display = 'block';
+        document.getElementById('final-score').innerText = score;
     }
 
-    function endBattle() {
-        isBattle = false;
-        document.getElementById('battle-overlay').style.display = 'none';
-        updateDB(); // Save score
+    function exitApp() {
+        if(confirm("Do you want to exit the exam?")) {
+            window.close();
+            alert("Quiz Closed");
+        }
     }
-    
-    function interact() {
-        // ปุ่ม A กดใน Battle ได้
-    }
-    
-    function cancel() {
-        // ปุ่ม B
-    }
-
 </script>
 </body>
 </html>
-
