@@ -1,45 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Studies Original Quiz</title>
+    <title>Social Studies Original Quiz (Final Version)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .quiz-card { background: white; width: 100%; max-width: 800px; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        h1 { color: #1a73e8; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; }
-        .q-container { margin-bottom: 30px; display: none; }
-        .q-container.active { display: block; }
-        .question { font-size: 1.3em; font-weight: bold; margin-bottom: 20px; color: #333; }
-        .options { display: flex; flex-direction: column; gap: 12px; }
-        .option-btn { padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; background: none; cursor: pointer; text-align: left; font-size: 1.1em; transition: 0.3s; }
-        .option-btn:hover { background-color: #f8f9fa; border-color: #1a73e8; }
-        .footer { margin-top: 40px; display: flex; justify-content: space-between; align-items: center; }
-        .exit-btn { padding: 10px 25px; background: #ea4335; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .score-board { text-align: center; display: none; }
-        .progress { color: #666; font-weight: bold; }
+        :root {
+            --primary-color: #2563eb; /* สีน้ำเงินหลัก */
+            --secondary-color: #f1f5f9; /* สีพื้นหลังอ่อน */
+            --success-color: #22c55e; /* สีเขียว (ถูก) */
+            --error-color: #ef4444; /* สีแดง (ผิด) */
+            --text-color: #334155;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Header & Progress Bar */
+        .quiz-header {
+            padding: 20px 30px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .progress-container {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Quiz Content */
+        .quiz-content {
+            padding: 30px;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary-color);
+            background-color: #eff6ff;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        /* Footer Buttons */
+        .quiz-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        .btn-confirm {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-confirm:hover { background-color: #1d4ed8; }
+        .btn-confirm:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .btn-exit {
+            background-color: transparent;
+            color: #64748b;
+            border: 2px solid #cbd5e1;
+        }
+        .btn-exit:hover { background-color: #e2e8f0; color: #334155; }
+
+
+        /* --- Results View Styles --- */
+        #results-view {
+            display: none; /* ซ่อนไว้ก่อน */
+            padding: 30px;
+        }
+
+        .score-summary {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .score-summary h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--primary-color); }
+        .score-summary p { font-size: 1.2rem; color: #64748b; }
+
+        .review-item {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 6px solid #ccc;
+        }
+        .review-item.correct { border-left-color: var(--success-color); }
+        .review-item.incorrect { border-left-color: var(--error-color); }
+
+        .review-q { font-weight: 600; margin-bottom: 15px; font-size: 1.1rem; }
+
+        .review-option {
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+        }
+        /* review-user-selected: สิ่งที่ผู้ใช้ตอบ */
+        .review-user-selected { background-color: #fee2e2; border-color: var(--error-color); color: #991b1b; }
+        /* review-correct-answer: คำตอบที่ถูกต้อง */
+        .review-correct-answer { background-color: #dcfce7; border-color: var(--success-color); color: #166534; font-weight: 600;}
+        /* ถ้าตอบถูก ให้ช่องที่เลือกเป็นสีเขียวไปเลย */
+        .review-item.correct .review-user-selected { background-color: #dcfce7; border-color: var(--success-color); color: #166534; }
+
     </style>
 </head>
 <body>
 
-<div class="quiz-card" id="quiz-box">
-    <h1>Social Studies Final Exam (29 Questions)</h1>
-    <div id="questions-area"></div>
-    
-    <div class="footer">
-        <div class="progress" id="progress-text">Question 1 of 29</div>
-        <button class="exit-btn" onclick="exitApp()">EXIT</button>
-    </div>
-</div>
+<div class="container">
+    <div id="quiz-view">
+        <div class="quiz-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin:0; color: var(--primary-color);">Social Studies Exam</h2>
+                <span id="question-counter" style="color: #64748b; font-weight: 600;">Question 1 / 29</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
 
-<div class="quiz-card score-board" id="score-box">
-    <h1>Exam Finished!</h1>
-    <p style="font-size: 2em;">Your Score: <span id="final-score"></span> / 29</p>
-    <button onclick="location.reload()" style="padding: 15px 30px; background: #34a853; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1.2em;">Restart Exam</button>
+        <div class="quiz-content">
+            <div class="question-text" id="question-text">Loading question...</div>
+            <div class="options-list" id="options-container">
+                </div>
+        </div>
+
+        <div class="quiz-footer">
+            <button class="btn btn-exit" onclick="exitQuiz()">ออก (Exit)</button>
+            <button class="btn btn-confirm" id="confirm-btn" onclick="confirmAnswer()" disabled>ยืนยันคำตอบ (Confirm)</button>
+        </div>
+    </div>
+
+    <div id="results-view">
+        <div class="score-summary">
+            <h1>ผลการทดสอบ</h1>
+            <p>คุณทำได้ <span id="final-score" style="font-weight:bold; color:var(--primary-color); font-size:1.5em;"></span> คะแนน (จาก 29 ข้อ)</p>
+        </div>
+        
+        <h3 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">เฉลยละเอียด (Detailed Review)</h3>
+        <div id="review-container">
+            </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+             <button class="btn btn-confirm" onclick="location.reload()" style="padding: 15px 40px; font-size: 1.1rem;">ทำข้อสอบอีกครั้ง (Restart)</button>
+        </div>
+    </div>
+
 </div>
 
 <script>
-    const questions = [
+    // Database ข้อสอบ 29 ข้อ (Original ที่คัดมาแล้ว)
+    const questionsData = [
         { q: "Once a law has been approved by the House of Representatives, who is it sent to?", o: ["The King", "The Prime Minister", "The Senate", "The Thai people"], a: 2 },
         { q: "The Senate must debate and approve a law within how many days?", o: ["30 days", "7 days", "60 days", "20 days"], a: 2 },
         { q: "During the FIRST READING, the bill is:", o: ["Approved immediately", "Debated in detail", "Sent to King", "Voted on to be considered"], a: 3 },
@@ -71,47 +257,146 @@
         { q: "When do Christians get baptised?", o: ["When they die", "At Christmas", "When they are born"], a: 2 }
     ];
 
-    let currentIdx = 0;
+    let currentQuestionIndex = 0;
     let score = 0;
+    let selectedOptionIndex = null; // เก็บตัวเลือกที่ user จิ้มไว้ก่อนกดยืนยัน
+    let userAnswers = []; // เก็บประวัติการตอบเพื่อใช้ในหน้าเฉลย
 
-    const questionsArea = document.getElementById('questions-area');
-    questions.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = `q-container ${index === 0 ? 'active' : ''}`;
-        div.id = `q-${index}`;
-        div.innerHTML = `
-            <div class="question">${index + 1}. ${item.q}</div>
-            <div class="options">
-                ${item.o.map((opt, i) => `<button class="option-btn" onclick="nextQ(${index}, ${i})">${opt}</button>`).join('')}
-            </div>
-        `;
-        questionsArea.appendChild(div);
-    });
+    const quizView = document.getElementById('quiz-view');
+    const resultsView = document.getElementById('results-view');
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const confirmBtn = document.getElementById('confirm-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const questionCounter = document.getElementById('question-counter');
 
-    function nextQ(qIdx, selectedIdx) {
-        if (selectedIdx === questions[qIdx].a) score++;
-        document.getElementById(`q-${qIdx}`).classList.remove('active');
-        currentIdx++;
-        if (currentIdx < questions.length) {
-            document.getElementById(`q-${currentIdx}`).classList.add('active');
-            document.getElementById('progress-text').innerText = `Question ${currentIdx + 1} of ${questions.length}`;
+    // เริ่มต้นโหลดข้อสอบ
+    loadQuestion();
+
+    function loadQuestion() {
+        // รีเซ็ตสถานะสำหรับข้อใหม่
+        selectedOptionIndex = null;
+        confirmBtn.disabled = true;
+        optionsContainer.innerHTML = '';
+
+        const currentQData = questionsData[currentQuestionIndex];
+        
+        // อัปเดต UI
+        questionText.innerText = `${currentQuestionIndex + 1}. ${currentQData.q}`;
+        questionCounter.innerText = `Question ${currentQuestionIndex + 1} / ${questionsData.length}`;
+        
+        // อัปเดต Progress Bar
+        const progressPercent = ((currentQuestionIndex) / questionsData.length) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+
+        // สร้างปุ่มตัวเลือก
+        currentQData.o.forEach((option, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = option;
+            btn.onclick = () => selectOption(index, btn);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    // ฟังก์ชันเมื่อผู้ใช้จิ้มเลือกข้อ (ยังไม่ยืนยัน)
+    function selectOption(index, btnElement) {
+        // ลบ class selected ออกจากปุ่มอื่นๆ
+        const allOptions = optionsContainer.querySelectorAll('.option-btn');
+        allOptions.forEach(opt => opt.classList.remove('selected'));
+
+        // เพิ่ม class selected ให้ปุ่มที่เลือก
+        btnElement.classList.add('selected');
+        selectedOptionIndex = index;
+        
+        // เปิดใช้งานปุ่มยืนยัน
+        confirmBtn.disabled = false;
+    }
+
+    // ฟังก์ชันเมื่อกดปุ่ม "ยืนยันคำตอบ"
+    function confirmAnswer() {
+        if (selectedOptionIndex === null) return;
+
+        const currentQData = questionsData[currentQuestionIndex];
+        const isCorrect = selectedOptionIndex === currentQData.a;
+        
+        if (isCorrect) {
+            score++;
+        }
+
+        // บันทึกประวัติการตอบ
+        userAnswers.push({
+            question: currentQData.q,
+            options: currentQData.o,
+            correctIndex: currentQData.a,
+            userSelectedIndex: selectedOptionIndex,
+            isCorrect: isCorrect
+        });
+
+        // ไปข้อถัดไป หรือ จบการสอบ
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questionsData.length) {
+            loadQuestion();
         } else {
-            showScore();
+            showResults();
         }
     }
 
-    function showScore() {
-        document.getElementById('quiz-box').style.display = 'none';
-        document.getElementById('score-box').style.display = 'block';
+    // แสดงหน้าผลลัพธ์และเฉลยละเอียด
+    function showResults() {
+        quizView.style.display = 'none';
+        resultsView.style.display = 'block';
+
         document.getElementById('final-score').innerText = score;
+
+        const reviewContainer = document.getElementById('review-container');
+        reviewContainer.innerHTML = ''; // เคลียร์ของเก่า
+
+        // วนลูปสร้างเฉลยทีละข้อ
+        userAnswers.forEach((answerData, index) => {
+            const reviewItem = document.createElement('div');
+            reviewItem.className = `review-item ${answerData.isCorrect ? 'correct' : 'incorrect'}`;
+
+            const questionTitle = document.createElement('div');
+            questionTitle.className = 'review-q';
+            questionTitle.innerHTML = `ข้อที่ ${index + 1}: ${answerData.question} ${answerData.isCorrect ? '<span style="color:var(--success-color); float:right;">✅ ถูกต้อง</span>' : '<span style="color:var(--error-color); float:right;">❌ ผิด</span>'}`;
+            reviewItem.appendChild(questionTitle);
+
+            // สร้างรายการตัวเลือกในส่วนเฉลย
+            answerData.options.forEach((opt, optIdx) => {
+                const optDiv = document.createElement('div');
+                optDiv.className = 'review-option';
+                optDiv.innerText = opt;
+
+                // ไฮไลท์คำตอบที่ผู้ใช้เลือก
+                if (optIdx === answerData.userSelectedIndex) {
+                    optDiv.classList.add('review-user-selected');
+                    // ถ้าผิด ให้เขียนบอกด้วยว่า "คุณตอบข้อนี้"
+                    if (!answerData.isCorrect) {
+                       optDiv.innerHTML += ' <i>(ที่คุณตอบ)</i>';
+                    }
+                }
+                
+                // ไฮไลท์คำตอบที่ถูกต้อง (ถ้าข้อนั้นผู้ใช้ตอบผิด)
+                if (optIdx === answerData.correctIndex && !answerData.isCorrect) {
+                     optDiv.classList.add('review-correct-answer');
+                     optDiv.innerHTML += ' <i>(คำตอบที่ถูก)</i>';
+                }
+
+                reviewItem.appendChild(optDiv);
+            });
+
+            reviewContainer.appendChild(reviewItem);
+        });
     }
 
-    function exitApp() {
-        if(confirm("Do you want to exit the exam?")) {
-            window.close();
-            alert("Quiz Closed");
+    function exitQuiz() {
+        if(confirm("ต้องการออกจากห้องสอบหรือไม่? ข้อมูลการทำข้อสอบจะไม่ถูกบันทึก")) {
+            // ในสภาพแวดล้อมจริงอาจจะ redirect ไปหน้าอื่น
+            window.location.reload(); // รีโหลดหน้าเว็บเพื่อนับหนึ่งใหม่
         }
     }
+
 </script>
 </body>
 </html>
