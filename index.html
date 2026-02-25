@@ -1,294 +1,116 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Studies Quiz Practice</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #f39c12;
-            --success-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-color: #2c3e50;
-        }
-
-        * { box-sizing: border-box; font-family: 'Kanit', sans-serif; }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            background: var(--card-bg);
-            width: 100%;
-            max-width: 800px;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        h1 { text-align: center; color: var(--primary-color); margin-bottom: 30px; }
-
-        /* Timer & Progress */
-        .quiz-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .timer { color: var(--danger-color); font-size: 1.2rem; }
-
-        .progress-bar {
-            height: 10px;
-            background: #eee;
-            border-radius: 5px;
-            margin-bottom: 30px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--primary-color);
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        /* Question Area */
-        .question-box { display: none; }
-        .question-box.active { display: block; animation: fadeIn 0.5s; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .question-text { font-size: 1.3rem; margin-bottom: 20px; font-weight: 600; }
-
-        .options { display: grid; gap: 12px; }
-
-        .option-btn {
-            padding: 15px 20px;
-            border: 2px solid #eee;
-            border-radius: 12px;
-            background: none;
-            cursor: pointer;
-            text-align: left;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-
-        .option-btn:hover { background: #f8f9fa; border-color: var(--primary-color); }
-        .option-btn.selected { background: var(--primary-color); color: white; border-color: var(--primary-color); }
-
-        /* Result Area */
-        #result-area { display: none; text-align: center; }
-        .score-circle {
-            width: 150px; height: 150px;
-            border-radius: 50%;
-            border: 8px solid var(--primary-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.5rem;
-            margin: 20px auto;
-            font-weight: bold;
-        }
-
-        .review-item {
-            text-align: left;
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            background: #f9f9f9;
-            border-left: 5px solid #ccc;
-        }
-        .review-item.wrong { border-left-color: var(--danger-color); }
-        .review-item.correct { border-left-color: var(--success-color); }
-
-        .explanation { font-size: 0.9rem; color: #666; margin-top: 5px; font-style: italic; }
-
-        button.start-btn, button.next-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            display: block;
-            margin: 20px auto;
-            transition: background 0.3s;
-        }
-
-        button:disabled { background: #ccc; cursor: not-allowed; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบฝึกประวัติศาสตร์ 20 ข้อ</title>
+<style>
+body{font-family:sans-serif;background:#eef2ff;padding:20px;}
+.container{background:white;padding:20px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.1);}
+h2{color:#3f51b5;}
+button{padding:10px;margin-top:20px;background:#3f51b5;color:white;border:none;border-radius:6px;}
+.correct{color:green;}
+.wrong{color:red;}
+</style>
 </head>
+
 <body>
-
 <div class="container">
-    <div id="start-screen">
-        <h1>แบบฝึกหัดวิชาสังคมศึกษา</h1>
-        <p style="text-align:center">รวบรวมข้อสอบประวัติศาสตร์ การเมือง และสถาบันทางสังคม</p>
-        <button class="start-btn" onclick="startQuiz()">เริ่มทำข้อสอบ</button>
-    </div>
+<h2>แบบฝึกทำข้อสอบอารยธรรมโลก (20 ข้อ)</h2>
 
-    <div id="quiz-screen" style="display:none">
-        <div class="quiz-header">
-            <span id="question-number">ข้อที่ 1/31</span>
-            <span class="timer">เวลา: <span id="time-left">00:00</span></span>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-        
-        <div id="question-container"></div>
-        
-        <button class="next-btn" id="next-btn" onclick="nextQuestion()" disabled>ถัดไป</button>
-    </div>
+<form id="quiz">
 
-    <div id="result-area">
-        <h1>สรุปคะแนน</h1>
-        <div class="score-circle" id="final-score">0/31</div>
-        <div id="review-list"></div>
-        <button class="start-btn" onclick="location.reload()">ทำใหม่อีกครั้ง</button>
-    </div>
+<div id="questions"></div>
+
+<button type="button" onclick="check()">ส่งคำตอบ</button>
+<h3 id="result"></h3>
+
+</form>
 </div>
 
 <script>
-    const questions = [
-        { q: "Once a law has been approved by the House of Representatives, who is the law sent to?", options: ["The King", "The Prime Minister", "The Senate", "The Thai people"], correct: 2, exp: "หลังจากสภาผู้แทนราษฎรเห็นชอบ ร่างกฎหมายจะถูกส่งต่อไปยัง 'วุฒิสภา' (The Senate) เพื่อพิจารณา" },
-        { q: "The Senate must debate and approve a law (not a financial law) within how many days?", options: ["Thirty days", "Seven days", "Sixty days", "Twenty days"], correct: 2, exp: "วุฒิสภาต้องพิจารณาร่างกฎหมายทั่วไปให้เสร็จภายใน 60 วัน" },
-        { q: "During the first reading, a new law or act is ______ by members of the House.", options: ["Approved and sent to the PM", "Debated by the House", "Given to the PM for King's approval", "Voted on to see if the law should be considered"], correct: 3, exp: "วาระแรกคือการรับหลักการ เพื่อลงมติว่าจะพิจารณาร่างกฎหมายนี้ต่อไปหรือไม่" },
-        { q: "If the House votes to consider the law, it is submitted to a committee who will:", options: ["Review and submit a report to the House", "Debated and sent to the PM", "Debated and amended if needed", "Review and submit a report to the Senate"], correct: 0, exp: "คณะกรรมาธิการจะพิจารณารายละเอียดและทำรายงานเสนอต่อสภา" },
-        { q: "Why did they change the system of governance to a constitutional monarchy?", options: ["The people were happy with the old system", "A small group of generals wanted to modernize Thailand", "The president wanted to change it", "Foreign countries forced Thailand"], correct: 1, exp: "คณะราษฎรต้องการเปลี่ยนแปลงการปกครองให้ทันสมัยและเป็นสากล" },
-        { q: "When was the first constitution of Thailand signed?", options: ["10th December 1932", "10th February 2014", "31st January 2013", "21st June 1983"], correct: 0, exp: "10 ธันวาคม พ.ศ. 2475 คือวันรัฐธรรมนูญ" },
-        { q: "What was the result of Black May in 1992?", options: ["People were happy", "Changed back to absolute monarchy", "Protests led to many deaths", "Changed to communism"], correct: 2, exp: "พฤษภาทมิฬคือการประท้วงรัฐบาลที่บานปลายเป็นความรุนแรงและการสูญเสีย" },
-        { q: "How many people were arrested during the 1973 Uprising protests?", options: ["14", "24", "31", "13"], correct: 3, exp: "การจับกุม 13 ขบวนการเรียกร้องรัฐธรรมนูญเป็นชนวนเหตุของเหตุการณ์ 14 ตุลา 2516" },
-        { q: "What does NPKC stand for?", options: ["National Police Keeper Council", "National Peace Keeping Council", "National Council for Peace and Order", "National Peoples council"], correct: 1, exp: "รสช. ย่อมาจาก National Peace Keeping Council (คณะรักษาความสงบเรียบร้อยแห่งชาติ)" },
-        { q: "Who was the prime minister who was ousted/arrested during the 2006 Coup?", options: ["Thaksin Shinawatra", "Sonthai Boonyaratglin", "Sujinda Kraprayoon", "Phraya Manapakorn"], correct: 0, exp: "คุณทักษิณ ชินวัตร ถูกรัฐประหารในปี 2549 ขณะอยู่ต่างประเทศ" },
-        { q: "How many constitutions have there been since 1932?", options: ["25", "35", "41", "20"], correct: 3, exp: "ประเทศไทยมีรัฐธรรมนูญมาแล้วทั้งหมด 20 ฉบับ (ถึงปัจจุบัน)" },
-        { q: "Which of the following is incorrect about culture?", options: ["Culture can change", "Culture cannot change", "Culture includes language", "Culture includes food and music"], correct: 1, exp: "วัฒนธรรมเป็นสิ่งที่เปลี่ยนแปรได้เสมอ (Dynamic)" },
-        { q: "How important is coronation day?", options: ["Not important", "Important for PM", "The prince is crowned King", "Important for school director"], correct: 2, exp: "พระราชพิธีบรมราชาภิเษกคือการสถาปนาพระมหากษัตริย์อย่างเป็นทางการ" },
-        { q: "What is the royal ploughing ceremony?", options: ["Birth ceremony", "Crowning ceremony", "Start of school year", "Start of the planting/harvest season"], correct: 3, exp: "พระราชพิธีพืชมงคลจรดพระนังคัลแรกนาขวัญจัดขึ้นเพื่อความเป็นสิริมงคลในการเริ่มฤดูทำนา" },
-        { q: "Where was the Mesopotamian civilization found?", options: ["Indus and Ganges", "Amazon and Nile", "Tigris and Euphrates", "Yellow and Yangtze"], correct: 2, exp: "เมโสโปเตเมียตั้งอยู่ระหว่างแม่น้ำไทกริสและยูเฟรทีส" },
-        { q: "When do Christians get baptised?", options: ["When they die", "At Christmas", "When they are born", "In Wet season"], correct: 2, exp: "ศีลล้างบาปมักทำตั้งแต่ยังเป็นทารกในหลายนิกาย" },
-        { q: "Society are a group of people who:", options: ["Do not share traditions", "Share traditions, interests and culture", "Do not protect each other", "Hurt people"], correct: 1, exp: "สังคมคือกลุ่มคนที่ใช้ชีวิตร่วมกันและมีวัฒนธรรมร่วมกัน" },
-        { q: "Social Institutions are people who come together to perform tasks:", options: ["Society doesn't need", "The society needs", "Only rich people need", "Only poor people need"], correct: 1, exp: "สถาบันทางสังคมสร้างขึ้นเพื่อตอบสนองความต้องการพื้นฐานของสังคม" },
-        { q: "Which is an example of an educational institution?", options: ["Temple", "Government", "Church", "School"], correct: 3, exp: "โรงเรียนคือสถาบันทางการศึกษาโดยตรง" },
-        { q: "Social Institutions help us deal with problems, both ____ and as a society.", options: ["Society", "Personal", "Peaceful"], correct: 1, exp: "ช่วยแก้ปัญหาทั้งในระดับส่วนตัว (เช่น ครอบครัว) และระดับสังคม" },
-        { q: "Which functions do Social Institutions satisfy?", options: ["Need for killing", "Love and attention", "Need to fight", "Never get married"], correct: 1, exp: "สถาบันครอบครัวตอบสนองความต้องการด้านความรักและการเอาใจใส่" },
-        { q: "What is a social institution?", options: ["Party place", "System that organizes society", "Group of friends", "A law"], correct: 1, exp: "สถาบันทางสังคมคือระบบระเบียบที่จัดระเบียบความสัมพันธ์ของคน" },
-        { q: "Which is an example of a social institution?", options: ["Family", "School", "Hospital", "All of the above"], correct: 3, exp: "ทั้งหมดที่กล่าวมาล้วนเป็นสถาบันทางสังคม" },
-        { q: "Which social institution creates and enforces laws?", options: ["Family", "Government", "Religion", "Education"], correct: 1, exp: "สถาบันการเมืองการปกครอง (Government) มีหน้าที่ออกและบังคับใช้กฎหมาย" },
-        { q: "Why is the family considered important?", options: ["Makes money", "Provides love and teaches values", "Builds schools", "Creates jobs"], correct: 1, exp: "ครอบครัวเป็นหน่วยพื้นฐานที่ขัดเกลาค่านิยมและความรัก" },
-        { q: "Where did Thailand get its culture from?", options: ["America", "England", "India", "Indonesia"], correct: 2, exp: "ไทยได้รับอิทธิพลอย่างมากจากอินเดีย (ศาสนา, ภาษา, ประเพณี)" },
-        { q: "Which religion began in East Asia?", options: ["Christianity", "Buddhism and Hindu", "Hebrew", "Communism"], correct: 1, exp: "ในบริบทข้อสอบนี้ พุทธและฮินดู (ถึงแม้จะเกิดในเอเชียใต้) แต่มักถูกรวมในหมวดนี้" },
-        { q: "Where does Mesopotamia come from?", options: ["North America", "South America", "Arab countries", "Antarctica"], correct: 2, exp: "ปัจจุบันอยู่ในแถบประเทศอิรัก/ประเทศกลุ่มอาหรับ" },
-        { q: "Where was the Indus civilization found?", options: ["Chao Phraya", "Indus and Ganges Rivers", "Yellow and Yangtze", "Tigris and Euphrates"], correct: 1, exp: "อารยธรรมลุ่มแม่น้ำสินธุอยู่ในแถบแม่น้ำสินธุและคงคา" },
-        { q: "Where was the Mesopotamian civilization found?", options: ["Indus", "Amazon", "Tigris and Euphrates", "Yellow"], correct: 2, exp: "คำถามซ้ำ (ไทกริส-ยูเฟรทีส)" },
-        { q: "What is the book of Hinduism called?", options: ["The Bible", "The Veda", "The Koran", "The Dhamma"], correct: 1, exp: "พระเวท (The Veda) คือคัมภีร์ที่เก่าแก่ที่สุดของศาสนาฮินดู" }
-    ];
 
-    let currentQuestion = 0;
-    let score = 0;
-    let timer;
-    let timeLeft = 0;
-    let userAnswers = [];
+const q = [
+["ความเจริญทางวิทยาศาสตร์เกิดขึ้นในอารยธรรมใด",
+["จีน","อินเดีย","เมโสโปเตเมีย","อียิปต์"],2],
 
-    function startQuiz() {
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('quiz-screen').style.display = 'block';
-        startTimer();
-        showQuestion();
-    }
+["กำแพงเมืองจีนสร้างขึ้นเพื่ออะไร",
+["ค้าขาย","ป้องกันการรุกราน","ศาสนา","ขยายเมือง"],1],
 
-    function startTimer() {
-        timer = setInterval(() => {
-            timeLeft++;
-            let mins = Math.floor(timeLeft / 60);
-            let secs = timeLeft % 60;
-            document.getElementById('time-left').innerText = 
-                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }, 1000);
-    }
+["แม่น้ำสำคัญของอารยธรรมเมโสโปเตเมีย",
+["แม่น้ำไนล์","แม่น้ำคงคา","ไทกริส-ยูเฟรติส","แม่น้ำฮวงโห"],2],
 
-    function showQuestion() {
-        const container = document.getElementById('question-container');
-        const q = questions[currentQuestion];
-        
-        document.getElementById('question-number').innerText = `ข้อที่ ${currentQuestion + 1}/${questions.length}`;
-        document.getElementById('progress-fill').style.width = `${((currentQuestion) / questions.length) * 100}%`;
+["แนวคิดของลัทธิเต๋าเน้นอะไร",
+["สงคราม","กฎหมาย","เรียบง่ายและสมดุล","การค้า"],2],
 
-        let html = `
-            <div class="question-box active">
-                <div class="question-text">${q.q}</div>
-                <div class="options">
-                    ${q.options.map((opt, i) => `
-                        <button class="option-btn" onclick="selectOption(${i})">${opt}</button>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-        container.innerHTML = html;
-        document.getElementById('next-btn').disabled = true;
-    }
+["ผู้ค้นพบทฤษฎีวิวัฒนาการ",
+["นิวตัน","ไอน์สไตน์","ชาร์ลส์ ดาร์วิน","อริสโตเติล"],2],
 
-    function selectOption(index) {
-        const btns = document.querySelectorAll('.option-btn');
-        btns.forEach(btn => btn.classList.remove('selected'));
-        btns[index].classList.add('selected');
-        
-        userAnswers[currentQuestion] = index;
-        document.getElementById('next-btn').disabled = false;
-    }
+["ชนชาติใดเข้ามามีอิทธิพลในอินเดีย",
+["จีน","อังกฤษ","ญี่ปุ่น","อาหรับ"],1],
 
-    function nextQuestion() {
-        if (userAnswers[currentQuestion] === questions[currentQuestion].correct) {
-            score++;
-        }
+["ชนชาติผู้สร้างอารยธรรมเมโสโปเตเมีย",
+["สุเมเรียน","อียิปต์","โรมัน","กรีก"],0],
 
-        currentQuestion++;
-        if (currentQuestion < questions.length) {
-            showQuestion();
-        } else {
-            showResult();
-        }
-    }
+["จุดเด่นของอารยธรรมจีน",
+["พีระมิด","ตัวอักษรจีน","โคลอสเซียม","ปฏิทินสุริยะ"],1],
 
-    function showResult() {
-        clearInterval(timer);
-        document.getElementById('quiz-screen').style.display = 'none';
-        document.getElementById('result-area').style.display = 'block';
-        document.getElementById('final-score').innerText = `${score}/${questions.length}`;
+["เมืองในอารยธรรมสินธุมีความเจริญด้านใด",
+["กองทัพ","วางผังเมืองและระบบระบายน้ำ","ศาสนา","กีฬา"],1],
 
-        const reviewList = document.getElementById('review-list');
-        let reviewHtml = '<h3>เฉลยคำตอบ</h3>';
-        
-        questions.forEach((q, i) => {
-            const isCorrect = userAnswers[i] === q.correct;
-            reviewHtml += `
-                <div class="review-item ${isCorrect ? 'correct' : 'wrong'}">
-                    <strong>ข้อที่ ${i+1}: ${q.q}</strong><br>
-                    ตอบ: ${q.options[userAnswers[i]]} ${isCorrect ? '✅' : '❌'}<br>
-                    ${!isCorrect ? `<span>ที่ถูกต้องคือ: ${q.options[q.correct]}</span><br>` : ''}
-                    <div class="explanation">คำอธิบาย: ${q.exp}</div>
-                </div>
-            `;
-        });
-        reviewList.innerHTML = reviewHtml;
-    }
+["รามเกียรติ์เป็นวรรณคดีของประเทศใด",
+["จีน","อินเดีย","ไทย","ญี่ปุ่น"],2],
+
+["ศาสนาใดมีอิทธิพลต่ออารยธรรมจีน",
+["พุทธ","เต๋า","คริสต์","อิสลาม"],1],
+
+["ระบบวรรณะเกี่ยวข้องกับอารยธรรมใด",
+["จีน","อินเดีย","กรีก","โรมัน"],1],
+
+["ระบบสังคมแบบแบ่งชนชั้นในอินเดียเรียกว่าอะไร",
+["ประชาธิปไตย","วรรณะ","จักรวรรดิ","สาธารณรัฐ"],1],
+
+["หน่วยงานที่รับรองมรดกโลก",
+["UNESCO","WHO","NASA","UNICEF"],0],
+
+["ความเชื่อว่าสิ่งต่างๆมีวิญญาณเรียกว่าอะไร",
+["เทวนิยม","วิญญาณนิยม","เอกเทวนิยม","พหุเทวนิยม"],1],
+
+["ความเชื่อเกี่ยวกับธรรมชาติของมนุษย์",
+["ศาสนา","ธรรมชาติ","การเมือง","เศรษฐกิจ"],1],
+
+["ดินแดนอารยธรรมมักเกิดบริเวณใด",
+["ภูเขา","ทะเลทราย","ลุ่มแม่น้ำ","ที่ราบสูง"],2],
+
+["ลักษณะภูมิประเทศของจีน",
+["ทะเลทราย","ภูเขาสูง","ที่ราบลุ่มแม่น้ำ","ป่าดิบ"],2],
+
+["1 ใน 7 สิ่งมหัศจรรย์ของโลก",
+["โคลอสเซียม","กำแพงเมืองจีน","หอไอเฟล","บิ๊กเบน"],1],
+
+["ศาสนาพุทธเจริญรุ่งเรืองในสมัยใดของจีน",
+["ราชวงศ์ฮั่น","ราชวงศ์ถัง","ราชวงศ์หมิง","ราชวงศ์ชิง"],1]
+];
+
+const letters=["ก","ข","ค","ง"];
+
+for(let i=0;i<q.length;i++){
+document.getElementById("questions").innerHTML+=`<p>${i+1}. ${q[i][0]}</p>`;
+for(let j=0;j<4;j++){
+document.getElementById("questions").innerHTML+=
+`<input type="radio" name="q${i}" value="${j}"> ${letters[j]}. ${q[i][1][j]}<br>`;
+}
+}
+
+function check(){
+let score=0;
+for(let i=0;i<q.length;i++){
+let ans=document.querySelector(`input[name="q${i}"]:checked`);
+if(ans && ans.value==q[i][2]) score++;
+}
+document.getElementById("result").innerHTML="ได้ "+score+" / 20 คะแนน";
+}
+
 </script>
 
 </body>
