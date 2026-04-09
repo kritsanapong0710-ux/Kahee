@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>QuizBuilder Pro - Mark Official Masterpiece</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,121 +16,119 @@
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 
     <style>
-        /* 🎨 ระบบธีมและ Contrast (แก้ไขเพื่อ Mark โดยเฉพาะ) */
+        /* 🎨 Theme System with High Contrast for Mark */
         :root {
-            --primary: #22c55e;
-            --bg-site: #f8fafc;
-            --text-main: #1e293b;
-            --card-bg: #ffffff;
-            --input-bg: #f1f5f9;
+            --p-color: #22c55e;
+            --p-bg: #f8fafc;
+            --p-text: #1e293b;
+            --p-card: #ffffff;
+            --p-input: #f1f5f9;
         }
 
-        /* ธีมน้ำเงิน (Midnight Blue - High Contrast) */
+        /* ธีมน้ำเงิน (ปรับปรุงให้อ่านง่าย 100%) */
         body.theme-blue {
-            --primary: #3b82f6;
-            --bg-site: #020617; /* พื้นหลังดำน้ำเงินมืดสนิท */
-            --text-main: #f8fafc; /* ตัวหนังสือขาวสว่าง */
-            --card-bg: #0f172a; /* การ์ดน้ำเงินเข้ม */
-            --input-bg: #1e293b;
+            --p-color: #3b82f6;
+            --p-bg: #020617; /* พื้นหลังมืดสนิท */
+            --p-text: #ffffff; /* ตัวหนังสือขาว */
+            --p-card: #0f172a; /* การ์ดน้ำเงินเข้ม */
+            --p-input: #1e293b;
         }
 
         /* ธีมมืด */
         body.theme-dark {
-            --primary: #10b981;
-            --bg-site: #000000;
-            --text-main: #f1f5f9;
-            --card-bg: #111827;
-            --input-bg: #1f2937;
+            --p-color: #10b981;
+            --p-bg: #000000;
+            --p-text: #f1f5f9;
+            --p-card: #111827;
+            --p-input: #1f2937;
         }
 
         body { 
             font-family: 'Kanit', sans-serif; 
-            background-color: var(--bg-site); 
-            color: var(--text-main);
+            background-color: var(--p-bg); 
+            color: var(--p-text);
             transition: all 0.4s ease; 
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* UI Components */
         .app-card { 
-            background-color: var(--card-bg); 
+            background-color: var(--p-card); 
             border-radius: 2rem; 
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 1.5rem;
         }
 
         .btn-glow {
-            background-color: var(--primary);
+            background-color: var(--p-color);
             color: white;
             border-radius: 1.25rem;
             font-weight: 700;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-glow:hover {
-            filter: brightness(115%);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px var(--primary);
-        }
+        .btn-glow:hover { filter: brightness(110%); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
 
-        /* Mobile Responsive Tabs */
-        .tab-scroller {
+        /* 📱 Mobile Responsive Tab Menu */
+        .tab-bar {
             display: flex;
             overflow-x: auto;
-            gap: 10px;
-            padding: 10px 5px;
+            gap: 8px;
+            padding: 10px;
             scrollbar-width: none;
-        }
-        .tab-scroller::-webkit-scrollbar { display: none; }
-        
-        .tab-btn {
-            flex: 0 0 auto;
-            padding: 12px 24px;
-            border-radius: 1.25rem;
-            font-weight: 700;
             background: rgba(148, 163, 184, 0.1);
+            border-radius: 1.5rem;
+        }
+        .tab-bar::-webkit-scrollbar { display: none; }
+        
+        .tab-item {
+            flex: 0 0 auto;
+            padding: 12px 20px;
+            border-radius: 1.1rem;
+            font-weight: 700;
+            font-size: 0.85rem;
             color: #94a3b8;
             transition: 0.3s;
+            white-space: nowrap;
         }
-        .tab-btn.active {
-            background-color: var(--primary);
+        .tab-item.active {
+            background-color: var(--p-color);
             color: white !important;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        .smart-input {
-            background-color: var(--input-bg);
+        .custom-input {
+            background-color: var(--p-input);
             border: 2px solid transparent;
             border-radius: 1.25rem;
-            padding: 14px;
+            padding: 14px 18px;
             width: 100%;
             outline: none;
-            color: var(--text-main);
+            color: var(--p-text);
             transition: 0.3s;
         }
-        .smart-input:focus { border-color: var(--primary); background: var(--card-bg); }
+        .custom-input:focus { border-color: var(--p-color); background-color: var(--p-card); }
 
-        /* Fix: จอมือถือไม่ให้เบียด */
-        @media (max-width: 640px) {
-            .app-card { border-radius: 1.5rem; padding: 1.5rem !important; }
-            h2 { font-size: 1.5rem !important; }
-            .btn-glow { width: 100%; }
-        }
+        /* 💡 Utility Classes */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--p-color); border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <nav class="sticky top-0 z-[60] bg-white/70 backdrop-blur-xl border-b border-gray-100 px-4 py-4 md:px-8 dark:bg-gray-900/80 dark:border-gray-800">
+    <nav class="sticky top-0 z-[60] bg-white/70 backdrop-blur-xl border-b border-gray-100 px-4 py-4 md:px-10 dark:bg-gray-900/80 dark:border-gray-800">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="bg-primary p-2.5 rounded-2xl text-white shadow-lg shadow-green-500/20">
-                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                <div class="bg-green-500 w-11 h-11 flex items-center justify-center rounded-2xl text-white shadow-lg">
+                    <i class="fa-solid fa-brain text-xl"></i>
                 </div>
-                <h1 class="text-xl md:text-2xl font-black tracking-tighter uppercase">QUIZ<span class="text-primary">PRO</span></h1>
+                <h1 class="text-xl md:text-2xl font-black tracking-tighter uppercase">QUIZ<span class="text-green-500">PRO</span></h1>
             </div>
             
-            <div class="flex items-center gap-2">
-                <div id="navAuthSlot">
-                    <button onclick="openAuthModal('login')" class="bg-gray-100 text-gray-700 px-5 py-2.5 rounded-xl font-black text-xs hover:bg-primary hover:text-white transition-all">LOGIN</button>
+            <div class="flex items-center gap-3">
+                <div id="navLoginSlot">
+                    <button onclick="openAuthModal('login')" class="bg-gray-100 text-gray-700 px-5 py-2.5 rounded-xl font-black text-[10px] hover:bg-green-500 hover:text-white transition-all">LOGIN</button>
                 </div>
                 <button onclick="toggleSidebar()" class="w-11 h-11 flex items-center justify-center rounded-2xl hover:bg-gray-100 text-gray-400 transition-all">
                     <i class="fa-solid fa-sliders text-xl"></i>
@@ -139,86 +137,125 @@
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto px-4 md:px-6 mt-6">
+    <main class="max-w-6xl mx-auto px-4 md:px-8 mt-6">
         
-        <div class="tab-scroller mb-10 bg-gray-100/50 p-1.5 rounded-[1.5rem] dark:bg-gray-800">
-            <button onclick="switchPage('db')" id="btn-db" class="tab-btn active"><i class="fa-solid fa-database mr-2"></i> คลังข้อสอบ</button>
-            <button onclick="switchPage('import')" id="btn-import" class="tab-btn"><i class="fa-solid fa-paste mr-2"></i> วางโจทย์ดิบ</button>
-            <button onclick="switchPage('ai')" id="btn-ai" class="tab-btn"><i class="fa-solid fa-robot mr-2"></i> AI เจนให้</button>
-            <button onclick="switchPage('chat')" id="btn-chat" class="tab-btn"><i class="fa-solid fa-comment-dots mr-2"></i> ติวกับ AI</button>
+        <div class="tab-bar mb-8 dark:bg-gray-800">
+            <button onclick="switchView('db')" id="btn-db" class="tab-item active"><i class="fa-solid fa-database mr-2"></i> คลังข้อสอบ</button>
+            <button onclick="switchView('import')" id="btn-import" class="tab-item"><i class="fa-solid fa-paste mr-2"></i> วางโจทย์ดิบ</button>
+            <button onclick="switchView('ai')" id="btn-ai" class="tab-item"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> AI เจนโจทย์</button>
+            <button onclick="switchView('chat')" id="btn-chat" class="tab-item"><i class="fa-solid fa-comments mr-2"></i> คุยกับ AI</button>
         </div>
 
         <div id="view-db" class="animate__animated animate__fadeIn">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl md:text-3xl font-black">MY LIBRARY</h2>
-                <button onclick="fetchExams()" class="text-primary font-bold"><i class="fa-solid fa-rotate"></i></button>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 px-2">
+                <div>
+                    <h2 class="text-3xl font-black italic">LIBRARY</h2>
+                    <p class="text-sm opacity-50 mt-1">ยินดีต้อนรับครับ Mark และทีมงาน</p>
+                </div>
+                <button onclick="fetchExamsFromCloud()" class="text-green-500 font-bold bg-green-50 px-4 py-2 rounded-xl hover:scale-105 transition-all">
+                    <i class="fa-solid fa-rotate mr-1"></i> รีเฟรชข้อมูล
+                </button>
             </div>
-            <div id="examsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="examsDisplayGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 </div>
         </div>
 
         <div id="view-import" class="hidden app-card p-6 md:p-12 animate__animated animate__fadeIn">
-            <h3 class="text-xl font-bold mb-4">Paste Raw Exam Text</h3>
-            <textarea id="bulkInput" class="smart-input h-64 md:h-96 resize-none text-base md:text-lg dark:bg-gray-800" placeholder="question*(ข้อใด...) *a(...)correct *b(...)nope"></textarea>
+            <h3 class="text-xl font-bold mb-4">นำเข้าชุดข้อสอบ (Raw Text)</h3>
+            <textarea id="bulkDataInput" class="custom-input h-64 md:h-96 resize-none text-base font-medium dark:bg-gray-900" placeholder="question*(ข้อใด...) *a(...)correct *b(...)nope"></textarea>
             <div class="mt-6 flex justify-end">
-                <button onclick="parseRawText()" class="btn-glow px-12 py-4 text-lg">ประมวลผลทันที</button>
+                <button onclick="parseAndEdit()" class="btn-glow px-12 py-4 text-lg shadow-xl shadow-green-500/20">ประมวลผลทันที</button>
             </div>
         </div>
 
-        <div id="view-ai" class="hidden app-card p-8 md:p-16 animate__animated animate__fadeIn text-center">
-            <img id="ai-img-gen" src="https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff" class="w-24 h-24 rounded-[2rem] mx-auto mb-6 shadow-2xl border-4 border-white object-cover">
-            <h2 id="ai-name-gen" class="text-3xl font-black mb-4">AI Smart Assistant</h2>
+        <div id="view-ai" class="hidden app-card p-8 md:p-20 animate__animated animate__fadeIn text-center">
+            <div class="w-28 h-28 rounded-[2.5rem] mx-auto mb-6 shadow-2xl overflow-hidden border-4 border-white animate__animated animate__pulse animate__infinite">
+                <img id="ai-avatar-gen" src="https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff" class="w-full h-full object-cover">
+            </div>
+            <h2 id="ai-name-gen" class="text-3xl font-black mb-2">AI Smart Assistant</h2>
+            <p class="text-gray-400 mb-10 max-w-md mx-auto">ระบุหัวข้อที่คุณต้องการ แล้ว AI จะจัดการเสกข้อสอบพร้อมเฉลยให้คุณเองครับ</p>
+            
             <div class="max-w-xl mx-auto space-y-4">
-                <input type="text" id="aiTopicInp" placeholder="ระบุหัวข้อวิชาที่จะออกสอบ..." class="smart-input text-center font-bold text-xl dark:bg-gray-800">
-                <button onclick="generateWithAI()" id="aiGenBtn" class="btn-glow w-full py-5 text-xl flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-wand-sparkles"></i> เริ่มออกข้อสอบ
+                <input type="text" id="aiTopicField" placeholder="ระบุวิชา หรือ หัวข้อเรื่อง..." class="custom-input text-center font-bold text-xl shadow-inner dark:bg-gray-800">
+                <button onclick="triggerAIGeneration()" id="aiGenBtn" class="btn-glow w-full py-5 text-xl shadow-xl">
+                    <i class="fa-solid fa-sparkles"></i> เริ่มออกข้อสอบทันที
                 </button>
             </div>
         </div>
 
-        <div id="view-chat" class="hidden app-card p-4 md:p-6 animate__animated animate__fadeIn flex flex-col h-[60vh] md:h-[75vh]">
-            <div id="chatMessages" class="flex-1 overflow-y-auto space-y-6 p-4 custom-scroll"></div>
+        <div id="view-chat" class="hidden app-card p-4 md:p-6 animate__animated animate__fadeIn flex flex-col h-[65vh] md:h-[75vh]">
+            <div class="p-3 border-b flex items-center gap-3 bg-gray-50/50 dark:bg-gray-800/50 dark:border-gray-700">
+                <img id="ai-avatar-chat" src="https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff" class="w-10 h-10 rounded-xl object-cover border-2 border-primary">
+                <div>
+                    <h4 class="font-bold leading-none" id="ai-name-chat">AI Assistant</h4>
+                    <span class="text-[9px] font-black text-green-500 uppercase tracking-widest animate-pulse mt-1 inline-block">Online Now</span>
+                </div>
+            </div>
+            <div id="chatMessageArea" class="flex-1 overflow-y-auto p-4 space-y-6 custom-scroll"></div>
             <div class="p-3 border-t dark:border-gray-700">
                 <div class="flex gap-2">
-                    <input type="text" id="chatInput" class="smart-input flex-1" placeholder="คุยกับ AI..." onkeypress="if(event.key=='Enter')sendChat()">
-                    <button onclick="sendChat()" class="btn-glow w-14 h-14 flex items-center justify-center shadow-lg"><i class="fa-solid fa-paper-plane"></i></button>
+                    <input type="text" id="chatInputField" class="custom-input flex-1" placeholder="พิมพ์คุยกับ AI..." onkeypress="if(event.key=='Enter')handleAIChat()">
+                    <button onclick="handleAIChat()" class="btn-glow w-14 h-14 shadow-lg"><i class="fa-solid fa-paper-plane text-xl"></i></button>
                 </div>
             </div>
         </div>
 
         <div id="view-editor" class="hidden mt-8 space-y-6 pb-40">
-            <div id="editorContent" class="space-y-6"></div>
-            <div class="fixed bottom-6 left-4 right-4 max-w-2xl mx-auto bg-white/90 backdrop-blur-lg p-5 rounded-[2.5rem] shadow-2xl border flex flex-col md:flex-row gap-3 items-center z-40 dark:bg-gray-800/90">
-                <input type="text" id="finalTitle" placeholder="ตั้งชื่อชุดข้อสอบนี้" class="smart-input flex-1 font-bold text-center dark:bg-gray-700">
-                <button onclick="saveExam()" class="btn-glow px-12 py-4 w-full md:w-auto">บันทึกคลัง</button>
+            <div class="flex items-center justify-between mb-4 px-2">
+                <h3 class="text-2xl font-black italic">EDITOR MODE</h3>
+                <span id="qCountBadge" class="bg-primary text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-lg">0 QUESTIONS</span>
+            </div>
+            <div id="editorCardsContainer" class="space-y-6"></div>
+            
+            <div class="fixed bottom-6 left-4 right-4 max-w-2xl mx-auto bg-white/90 backdrop-blur-lg p-5 rounded-[2.5rem] shadow-2xl border border-white/50 flex flex-col md:flex-row gap-3 items-center z-40 dark:bg-gray-800/90">
+                <input type="text" id="saveExamTitleInp" placeholder="ตั้งชื่อชุดข้อสอบนี้" class="custom-input flex-1 font-bold text-center dark:bg-gray-700">
+                <button onclick="commitExamToFirebase()" class="btn-glow px-12 py-4 w-full md:w-auto text-lg shadow-xl">บันทึกข้อมูล</button>
             </div>
         </div>
 
     </main>
 
-    <div id="sideSettings" class="fixed right-0 top-0 h-full w-full sm:w-85 bg-white shadow-2xl translate-x-full transition-transform duration-500 z-[100] border-l dark:bg-gray-900">
+    <div id="sideSettingsMenu" class="fixed right-0 top-0 h-full w-full sm:w-85 bg-white shadow-2xl translate-x-full transition-transform duration-500 z-[100] border-l dark:bg-gray-900">
         <div class="p-8 border-b flex justify-between items-center dark:border-gray-800">
             <h3 class="font-black text-xl">SETTINGS</h3>
-            <button onclick="toggleSidebar()" class="text-3xl text-gray-400">&times;</button>
+            <button onclick="toggleSidebar()" class="w-10 h-10 rounded-full hover:bg-red-50 text-gray-300 hover:text-red-500 transition-all text-2xl flex items-center justify-center">&times;</button>
         </div>
-        <div class="p-8 space-y-10 overflow-y-auto h-[85%]">
-            <div>
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Select Theme</label>
-                <div class="flex gap-4">
-                    <button onclick="updateTheme('green')" class="w-12 h-12 rounded-2xl bg-green-500 border-4 border-white shadow-lg"></button>
-                    <button onclick="updateTheme('blue')" class="w-12 h-12 rounded-2xl bg-blue-600 border-4 border-white shadow-lg"></button>
-                    <button onclick="updateTheme('dark')" class="w-12 h-12 rounded-2xl bg-gray-900 border-4 border-white shadow-lg"></button>
+        <div class="p-8 space-y-10 overflow-y-auto h-[85%] custom-scroll">
+            
+            <div class="space-y-6">
+                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Personalization</h4>
+                <div>
+                    <label class="block text-sm font-bold mb-4">App Theme Color</label>
+                    <div class="flex gap-4">
+                        <button onclick="setAppTheme('green')" class="w-12 h-12 rounded-2xl bg-green-500 border-4 border-white shadow-xl hover:scale-110 transition-all"></button>
+                        <button onclick="setAppTheme('blue')" class="w-12 h-12 rounded-2xl bg-blue-600 border-4 border-white shadow-xl hover:scale-110 transition-all"></button>
+                        <button onclick="setAppTheme('dark')" class="w-12 h-12 rounded-2xl bg-gray-900 border-4 border-white shadow-xl hover:scale-110 transition-all"></button>
+                    </div>
                 </div>
             </div>
 
-            <div id="adminPanel" class="hidden space-y-6 bg-red-50 p-6 rounded-[2.5rem] border border-red-100 dark:bg-red-900/10">
-                <h4 class="font-black text-red-600 text-xs uppercase tracking-widest border-b pb-3">Admin Mark Control</h4>
+            <div id="adminSecretPanel" class="hidden space-y-6 bg-red-50 p-6 rounded-[2.5rem] border border-red-100 dark:bg-red-900/10">
+                <h4 class="font-black text-red-600 text-xs uppercase tracking-widest border-b pb-4 border-red-200">
+                    <i class="fa-solid fa-crown mr-2"></i> Admin Mark Control
+                </h4>
                 <div class="space-y-4">
-                    <input type="password" id="adm-key" placeholder="Gemini API Key (แปะที่นี่!)" class="smart-input text-xs font-mono py-3">
-                    <input type="text" id="adm-name" placeholder="ชื่อ AI" class="smart-input text-sm py-3">
-                    <input type="text" id="adm-img" placeholder="ลิงก์รูป AI" class="smart-input text-xs py-3">
-                    <textarea id="adm-persona" placeholder="System Persona" class="smart-input text-xs h-24"></textarea>
-                    <button onclick="saveAdminSettings()" class="w-full bg-red-600 text-white py-4 rounded-2xl font-bold">บันทึก Admin</button>
+                    <div>
+                        <label class="text-[10px] font-black opacity-40 uppercase ml-1 mb-2 block">Gemini API Key</label>
+                        <input type="password" id="adm-key-field" class="custom-input text-xs font-mono py-3 bg-white shadow-inner">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black opacity-40 uppercase ml-1 mb-2 block">AI Name</label>
+                        <input type="text" id="adm-name-field" class="custom-input text-sm py-3 bg-white shadow-inner">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black opacity-40 uppercase ml-1 mb-2 block">AI Avatar (URL)</label>
+                        <input type="text" id="adm-img-field" class="custom-input text-xs py-3 bg-white shadow-inner">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black opacity-40 uppercase ml-1 mb-2 block">AI System Instruction</label>
+                        <textarea id="adm-persona-field" class="custom-input text-xs h-24 resize-none bg-white shadow-inner" placeholder="คุณเป็นครูสอนวิชาอะไร..."></textarea>
+                    </div>
+                    <button onclick="saveMarkAdminSettings()" class="w-full bg-red-600 text-white py-4 rounded-2xl font-bold shadow-2xl hover:bg-red-700 transition-all">บันทึก CONFIG แอดมิน</button>
                 </div>
             </div>
         </div>
@@ -226,211 +263,223 @@
 
     <div id="authModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-md">
         <div class="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-2xl w-full max-w-sm animate__animated animate__zoomIn dark:bg-gray-800">
-            <h3 id="authTitle" class="text-3xl font-black text-center mb-10 tracking-tighter uppercase">QuizMaster</h3>
+            <h3 id="authModalTitle" class="text-3xl font-black italic text-center mb-10 tracking-tighter uppercase">QuizMaster</h3>
             <div class="space-y-4">
-                <button onclick="authSocial('google')" class="w-full bg-white border py-4 rounded-2xl font-bold flex justify-center gap-3 hover:bg-gray-50 shadow-sm dark:bg-gray-700 dark:border-gray-600">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6"> Google
+                <button onclick="authSocialLogin('google')" class="w-full bg-white border py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-sm dark:bg-gray-700 dark:border-gray-600">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6"> Google Login
                 </button>
-                <div class="flex items-center gap-2 py-4">
-                    <hr class="flex-1 border-gray-100"> <span class="text-[10px] text-gray-300 font-bold uppercase">อีเมล</span> <hr class="flex-1 border-gray-100">
+                <div class="flex items-center gap-3 py-4">
+                    <hr class="flex-1 border-gray-100"> <span class="text-[10px] text-gray-300 font-bold">OR</span> <hr class="flex-1 border-gray-100">
                 </div>
-                <input type="email" id="emailInp" placeholder="อีเมล" class="smart-input font-bold dark:bg-gray-700">
-                <input type="password" id="passInp" placeholder="รหัสผ่าน" class="smart-input font-bold dark:bg-gray-700">
+                <input type="email" id="authEmailInp" placeholder="Email Address" class="custom-input font-bold dark:bg-gray-700">
+                <input type="password" id="authPassInp" placeholder="Password" class="custom-input font-bold dark:bg-gray-700">
                 
-                <div id="loginGroup">
-                    <button onclick="handleAuth('login')" class="btn-glow w-full py-5 text-lg shadow-xl mb-4">LOG IN</button>
-                    <p class="text-center text-xs text-gray-400 font-bold">ยังไม่มีบัญชี? <a href="javascript:switchAuth('sign')" class="text-primary underline">สมัครสมาชิก</a></p>
+                <div id="loginActionBox">
+                    <button onclick="processEmailAuth('login')" class="btn-glow w-full py-5 text-lg shadow-xl mb-4">LOG IN</button>
+                    <p class="text-center text-xs text-gray-400 font-bold uppercase">No account? <a href="javascript:switchAuthMode('sign')" class="text-primary underline">สมัครสมาชิก</a></p>
                 </div>
-                <div id="signGroup" class="hidden">
-                    <button onclick="handleAuth('sign')" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-black text-lg shadow-xl mb-4">SIGN UP</button>
-                    <p class="text-center text-xs text-gray-400 font-bold">มีบัญชีแล้ว? <a href="javascript:switchAuth('login')" class="text-green-500 underline">เข้าสู่ระบบ</a></p>
+                <div id="signupActionBox" class="hidden">
+                    <button onclick="processEmailAuth('sign')" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-black text-lg shadow-xl mb-4">CREATE ACCOUNT</button>
+                    <p class="text-center text-xs text-gray-400 font-bold uppercase">Have account? <a href="javascript:switchAuthMode('login')" class="text-green-500 underline">เข้าสู่ระบบ</a></p>
                 </div>
             </div>
-            <button onclick="closeAuthModal()" class="w-full mt-10 text-gray-300 text-[10px] font-black uppercase tracking-widest">Cancel</button>
+            <button onclick="closeAuthModal()" class="w-full mt-10 text-gray-300 text-[10px] font-black uppercase tracking-widest hover:text-gray-500">ยกเลิก</button>
         </div>
     </div>
 
     <script>
-        // 1. Init Firebase
+        // ==========================================
+        // 1. FIREBASE CONFIG
+        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyA0-4a5zxaPZZejG955NgNUVM23YXNV2Gc",
             authDomain: "the-web-for-test.firebaseapp.com",
             projectId: "the-web-for-test",
             storageBucket: "the-web-for-test.firebasestorage.app",
             messagingSenderId: "198176720357",
-            appId: "1:198176720357:web:64d613b64edbfb15dc9b0c"
+            appId: "1:198176720357:web:64d613b64edbfb15dc9b0c",
+            measurementId: "G-GDYRJDMZCV"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-        const ADMIN_MARK_EMAIL = "Kritsanapong0710@gmail.com";
+        const ADMIN_EMAIL = "Kritsanapong0710@gmail.com";
 
-        let userC = null;
-        let isA = false;
+        let currentActiveUser = null;
+        let isAdminMark = false;
 
-        // 2. Auth State
+        // ==========================================
+        // 2. AUTHENTICATION LOGIC
+        // ==========================================
         auth.onAuthStateChanged(function(user) {
-            userC = user;
-            const slot = document.getElementById('navAuthSlot');
+            currentActiveUser = user;
+            const topSlot = document.getElementById('navLoginSlot');
             if (user) {
-                isA = (user.email && user.email.toLowerCase() === ADMIN_MARK_EMAIL.toLowerCase()) || (user.phoneNumber === '+66967358298');
-                const pic = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'Mark'}&background=22c55e&color=fff`;
-                slot.innerHTML = `
+                isAdminMark = (user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) || (user.phoneNumber === '+66967358298');
+                const pPhoto = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'Mark'}&background=22c55e&color=fff`;
+                topSlot.innerHTML = `
                     <div class="flex items-center gap-3 bg-white p-1 pr-4 rounded-full border shadow-sm dark:bg-gray-800">
-                        <img src="${pic}" class="w-10 h-10 rounded-full border-2 border-primary">
-                        <span class="text-[10px] font-black max-w-[80px] truncate leading-tight dark:text-white">${user.displayName || 'User'}</span>
-                        <button onclick="auth.signOut()" class="text-red-300 hover:text-red-500 ml-1 transition-colors"><i class="fa-solid fa-power-off text-xs"></i></button>
+                        <img src="${pPhoto}" class="w-10 h-10 rounded-full border-2 border-primary shadow-sm">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-black max-w-[80px] truncate leading-tight dark:text-white">${user.displayName || 'Mark'}</span>
+                            <span class="text-[8px] font-bold text-primary uppercase">${isAdminMark ? '👑 Admin' : 'Member'}</span>
+                        </div>
+                        <button onclick="auth.signOut()" class="text-red-300 hover:text-red-500 ml-1 transition-all"><i class="fa-solid fa-power-off text-xs"></i></button>
                     </div>
                 `;
-                if(isA) document.getElementById('adminPanel').classList.remove('hidden');
+                if(isAdminMark) document.getElementById('adminSecretPanel').classList.remove('hidden');
                 closeAuthModal();
-                fetchExams();
+                fetchExamsFromCloud();
             } else {
-                slot.innerHTML = `<button onclick="openAuthModal('login')" class="bg-gray-100 text-gray-700 px-5 py-2.5 rounded-xl font-black text-xs hover:bg-primary hover:text-white transition-all shadow-sm">LOGIN</button>`;
-                document.getElementById('adminPanel').classList.add('hidden');
-                isA = false;
-                fetchExams();
+                topSlot.innerHTML = `<button onclick="openAuthModal('login')" class="bg-gray-100 text-gray-700 px-5 py-2.5 rounded-xl font-black text-[10px] hover:bg-green-500 hover:text-white transition-all shadow-sm">LOGIN</button>`;
+                document.getElementById('adminSecretPanel').classList.add('hidden');
+                isAdminMark = false;
+                fetchExamsFromCloud();
             }
         });
 
-        function openAuthModal(m) { document.getElementById('authModal').classList.remove('hidden'); switchAuth(m); }
+        function openAuthModal(m) { document.getElementById('authModal').classList.remove('hidden'); switchAuthMode(m); }
         function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
-        function switchAuth(m) {
-            const isSign = m === 'sign';
-            document.getElementById('loginGroup').classList.toggle('hidden', isSign);
-            document.getElementById('signGroup').classList.toggle('hidden', !isSign);
-            document.getElementById('authTitle').innerText = isSign ? "SIGN UP" : "WELCOME";
+        function switchAuthMode(m) {
+            const isSignup = (m === 'sign');
+            document.getElementById('loginActionBox').classList.toggle('hidden', isSignup);
+            document.getElementById('signupActionBox').classList.toggle('hidden', !isSignup);
+            document.getElementById('authModalTitle').innerText = isSignup ? "JOIN US" : "QUIZMASTER";
         }
 
-        async function authSocial() {
+        async function authSocialLogin() {
             try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } }); } catch (e) { alert(e.message); }
         }
 
-        async function handleAuth(mode) {
-            const e = document.getElementById('emailInp').value;
-            const p = document.getElementById('passInp').value;
+        async function processEmailAuth(mode) {
+            const email = document.getElementById('authEmailInp').value;
+            const pass = document.getElementById('authPassInp').value;
             try {
                 if(mode==='sign') {
-                    const res = await auth.createUserWithEmailAndPassword(e, p);
+                    const res = await auth.createUserWithEmailAndPassword(email, pass);
                     await res.user.sendEmailVerification();
-                    alert("สมัครแล้ว! ยืนยันในอีเมลนะครับ");
-                } else { await auth.signInWithEmailAndPassword(e, p); }
+                    alert("ลงทะเบียนสำเร็จ! โปรดตรวจสอบอีเมลคุณครับ");
+                } else { await auth.signInWithEmailAndPassword(email, pass); }
             } catch (x) { alert(x.message); }
         }
 
-        // 3. AI SYSTEM (THE ULTIMATE BRUTE-FORCE FIX)
-        function getAiKey() { return localStorage.getItem('mk_final_v5_key') || ""; }
+        // ==========================================
+        // 3. AI ENGINE (DYNAMIC MODEL DISCOVERY FIX)
+        // ==========================================
+        function getMarkApiKey() { return localStorage.getItem('mk_v6_key') || ""; }
 
-        async function callGemini(promptText) {
-            const key = getAiKey();
-            if(!key) throw new Error("Mark ครับ! ลืมแปะ API Key หรือเปล่า? (ล็อกอินแอดมินแล้วกดฟันเฟืองด้านบนนะครับ)");
+        async function callGeminiDynamic(prompt) {
+            const key = getMarkApiKey();
+            if(!key) throw new Error("Mark ครับ! ลืมใส่ API Key ในหน้าแอดมินหรือเปล่า? (ล็อกอินแอดมินแล้วกดฟันเฟืองด้านบนนะครับ)");
             
-            const persona = localStorage.getItem('mk_final_v5_persona') || "คุณเป็นครูติวเตอร์อัจฉริยะ";
-            const reqBody = { contents: [{ parts: [{ text: `[System Personality: ${persona}]\n\n${promptText}` }] }] };
+            const persona = localStorage.getItem('mk_v6_persona') || "คุณเป็นครูติวเตอร์อัจฉริยะ";
+            const reqBody = { contents: [{ parts: [{ text: `[System Personality: ${persona}]\n\n${prompt}` }] }] };
 
-            // 🛑 กลยุทธ์รัวยิง: ลองทุก Endpoint จนกว่า Google จะยอมตอบ 🛑
+            // 🛑 กลยุทธ์ใหม่: "Dynamic Probe" ถาม Google เลยว่า Key นี้ใช้รุ่นไหนได้บ้าง 🛑
             const versions = ['v1', 'v1beta'];
-            const models = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
+            const candidateModels = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
             
-            let lastErr = "";
+            let lastErrorMessage = "";
 
             for (let v of versions) {
-                for (let m of models) {
+                for (let modelName of candidateModels) {
                     try {
-                        const url = `https://generativelanguage.googleapis.com/${v}/models/${m}:generateContent?key=${key}`;
-                        const res = await fetch(url, {
+                        const url = `https://generativelanguage.googleapis.com/${v}/models/${modelName}:generateContent?key=${key}`;
+                        const response = await fetch(url, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(reqBody)
                         });
-                        const data = await res.json();
+                        const data = await response.json();
                         
                         if (data.candidates && data.candidates[0].content) {
-                            console.log(`✅ Success with ${v}/${m}`);
+                            console.log(`✅ Success with Endpoint: ${v} and Model: ${modelName}`);
                             return data.candidates[0].content.parts[0].text;
                         } else if (data.error) {
-                            lastErr = `${data.error.message} (${v}/${m})`;
+                            lastErrorMessage = `${data.error.message} (${v}/${modelName})`;
                         }
-                    } catch (e) { lastErr = e.message; }
+                    } catch (e) { lastErrorMessage = e.message; }
                 }
             }
-            throw new Error(`AI ล้มเหลวทุกช่องทาง: ${lastErr}\n(แนะนำ: Mark ลองกดสร้าง API Key ใหม่ใน AI Studio ดูนะครับ)`);
+            throw new Error(`AI พ่ายแพ้ทุกช่องทาง: ${lastErrorMessage}\n(คำแนะนำจาก AI: Mark ลองสร้าง API Key ใหม่ใน AI Studio แล้วเลือก 'Default Project' ดูนะครับ)`);
         }
 
-        async function generateWithAI() {
-            const topic = document.getElementById('aiTopicInp').value;
-            if(!topic) return alert("ระบุหัวข้อที่จะออกสอบด้วยครับ");
+        async function triggerAIGeneration() {
+            const topic = document.getElementById('aiTopicField').value;
+            if(!topic) return alert("ระบุเรื่องที่อยากให้ออกสอบด้วยครับ");
             const btn = document.getElementById('aiGenBtn');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังวิเคราะห์...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> AI กำลังคิดคำนวณ...`;
             btn.disabled = true;
 
             try {
-                const res = await callGemini(`ออกข้อสอบ 5 ข้อ เรื่อง "${topic}" รูปแบบโค้ดเท่านั้น: question*(คำถาม) *a(ข้อ1)correct *b(ข้อ2)nope *c(ข้อ3)nope *d(ข้อ4)nope`);
-                document.getElementById('bulkInput').value = res;
-                document.getElementById('finalTitle').value = topic;
-                switchPage('import');
-                parseRawText();
+                const res = await callGeminiDynamic(`จงสร้างข้อสอบ 5 ข้อ เรื่อง "${topic}" รูปแบบโค้ดเท่านั้น ห้ามพิมพ์ประโยคอื่น: question*(คำถาม) *a(ข้อ1)correct *b(ข้อ2)nope *c(ข้อ3)nope *d(ข้อ4)nope`);
+                document.getElementById('bulkDataInput').value = res;
+                document.getElementById('saveExamTitleInp').value = topic;
+                switchView('import');
+                parseAndEdit();
             } catch (e) { alert(e.message); } finally {
-                btn.innerHTML = `<i class="fa-solid fa-sparkles"></i> เริ่มออกข้อสอบ`;
+                btn.innerHTML = `<i class="fa-solid fa-sparkles"></i> เริ่มออกข้อสอบทันที`;
                 btn.disabled = false;
             }
         }
 
-        async function sendChat() {
-            const inp = document.getElementById('chatInput');
-            const box = document.getElementById('chatMessages');
+        async function handleAIChat() {
+            const inp = document.getElementById('chatInputField');
+            const box = document.getElementById('chatMessageArea');
             if(!inp.value) return;
-            const msg = inp.value; inp.value = '';
+            const userMsg = inp.value; inp.value = '';
 
-            box.innerHTML += `<div class="flex justify-end"><div class="bg-primary text-white p-4 rounded-3xl rounded-tr-none max-w-[85%] text-sm font-bold shadow-lg animate__animated animate__fadeInRight">${msg}</div></div>`;
+            box.innerHTML += `<div class="flex justify-end"><div class="bg-primary text-white p-4 rounded-3xl rounded-tr-none max-w-[85%] text-sm font-bold shadow-lg animate__animated animate__fadeInRight">${userMsg}</div></div>`;
             box.scrollTop = box.scrollHeight;
 
-            const lID = "l-" + Date.now();
-            box.innerHTML += `<div id="${lID}" class="text-[10px] font-black opacity-30 animate-pulse uppercase">AI กำลังคิด...</div>`;
+            const tempId = "ai-loading-" + Date.now();
+            box.innerHTML += `<div id="${tempId}" class="flex gap-2 p-2"><div class="dot-flashing"></div></div>`;
 
             try {
-                const res = await callGemini(msg);
-                document.getElementById(lID).remove();
-                const n = localStorage.getItem('mk_final_v5_name') || "AI Assistant";
-                const i = localStorage.getItem('mk_final_v5_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
+                const res = await callGeminiDynamic(userMsg);
+                document.getElementById(tempId).remove();
+                const aiName = localStorage.getItem('mk_v6_name') || "AI Assistant";
+                const aiAvatar = localStorage.getItem('mk_v6_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
                 box.innerHTML += `
                     <div class="flex items-start gap-2 animate__animated animate__fadeInLeft">
-                        <img src="${i}" class="w-10 h-10 rounded-2xl border-2 border-primary shadow-md object-cover">
+                        <img src="${aiAvatar}" class="w-10 h-10 rounded-2xl border-2 border-primary shadow-md object-cover">
                         <div class="bg-white text-gray-700 p-5 rounded-3xl rounded-tl-none max-w-[85%] text-sm leading-relaxed border dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
-                            <p class="text-[10px] font-black text-blue-500 mb-1 uppercase">${n}</p>
+                            <p class="text-[10px] font-black text-blue-500 mb-1 uppercase">${aiName}</p>
                             ${res.replace(/\n/g, '<br>')}
                         </div>
                     </div>
                 `;
                 box.scrollTop = box.scrollHeight;
-            } catch (e) { document.getElementById(lID).innerText = "❌ ERROR: " + e.message; }
+            } catch (e) { document.getElementById(tempId).innerText = "❌ ERROR: " + e.message; }
         }
 
-        // 4. Parser & Database
-        function parseRawText() {
-            const raw = document.getElementById('bulkInput').value;
-            const editor = document.getElementById('editorContent'); editor.innerHTML = '';
-            const blocks = raw.split('question*(').filter(q => q.trim() !== '');
+        // ==========================================
+        // 4. DATABASE & PARSER SYSTEM
+        // ==========================================
+        function parseAndEdit() {
+            const rawText = document.getElementById('bulkDataInput').value;
+            const container = document.getElementById('editorCardsContainer'); container.innerHTML = '';
+            const questions = rawText.split('question*(').filter(q => q.trim() !== '');
             
-            blocks.forEach((b, i) => {
-                const pts = b.split(')'); if(pts.length < 2) return;
-                const qT = pts[0].trim();
-                const re = /\*([a-z0-9ก-ฮ])\((.*?)\)(correct|nope)/gi;
-                let m, oH = '';
-                while((m = re.exec(pts[1])) !== null) {
-                    oH += `
-                        <div class="flex items-center gap-4 p-4 bg-gray-50 border rounded-2xl dark:bg-gray-700">
-                            <input type="radio" name="g_${i}" ${m[3].toLowerCase()==='correct'?'checked':''} class="w-6 h-6 accent-green-500">
-                            <span class="font-bold text-gray-400 uppercase w-6 text-center text-sm">${m[1]}.</span>
-                            <input type="text" value="${m[2]}" class="v-opt flex-1 bg-transparent outline-none font-bold text-sm">
+            questions.forEach((block, index) => {
+                const parts = block.split(')'); if(parts.length < 2) return;
+                const qText = parts[0].trim();
+                const regex = /\*([a-z0-9ก-ฮ])\((.*?)\)(correct|nope)/gi;
+                let match, optsHtml = '';
+                while((match = regex.exec(parts[1])) !== null) {
+                    optsHtml += `
+                        <div class="flex items-center gap-4 p-4 bg-gray-50 border rounded-2xl hover:border-primary/40 dark:bg-gray-700 transition-all">
+                            <input type="radio" name="grp_${index}" ${match[3].toLowerCase()==='correct'?'checked':''} class="w-6 h-6 accent-green-500">
+                            <span class="font-black text-gray-400 uppercase w-6 text-center text-sm">${match[1]}.</span>
+                            <input type="text" value="${match[2]}" class="opt-val flex-1 bg-transparent outline-none font-bold text-sm">
                         </div>
                     `;
                 }
-                editor.innerHTML += `
-                    <div class="q-item app-card p-6 md:p-10 relative group animate__animated animate__fadeInUp">
-                        <button onclick="this.parentElement.remove()" class="absolute top-6 right-6 text-gray-200 hover:text-red-500"><i class="fa-solid fa-trash-can text-xl"></i></button>
-                        <textarea class="v-q w-full bg-transparent font-black text-2xl border-b-2 border-gray-100 pb-4 outline-none focus:border-primary transition-all dark:text-white">${qT}</textarea>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">${oH}</div>
+                container.innerHTML += `
+                    <div class="exam-card-unit app-card relative group animate__animated animate__fadeInUp">
+                        <button onclick="this.parentElement.remove()" class="absolute top-6 right-6 text-gray-300 hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>
+                        <textarea class="q-val w-full bg-transparent font-black text-xl md:text-2xl border-b-2 border-gray-100 pb-4 outline-none focus:border-primary transition-all dark:text-white resize-none h-auto">${qText}</textarea>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">${optsHtml}</div>
                     </div>
                 `;
             });
@@ -438,44 +487,45 @@
             window.scrollTo({ top: document.getElementById('view-editor').offsetTop - 50, behavior: 'smooth' });
         }
 
-        async function saveExam() {
-            if(!userC) return alert("ล็อกอินก่อนนะครับ!");
+        async function commitExamToFirebase() {
+            if(!currentActiveUser) return alert("ล็อกอินก่อนนะครับแอดมิน!");
             const data = {
-                title: document.getElementById('finalTitle').value || "ชุดข้อสอบใหม่",
-                uid: userC.uid, owner: userC.displayName || userC.email,
+                title: document.getElementById('saveExamTitleInp').value || "ชุดข้อสอบนิรนาม",
+                uid: currentActiveUser.uid, owner: currentActiveUser.displayName || currentActiveUser.email,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 visibility: 'private', questions: []
             };
-            document.querySelectorAll('.q-item').forEach(c => {
+            document.querySelectorAll('.exam-card-unit').forEach(card => {
                 const opts = [];
-                c.querySelectorAll('.flex.items-center').forEach(r => {
-                    opts.push({ text: r.querySelector('.v-opt').value, isCorrect: r.querySelector('input[type="radio"]').checked });
+                card.querySelectorAll('.flex.items-center').forEach(row => {
+                    opts.push({ text: row.querySelector('.opt-val').value, isCorrect: row.querySelector('input[type="radio"]').checked });
                 });
-                data.questions.push({ q: c.querySelector('.v-q').value, options: opts });
+                data.questions.push({ q: card.querySelector('.q-val').value, options: opts });
             });
-            try { await db.collection('exams').add(data); confetti({ particleCount: 150, spread: 80 }); alert("บันทึกสำเร็จ!"); switchPage('db'); } catch (e) { alert(e.message); }
+            try { await db.collection('exams').add(data); confetti({ particleCount: 200, spread: 100 }); alert("สำเร็จ! บันทึกลงคลังเรียบร้อย"); switchView('db'); } catch (e) { alert(e.message); }
         }
 
-        async function fetchExams() {
-            const grid = document.getElementById('examsGrid');
-            grid.innerHTML = '<div class="col-span-full text-center py-20 opacity-30 animate-pulse">กำลังโหลด...</div>';
+        async function fetchExamsFromCloud() {
+            const grid = document.getElementById('examsDisplayGrid');
+            grid.innerHTML = '<div class="col-span-full text-center py-20 opacity-30 animate-pulse">กำลังดึงข้อมูล...</div>';
             try {
                 const snap = await db.collection('exams').orderBy('createdAt','desc').get();
                 grid.innerHTML = '';
                 snap.forEach(doc => {
                     const x = doc.data();
-                    const isM = userC && x.uid === userC.uid;
-                    if(isA || isM || x.visibility === 'public') {
+                    const isOwner = currentActiveUser && x.uid === currentActiveUser.uid;
+                    if(isAdminMark || isOwner || x.visibility === 'public') {
+                        const date = x.createdAt ? x.createdAt.toDate().toLocaleDateString('th-TH') : '-';
                         grid.innerHTML += `
-                            <div class="app-card p-6 border border-gray-50 flex flex-col justify-between hover:scale-[1.03] transition-all relative">
-                                ${(isA || isM) ? `<button onclick="deleteExam('${doc.id}')" class="absolute top-4 right-4 text-red-100 hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                            <div class="app-card border border-gray-100 flex flex-col justify-between hover:scale-[1.03] transition-all relative">
+                                ${(isAdminMark || isOwner) ? `<button onclick="deleteExamByID('${doc.id}')" class="absolute top-4 right-4 text-red-100 hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>` : ''}
                                 <div>
                                     <span class="text-[9px] font-black px-4 py-1.5 rounded-full uppercase border ${x.visibility==='public'?'bg-green-100 text-green-600 border-green-200':'bg-gray-100 text-gray-500'}">${x.visibility}</span>
                                     <h3 class="font-black text-xl mt-4 mb-2 dark:text-white line-clamp-2">${x.title}</h3>
-                                    <p class="text-[10px] text-gray-400 mb-6 font-bold uppercase tracking-widest">โดย: ${x.owner}</p>
+                                    <p class="text-[10px] text-gray-400 mb-6 font-bold uppercase tracking-widest">โดย: ${x.owner} • ${date}</p>
                                 </div>
-                                <button class="w-full py-4 bg-gray-50 border rounded-2xl text-[10px] font-black uppercase text-gray-500 hover:bg-primary hover:text-white transition-all dark:bg-gray-700">Open Exam (${x.questions.length})</button>
-                                ${isA ? `<button onclick="toggleVisibility('${doc.id}','${x.visibility}')" class="w-full py-2 mt-2 text-[9px] font-bold text-blue-500 underline uppercase tracking-tighter">สลับสถานะ</button>` : ''}
+                                <button class="w-full py-4 bg-gray-50 border rounded-2xl text-[10px] font-black uppercase text-gray-500 hover:bg-primary hover:text-white transition-all dark:bg-gray-700">Open Exam (${x.questions.length} ข้อ)</button>
+                                ${isAdminMark ? `<button onclick="togglePrivacy('${doc.id}','${x.visibility}')" class="w-full py-2 mt-2 text-[9px] font-black text-blue-500 underline uppercase tracking-tighter">สลับสถานะ</button>` : ''}
                             </div>
                         `;
                     }
@@ -483,17 +533,19 @@
             } catch (e) { grid.innerHTML = 'Error loading: ' + e.message; }
         }
 
-        async function toggleVisibility(id, cur) { await db.collection('exams').doc(id).update({ visibility: (cur==='public'?'private':'public') }); fetchExams(); }
-        async function deleteExam(id) { if(confirm("ลบถาวร?")) { await db.collection('exams').doc(id).delete(); fetchExams(); } }
+        async function togglePrivacy(id, cur) { await db.collection('exams').doc(id).update({ visibility: (cur==='public'?'private':'public') }); fetchExamsFromCloud(); }
+        async function deleteExamByID(id) { if(confirm("ลบถาวร?")) { await db.collection('exams').doc(id).delete(); fetchExamsFromCloud(); } }
 
-        // 5. UI & Themes
-        function toggleSidebar() { document.getElementById('sideSettings').classList.toggle('translate-x-full'); }
-        function updateTheme(t) {
+        // ==========================================
+        // 5. THEMES & UI CONTROLS
+        // ==========================================
+        function toggleSidebar() { document.getElementById('sideSettingsMenu').classList.toggle('translate-x-full'); }
+        function setAppTheme(t) {
             document.body.classList.remove('theme-blue', 'theme-dark');
             if(t !== 'green') document.body.classList.add('theme-' + t);
-            localStorage.setItem('mk_final_theme', t);
+            localStorage.setItem('mk_v6_theme', t);
         }
-        function switchPage(target) {
+        function switchView(target) {
             ['db','import','ai','chat'].forEach(x => {
                 document.getElementById('view-'+x).classList.add('hidden');
                 document.getElementById('btn-'+x).classList.remove('active');
@@ -501,35 +553,35 @@
             document.getElementById('view-'+target).classList.remove('hidden');
             document.getElementById('btn-'+target).classList.add('active');
             document.getElementById('view-editor').classList.add('hidden');
-            if(target==='db') fetchExams();
+            if(target==='db') fetchExamsFromCloud();
         }
 
-        function saveAdminSettings() {
-            if(!isA) return;
-            localStorage.setItem('mk_final_v5_key', document.getElementById('adm-key').value);
-            localStorage.setItem('mk_final_v5_name', document.getElementById('adm-name').value);
-            localStorage.setItem('mk_final_v5_img', document.getElementById('adm-img').value);
-            localStorage.setItem('mk_final_v5_persona', document.getElementById('adm-persona').value);
-            loadAI(); alert("Admin Mark: บันทึกข้อมูลสำเร็จ!");
+        function saveMarkAdminSettings() {
+            if(!isAdminMark) return;
+            localStorage.setItem('mk_v6_key', document.getElementById('adm-key-field').value);
+            localStorage.setItem('mk_v6_name', document.getElementById('adm-name-field').value);
+            localStorage.setItem('mk_v6_img', document.getElementById('adm-img-field').value);
+            localStorage.setItem('mk_v6_persona', document.getElementById('adm-persona-field').value);
+            initAIConfigs(); alert("แอดมิน Mark: บันทึก Config เรียบร้อยครับ!");
         }
 
-        function loadAI() {
-            const n = localStorage.getItem('mk_final_v5_name') || "AI Tutor Pro";
-            const i = localStorage.getItem('mk_final_v5_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
-            document.getElementById('ai-name-gen').innerText = n;
-            document.getElementById('ai-name-chat').innerText = n;
-            document.getElementById('ai-img-gen').src = i;
-            document.getElementById('ai-img-chat').src = i;
+        function initAIConfigs() {
+            const name = localStorage.getItem('mk_v6_name') || "AI Smart Assistant";
+            const img = localStorage.getItem('mk_v6_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
+            document.getElementById('ai-name-gen').innerText = name;
+            document.getElementById('ai-name-chat').innerText = name;
+            document.getElementById('ai-avatar-gen').src = img;
+            document.getElementById('ai-avatar-chat').src = img;
             
-            document.getElementById('adm-name').value = n;
-            document.getElementById('adm-img').value = i;
-            document.getElementById('adm-key').value = getAiKey();
-            document.getElementById('adm-persona').value = localStorage.getItem('mk_final_v5_persona') || "";
+            document.getElementById('adm-name-field').value = name;
+            document.getElementById('adm-img-field').value = img;
+            document.getElementById('adm-key-field').value = getMarkApiKey();
+            document.getElementById('adm-persona-field').value = localStorage.getItem('mk_v6_persona') || "";
         }
 
         window.onload = function() {
-            if(localStorage.getItem('mk_final_theme')) updateTheme(localStorage.getItem('mk_final_theme'));
-            loadAI(); switchPage('db');
+            if(localStorage.getItem('mk_v6_theme')) setAppTheme(localStorage.getItem('mk_v6_theme'));
+            initAIConfigs(); switchView('db');
         };
     </script>
 </body>
