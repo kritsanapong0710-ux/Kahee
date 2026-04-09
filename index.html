@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizBuilder PRO - Final Clean</title>
+    <title>QuizBuilder PRO - Gemini 2.5 Ideal</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -16,25 +16,27 @@
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 
     <style>
+        /* 🎨 Master Theme Variables (No bg-primary / border-primary) */
         :root {
-            --main-accent: #22c55e;
+            --accent: #22c55e; /* เขียว */
             --bg-site: #f8fafc;
             --text-main: #1e293b;
             --card-bg: #ffffff;
             --input-bg: #f1f5f9;
         }
 
-        /* ธีมน้ำเงิน (Midnight Navy - High Contrast) */
+        /* ธีมขาว-น้ำเงิน (High Contrast) */
         body.theme-blue {
-            --main-accent: #3b82f6;
+            --accent: #3b82f6;
             --bg-site: #020617; 
             --text-main: #ffffff; 
             --card-bg: #0f172a; 
             --input-bg: #1e293b;
         }
 
+        /* ธีมดำ-ขาว (Dark Mode) */
         body.theme-dark {
-            --main-accent: #10b981;
+            --accent: #ffffff;
             --bg-site: #000000;
             --text-main: #f1f5f9;
             --card-bg: #111827;
@@ -45,40 +47,45 @@
             font-family: 'Kanit', sans-serif; 
             background-color: var(--bg-site); 
             color: var(--text-main);
-            transition: all 0.4s ease; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
             overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .app-card { 
             background-color: var(--card-bg); 
             border-radius: 2rem; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15); 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1); 
             padding: 1.5rem; 
             border: 1px solid rgba(255,255,255,0.05);
         }
 
         .btn-glow { 
-            background-color: var(--main-accent); 
-            color: white; 
+            background-color: var(--accent); 
+            color: (var(--accent) == #ffffff ? #000 : #fff); 
             border-radius: 1.1rem; 
             font-weight: 700; 
             transition: 0.3s; 
+            border: none; 
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
+        body.theme-dark .btn-glow { color: #000; }
         .btn-glow:hover { filter: brightness(115%); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
+        /* 📱 Mobile UI Fix */
         .tab-bar { display: flex; overflow-x: auto; gap: 10px; padding: 10px; scrollbar-width: none; background: rgba(148, 163, 184, 0.1); border-radius: 1.5rem; }
         .tab-bar::-webkit-scrollbar { display: none; }
         .tab-item { flex: 0 0 auto; padding: 12px 22px; border-radius: 1.1rem; font-weight: 700; font-size: 0.85rem; color: #94a3b8; transition: 0.3s; }
-        .tab-item.active { background-color: var(--main-accent); color: white !important; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .tab-item.active { background-color: var(--accent); color: (var(--accent) == #ffffff ? #000 !important : #fff !important); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        body.theme-dark .tab-item.active { color: #000 !important; }
 
         .custom-input { background-color: var(--input-bg); border: 2px solid transparent; border-radius: 1.1rem; padding: 14px; width: 100%; outline: none; color: inherit; transition: 0.3s; }
-        .custom-input:focus { border-color: var(--main-accent); background-color: var(--card-bg); }
+        .custom-input:focus { border-color: var(--accent); background-color: var(--card-bg); }
 
-        .dot-flashing { position: relative; width: 6px; height: 6px; border-radius: 5px; background-color: var(--main-accent); animation: dot-flashing 1s infinite linear alternate; }
-        @keyframes dot-flashing { 0% { background-color: var(--main-accent); } 50%, 100% { background-color: rgba(148, 163, 184, 0.2); } }
+        .dot-flashing { position: relative; width: 6px; height: 6px; border-radius: 5px; background-color: var(--accent); animation: dot-flashing 1s infinite linear alternate; }
+        @keyframes dot-flashing { 0% { background-color: var(--accent); } 50%, 100% { background-color: rgba(148, 163, 184, 0.2); } }
 
-        @media (max-width: 640px) { .app-card { border-radius: 1.5rem; } .btn-glow { width: 100%; min-height: 50px; } }
+        @media (max-width: 640px) { .app-card { border-radius: 1.5rem; } .btn-glow { width: 100%; min-height: 52px; } }
     </style>
 </head>
 <body class="min-h-screen">
@@ -86,8 +93,8 @@
     <nav class="sticky top-0 z-[60] bg-white/70 backdrop-blur-xl border-b border-gray-100 px-4 py-4 md:px-10 dark:bg-gray-900/80 dark:border-gray-800">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="bg-green-500 w-11 h-11 flex items-center justify-center rounded-2xl text-white shadow-lg"><i class="fa-solid fa-graduation-cap text-xl"></i></div>
-                <h1 class="text-xl md:text-2xl font-black tracking-tighter uppercase">QUIZ<span class="text-green-500">PRO</span></h1>
+                <div style="background-color: #22c55e;" class="w-11 h-11 flex items-center justify-center rounded-2xl text-white shadow-lg"><i class="fa-solid fa-graduation-cap text-xl"></i></div>
+                <h1 class="text-xl md:text-2xl font-black tracking-tighter uppercase">QUIZ<span style="color: #22c55e;">PRO</span></h1>
             </div>
             <div class="flex items-center gap-3">
                 <div id="navAuthSlot">
@@ -109,7 +116,7 @@
         <div id="view-db" class="animate__animated animate__fadeIn">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-3xl font-black italic uppercase">Library</h2>
-                <button onclick="fetchExams()" class="text-green-500 font-bold bg-green-50 px-4 py-2 rounded-xl"><i class="fa-solid fa-rotate"></i></button>
+                <button onclick="fetchExams()" class="text-green-500 font-bold bg-green-50 px-4 py-2 rounded-xl hover:scale-105 transition-all"><i class="fa-solid fa-rotate mr-1"></i> รีเฟรช</button>
             </div>
             <div id="examsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
@@ -121,14 +128,14 @@
 
         <div id="view-ai" class="hidden app-card p-8 md:p-16 text-center animate__animated animate__fadeIn">
             <img id="ai-img-gen" src="https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff" class="w-24 h-24 rounded-3xl mx-auto mb-6 shadow-2xl border-4 border-white">
-            <h2 id="ai-name-gen" class="text-3xl font-black mb-6">AI Generator</h2>
+            <h2 id="ai-name-gen" class="text-3xl font-black mb-6">AI Smart Assistant</h2>
             <div class="max-w-md mx-auto space-y-4">
                 <input type="text" id="aiTopic" placeholder="ระบุหัวข้อที่จะสอบ..." class="custom-input text-center font-bold dark:bg-gray-900">
                 <button onclick="generateWithAI()" id="aiGenBtn" class="btn-glow w-full py-4 text-xl shadow-xl"><i class="fa-solid fa-sparkles"></i> เริ่มออกข้อสอบ</button>
             </div>
         </div>
 
-        <div id="view-chat" class="hidden app-card p-4 md:p-6 flex flex-col h-[60vh] md:h-[75vh] animate__animated animate__fadeIn">
+        <div id="view-chat" class="hidden app-card p-4 md:p-6 flex flex-col h-[60vh] md:h-[70vh] animate__animated animate__fadeIn">
             <div id="chatArea" class="flex-1 overflow-y-auto space-y-4 p-2 custom-scroll">
                 </div>
             <div class="mt-4 flex gap-2">
@@ -153,21 +160,21 @@
         </div>
         <div class="p-8 space-y-10 overflow-y-auto h-[85%] no-scrollbar">
             <div>
-                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Themes</label>
+                <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Select Theme</label>
                 <div class="flex gap-4">
-                    <button onclick="updateTheme('green')" class="w-12 h-12 rounded-2xl bg-green-500 border-2 border-white shadow-lg"></button>
-                    <button onclick="updateTheme('blue')" class="w-12 h-12 rounded-2xl bg-blue-600 border-2 border-white shadow-lg"></button>
-                    <button onclick="updateTheme('dark')" class="w-12 h-12 rounded-2xl bg-gray-900 border-2 border-white shadow-lg"></button>
+                    <button onclick="updateTheme('green')" class="w-12 h-12 rounded-2xl bg-green-500 border-2 border-white shadow-lg hover:scale-110 transition-all"></button>
+                    <button onclick="updateTheme('blue')" class="w-12 h-12 rounded-2xl bg-blue-600 border-2 border-white shadow-lg hover:scale-110 transition-all"></button>
+                    <button onclick="updateTheme('dark')" class="w-12 h-12 rounded-2xl bg-gray-900 border-2 border-white shadow-lg hover:scale-110 transition-all"></button>
                 </div>
             </div>
             <div id="adminPanel" class="hidden space-y-6 bg-red-50 p-6 rounded-[2.5rem] border border-red-100 dark:bg-red-900/10">
-                <h4 class="font-black text-red-600 text-xs uppercase border-b pb-4">Admin Control</h4>
+                <h4 class="font-black text-red-600 text-xs uppercase border-b pb-4">Admin Mark Ideal AI</h4>
                 <div class="space-y-4">
-                    <input type="password" id="adm-key" placeholder="Gemini API Key" class="custom-input text-xs font-mono bg-white">
-                    <input type="text" id="adm-name" placeholder="ชื่อ AI" class="custom-input text-sm bg-white">
-                    <input type="text" id="adm-img" placeholder="URL รูปโปรไฟล์ AI" class="custom-input text-xs bg-white">
-                    <textarea id="adm-persona" placeholder="System Persona" class="custom-input text-xs h-24 bg-white"></textarea>
-                    <button onclick="saveAdmin()" class="w-full bg-red-600 text-white py-3.5 rounded-2xl font-bold shadow-xl">SAVE CONFIG</button>
+                    <input type="password" id="adm-key" placeholder="Paste Gemini Key Here" class="custom-input text-xs font-mono bg-white">
+                    <input type="text" id="adm-name" placeholder="ชื่อ AI อุดมคติ" class="custom-input text-sm bg-white">
+                    <input type="text" id="adm-img" placeholder="ลิงก์รูป AI อุดมคติ" class="custom-input text-xs bg-white">
+                    <textarea id="adm-persona" placeholder="บุคลิก AI (System Instruction)" class="custom-input text-xs h-24 bg-white"></textarea>
+                    <button onclick="saveAdmin()" class="w-full bg-red-600 text-white py-3.5 rounded-2xl font-bold shadow-xl">SAVE IDEAL CONFIG</button>
                 </div>
             </div>
         </div>
@@ -175,7 +182,7 @@
 
     <div id="authModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-md">
         <div class="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-2xl w-full max-w-sm animate__animated animate__zoomIn dark:bg-gray-800">
-            <h3 id="authTitle" class="text-2xl font-black text-center mb-8 uppercase tracking-tighter">Login</h3>
+            <h3 id="authTitle" class="text-2xl font-black text-center mb-8 uppercase tracking-tighter">Authentication</h3>
             <div class="flex bg-gray-100 p-1.5 rounded-2xl mb-6 dark:bg-gray-700">
                 <button onclick="switchAuthTab('email')" id="tabEmail" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-white shadow-sm">EMAIL</button>
                 <button onclick="switchAuthTab('phone')" id="tabPhone" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-gray-400">PHONE</button>
@@ -188,9 +195,9 @@
                 <div id="emailBox" class="space-y-3">
                     <input type="email" id="emailInp" placeholder="Email" class="custom-input font-bold dark:bg-gray-700">
                     <input type="password" id="passInp" placeholder="Password" class="custom-input font-bold dark:bg-gray-700">
-                    <div id="loginGrp"><button onclick="emailAuth('login')" class="btn-glow w-full py-4 uppercase">LOG IN</button></div>
-                    <div id="signGrp" class="hidden"><button onclick="emailAuth('sign')" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase">CREATE ACCOUNT</button></div>
-                    <p class="text-center text-xs text-gray-400 font-bold">Mode: <a href="javascript:toggleAuth()" class="text-blue-500 underline">Login / Signup</a></p>
+                    <div id="loginGrp"><button onclick="emailAuth('login')" class="btn-glow w-full py-4 uppercase shadow-lg">LOG IN</button></div>
+                    <div id="signGrp" class="hidden"><button onclick="emailAuth('sign')" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase shadow-lg">CREATE ACCOUNT</button></div>
+                    <p class="text-center text-xs text-gray-400 font-bold mt-2">Mode: <a href="javascript:toggleAuth()" class="text-blue-500 underline">Switch</a></p>
                 </div>
                 <div id="phoneBox" class="hidden space-y-4">
                     <div id="recaptcha-container"></div>
@@ -198,16 +205,16 @@
                     <button onclick="phoneSend()" id="btnPhoneSend" class="btn-glow w-full py-4 uppercase">GET OTP</button>
                     <div id="otpArea" class="hidden space-y-4">
                         <input type="text" id="otpInp" placeholder="OTP 6-DIGITS" class="custom-input text-center font-black tracking-widest text-xl">
-                        <button onclick="phoneVerify()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-bold">VERIFY</button>
+                        <button onclick="phoneVerify()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-bold shadow-lg">VERIFY & LOGIN</button>
                     </div>
                 </div>
             </div>
-            <button onclick="closeAuthModal()" class="w-full mt-8 text-gray-300 text-[10px] font-black uppercase tracking-widest">Cancel</button>
+            <button onclick="closeAuthModal()" class="w-full mt-10 text-gray-300 text-[10px] font-black uppercase tracking-widest">Cancel</button>
         </div>
     </div>
 
     <script>
-        // 1. Firebase Initialize
+        // 1. Initial Setup
         const firebaseConfig = {
             apiKey: "AIzaSyA0-4a5zxaPZZejG955NgNUVM23YXNV2Gc",
             authDomain: "the-web-for-test.firebaseapp.com",
@@ -226,7 +233,7 @@
         let isA = false;
         let confirmRes = null;
 
-        // 2. Auth Status
+        // 2. Auth Logic
         auth.onAuthStateChanged(function(user) {
             userC = user;
             const slot = document.getElementById('navAuthSlot');
@@ -234,10 +241,10 @@
                 isA = (user.email && user.email.toLowerCase() === ADMIN_E.toLowerCase()) || (user.phoneNumber === '+66967358298');
                 const p = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'M'}&background=22c55e&color=fff`;
                 slot.innerHTML = `
-                    <div class="flex items-center gap-2 bg-white/10 p-1 pr-3 rounded-full border border-gray-200 dark:bg-gray-800">
+                    <div class="flex items-center gap-2 bg-white/10 p-1 pr-3 rounded-full border border-gray-200 dark:bg-gray-800 animate__animated animate__fadeInRight">
                         <img src="${p}" class="w-8 h-8 rounded-full border border-white">
-                        <span class="text-[10px] font-bold max-w-[80px] truncate">${user.displayName || 'Mark'}</span>
-                        <button onclick="auth.signOut()" class="text-red-400 ml-1"><i class="fa-solid fa-power-off"></i></button>
+                        <span class="text-[10px] font-bold max-w-[60px] truncate">${user.displayName || 'Mark'}</span>
+                        <button onclick="auth.signOut()" class="text-red-400 ml-1 transition-all"><i class="fa-solid fa-power-off"></i></button>
                     </div>
                 `;
                 if(isA) document.getElementById('adminPanel').classList.remove('hidden');
@@ -277,27 +284,34 @@
         }
         async function phoneVerify() { try { await confirmRes.confirm(document.getElementById('otpInp').value); } catch (e) { alert("OTP Wrong!"); } }
 
-        // 3. AI LOGIC (v1beta + gemini-1.5-flash)
+        // ==========================================
+        // 3. AI ENGINE (Gemini 2.5 Flash Implementation)
+        // ==========================================
         async function callGemini(prompt) {
-            const key = localStorage.getItem('mk_final_v12_key') || "";
+            const key = localStorage.getItem('mk_ideal_key') || "";
             if(!key) throw new Error("Mark ครับ! ลืมใส่ API Key ในหน้าแอดมินหรือเปล่า?");
             
-            const persona = localStorage.getItem('mk_final_v12_persona') || "คุณเป็นครูติวเตอร์ที่เก่งที่สุด และช่วย Mark ออกแบบ Prompt ด้วย";
-            const body = { contents: [{ parts: [{ text: `[Persona: ${persona}]\n\n${prompt}` }] }] };
+            const persona = localStorage.getItem('mk_ideal_persona') || "คุณคือ AI อุดมคติของ Mark ที่ช่วยติวหนังสือและออกแบบ Prompt เก่งที่สุด";
+            const body = { contents: [{ parts: [{ text: `[System Instruction: ${persona}]\n\n${prompt}` }] }] };
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+            // 🛑 TARGET: models/gemini-2.5-flash (v1beta) 🛑
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
 
             try {
                 const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
                 const data = await res.json();
                 if (data.candidates && data.candidates[0].content) return data.candidates[0].content.parts[0].text;
-                throw new Error(data.error ? data.error.message : "AI Error");
+                // Fallback for 2026 rollouts
+                const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`;
+                const fRes = await fetch(fallbackUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const fData = await fRes.json();
+                return fData.candidates[0].content.parts[0].text;
             } catch (e) { throw new Error("AI Fail: " + e.message); }
         }
 
         async function generateWithAI() {
             const t = document.getElementById('aiTopic').value; if(!t) return alert("ระบุเรื่องก่อนครับ");
-            const btn = document.getElementById('aiGenBtn'); btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Generating...`; btn.disabled = true;
+            const btn = document.getElementById('aiGenBtn'); btn.innerHTML = `<i class="fa-solid fa-sync fa-spin mr-2"></i> Generating Ideal Quiz...`; btn.disabled = true;
             try {
                 const res = await callGemini(`สร้างข้อสอบ 5 ข้อ เรื่อง "${t}" รูปแบบโค้ดเท่านั้น: question*(คำถาม) *a(ข้อ1)correct *b(ข้อ2)nope *c(ข้อ3)nope *d(ข้อ4)nope`);
                 document.getElementById('bulkInput').value = res; document.getElementById('saveExamTitle').value = t; switchView('import'); parseRawText();
@@ -306,28 +320,37 @@
 
         async function sendChat() {
             const inp = document.getElementById('chatIn'); const box = document.getElementById('chatArea'); if(!inp.value) return; const msg = inp.value; inp.value = '';
-            box.innerHTML += `<div class="flex justify-end"><div class="bg-blue-600 text-white p-4 rounded-3xl rounded-tr-none max-w-[85%] text-sm font-bold shadow-lg animate__animated animate__fadeInRight">${msg}</div></div>`;
+            box.innerHTML += `<div class="flex justify-end animate__animated animate__fadeInRight"><div style="background-color: var(--accent); color: (var(--accent)=='#ffffff'?'#000':'#fff')" class="p-4 rounded-3xl rounded-tr-none max-w-[85%] text-sm font-bold shadow-lg">${msg}</div></div>`;
             box.scrollTop = box.scrollHeight;
             const lid = "l-" + Date.now(); box.innerHTML += `<div id="${lid}" class="flex gap-2 p-2"><div class="dot-flashing"></div></div>`;
             try {
                 const res = await callGemini(msg); document.getElementById(lid).remove();
-                // ❌ ai-img-chat / ai-name-chat ลบออกแล้วตามสั่ง
-                const aiImg = localStorage.getItem('mk_final_v12_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
-                const aiName = localStorage.getItem('mk_final_v12_name') || "AI Tutor";
-                box.innerHTML += `<div class="flex items-start gap-2 animate__animated animate__fadeInLeft"><img src="${aiImg}" class="w-9 h-9 rounded-2xl object-cover shadow-sm"><div class="bg-white text-gray-700 p-5 rounded-3xl rounded-tl-none max-w-[85%] text-sm border dark:bg-gray-800 dark:text-gray-200 shadow-sm"><p class="text-[10px] font-black text-blue-500 mb-1 uppercase">${aiName}</p>${res.replace(/\n/g, '<br>')}</div></div>`;
+                const aiImg = localStorage.getItem('mk_ideal_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
+                const aiName = localStorage.getItem('mk_ideal_name') || "AI Tutor";
+                box.innerHTML += `
+                    <div class="flex items-start gap-2 animate__animated animate__fadeInLeft">
+                        <img src="${aiImg}" class="w-9 h-9 rounded-2xl object-cover shadow-sm border-2 border-white">
+                        <div class="bg-white text-gray-700 p-5 rounded-3xl rounded-tl-none max-w-[85%] text-sm border shadow-sm dark:bg-gray-800 dark:text-gray-200">
+                            <p class="text-[10px] font-black text-blue-500 mb-1 uppercase tracking-widest">${aiName}</p>
+                            ${res.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                `;
                 box.scrollTop = box.scrollHeight;
             } catch (e) { document.getElementById(lid).innerText = "❌ ERROR: " + e.message; }
         }
 
-        // 4. Content & Database
+        // ==========================================
+        // 4. DATA ENGINE (editorCards)
+        // ==========================================
         function parseRawText() {
             const raw = document.getElementById('bulkInput').value; const container = document.getElementById('editorCards'); container.innerHTML = '';
             const blocks = raw.split('question*(').filter(q => q.trim() !== '');
             blocks.forEach((b, i) => {
                 const pts = b.split(')'); if(pts.length < 2) return;
                 const qT = pts[0].trim(); const re = /\*([a-z0-9ก-ฮ])\((.*?)\)(correct|nope)/gi; let m, oH = '';
-                while((m = re.exec(pts[1])) !== null) oH += `<div class="flex items-center gap-4 p-4 bg-gray-50 border border-gray-100 rounded-2xl dark:bg-gray-700"><input type="radio" name="g_${i}" ${m[3].toLowerCase()==='correct'?'checked':''} class="w-6 h-6 accent-blue-500"><span class="font-black text-gray-400 uppercase w-6 text-center text-sm">${m[1]}.</span><input type="text" value="${m[2]}" class="v-opt flex-1 bg-transparent outline-none font-bold text-sm"></div>`;
-                container.innerHTML += `<div class="q-item app-card fade-up"><textarea class="v-q-val w-full bg-transparent font-black text-xl border-b border-gray-200 pb-4 outline-none focus:border-blue-500 dark:text-white resize-none h-auto">${qT}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">${oH}</div></div>`;
+                while((m = re.exec(pts[1])) !== null) oH += `<div class="flex items-center gap-4 p-4 bg-gray-50 border border-gray-100 rounded-2xl dark:bg-gray-700 transition-all hover:scale-[1.01]"><input type="radio" name="g_${i}" ${m[3].toLowerCase()==='correct'?'checked':''} class="w-6 h-6 accent-blue-500"><span class="font-black text-gray-400 uppercase w-6 text-center text-sm">${m[1]}.</span><input type="text" value="${m[2]}" class="v-opt flex-1 bg-transparent outline-none font-bold text-sm"></div>`;
+                container.innerHTML += `<div class="q-item app-card animate__animated animate__fadeInUp"><textarea class="v-q-val w-full bg-transparent font-black text-xl border-b border-gray-200 pb-4 outline-none focus:border-blue-500 dark:text-white resize-none h-auto">${qT}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">${oH}</div></div>`;
             });
             document.getElementById('view-editor').classList.remove('hidden');
             window.scrollTo({ top: document.getElementById('view-editor').offsetTop - 50, behavior: 'smooth' });
@@ -335,33 +358,49 @@
 
         async function saveExam() {
             if(!userC) return alert("Login first!");
-            const data = { title: document.getElementById('saveExamTitle').value || "New Exam", uid: userC.uid, owner: userC.displayName || userC.email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), visibility: 'private', questions: [] };
+            const data = { title: document.getElementById('saveExamTitle').value || "Ideal Exam", uid: userC.uid, owner: userC.displayName || userC.email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), visibility: 'private', questions: [] };
             document.querySelectorAll('.q-item').forEach(c => {
                 const opts = []; c.querySelectorAll('.flex.items-center').forEach(r => { opts.push({ text: r.querySelector('.v-opt').value, isCorrect: r.querySelector('input[type="radio"]').checked }); });
                 data.questions.push({ q: c.querySelector('.v-q-val').value, options: opts });
             });
-            try { await db.collection('exams').add(data); confetti({ particleCount: 150 }); alert("Saved!"); switchView('db'); } catch (e) { alert(e.message); }
+            try { await db.collection('exams').add(data); confetti({ particleCount: 150 }); alert("Saved Successfully!"); switchView('db'); } catch (e) { alert(e.message); }
         }
 
         async function fetchExams() {
-            const grid = document.getElementById('examsGrid'); grid.innerHTML = '<div class="col-span-full text-center py-20 opacity-30 animate-pulse">Loading Library...</div>';
+            const grid = document.getElementById('examsGrid'); grid.innerHTML = '<div class="col-span-full text-center py-20 opacity-30 animate-pulse">Loading Ideal Library...</div>';
             try {
                 const snap = await db.collection('exams').orderBy('createdAt','desc').get(); grid.innerHTML = '';
                 snap.forEach(doc => {
                     const x = doc.data(); const isM = userC && x.uid === userC.uid;
                     if(isA || isM || x.visibility === 'public') {
                         const dStr = x.createdAt ? x.createdAt.toDate().toLocaleDateString('th-TH') : '-';
-                        grid.innerHTML += `<div class="app-card border border-gray-100 flex flex-col justify-between hover:scale-[1.03] transition-all relative">${(isA || isM) ? `<button onclick="deleteEx('${doc.id}')" class="absolute top-4 right-4 text-red-100 hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>` : ''}<div><span class="text-[9px] font-black px-4 py-1.5 rounded-full uppercase border ${x.visibility==='public'?'bg-green-100 text-green-600 border-green-200':'bg-gray-100 text-gray-500'}">${x.visibility}</span><h3 class="font-black text-xl mt-4 mb-2 dark:text-white line-clamp-2">${x.title}</h3><p class="text-[10px] text-gray-400 mb-6 font-bold uppercase tracking-widest">By: ${x.owner} • ${dStr}</p></div><button class="w-full py-4 bg-gray-50 border border-gray-200 rounded-2xl text-[10px] font-black uppercase text-gray-500 hover:bg-blue-600 hover:text-white transition-all dark:bg-gray-700">Open Exam</button></div>`;
+                        grid.innerHTML += `
+                            <div class="app-card border border-gray-100 flex flex-col justify-between hover:scale-[1.03] transition-all relative">
+                                ${(isA || isM) ? `<button onclick="deleteEx('${doc.id}')" class="absolute top-4 right-4 text-red-300 hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                                <div>
+                                    <span style="background-color: var(--bg-site); color: var(--accent)" class="text-[9px] font-black px-4 py-1.5 rounded-full uppercase border">${x.visibility}</span>
+                                    <h3 class="font-black text-xl mt-4 mb-2 dark:text-white line-clamp-2">${x.title}</h3>
+                                    <p class="text-[10px] text-gray-400 mb-6 font-bold uppercase tracking-widest">By: ${x.owner} • ${dStr}</p>
+                                </div>
+                                <button class="w-full py-4 bg-gray-50 border border-gray-200 rounded-2xl text-[10px] font-black uppercase text-gray-500 hover:bg-blue-600 hover:text-white transition-all dark:bg-gray-700">Open Exam</button>
+                            </div>
+                        `;
                     }
                 });
             } catch (e) { grid.innerHTML = 'Error: ' + e.message; }
         }
 
-        async function deleteEx(id) { if(confirm("Delete?")) { await db.collection('exams').doc(id).delete(); fetchExams(); } }
+        async function deleteEx(id) { if(confirm("Delete Permanently?")) { await db.collection('exams').doc(id).delete(); fetchExams(); } }
 
-        // 5. Interface
+        // ==========================================
+        // 5. THEMES & UI
+        // ==========================================
         function toggleSidebar() { document.getElementById('sideMenu').classList.toggle('translate-x-full'); }
-        function updateTheme(t) { document.body.classList.remove('theme-blue', 'theme-dark'); if(t !== 'green') document.body.classList.add('theme-' + t); localStorage.setItem('mk_v12_theme', t); }
+        function updateTheme(t) { 
+            document.body.classList.remove('theme-blue', 'theme-dark'); 
+            if(t !== 'green') document.body.classList.add('theme-' + t); 
+            localStorage.setItem('mk_ideal_theme', t); 
+        }
         function switchView(t) {
             ['db','import','ai','chat'].forEach(x => { document.getElementById('view-'+x).classList.add('hidden'); document.getElementById('btn-'+x).classList.remove('active'); });
             document.getElementById('view-'+t).classList.remove('hidden'); document.getElementById('btn-'+t).classList.add('active');
@@ -369,26 +408,29 @@
         }
 
         function saveAdmin() {
-            localStorage.setItem('mk_final_v12_key', document.getElementById('adm-key').value);
-            localStorage.setItem('mk_final_v12_name', document.getElementById('adm-name').value);
-            localStorage.setItem('mk_final_v12_img', document.getElementById('adm-img').value);
-            localStorage.setItem('mk_final_v12_persona', document.getElementById('adm-persona').value);
-            initUI(); alert("Admin Mark: Config Saved!");
+            localStorage.setItem('mk_ideal_key', document.getElementById('adm-key').value);
+            localStorage.setItem('mk_ideal_name', document.getElementById('adm-name').value);
+            localStorage.setItem('mk_ideal_img', document.getElementById('adm-img').value);
+            localStorage.setItem('mk_ideal_persona', document.getElementById('adm-persona').value);
+            initUI(); alert("Admin Mark: Ideal Config Saved!");
         }
 
         function initUI() {
-            const n = localStorage.getItem('mk_final_v12_name') || "AI Tutor Pro";
-            const i = localStorage.getItem('mk_final_v12_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
+            const n = localStorage.getItem('mk_ideal_name') || "Ideal AI Tutor";
+            const i = localStorage.getItem('mk_ideal_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
             document.getElementById('ai-name-gen').innerText = n;
             document.getElementById('ai-img-gen').src = i;
-            // ❌ ai-name-chat / ai-img-chat ลบออกแล้วตามสั่ง
             document.getElementById('adm-name').value = n;
             document.getElementById('adm-img').value = i;
-            document.getElementById('adm-key').value = localStorage.getItem('mk_final_v12_key') || "";
-            document.getElementById('adm-persona').value = localStorage.getItem('mk_final_v12_persona') || "";
+            document.getElementById('adm-key').value = localStorage.getItem('mk_ideal_key') || "";
+            document.getElementById('adm-persona').value = localStorage.getItem('mk_ideal_persona') || "";
         }
 
-        window.onload = function() { if(localStorage.getItem('mk_v12_theme')) updateTheme(localStorage.getItem('mk_v12_theme')); initUI(); switchView('db'); };
+        window.onload = function() { 
+            if(localStorage.getItem('mk_ideal_theme')) updateTheme(localStorage.getItem('mk_ideal_theme')); 
+            initUI(); switchView('db'); 
+        };
     </script>
 </body>
 </html>
+
