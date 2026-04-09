@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizBuilder PRO - Final Optimized</title>
+    <title>QuizBuilder PRO - Final Clean</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -16,7 +16,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 
     <style>
-        /* 🎨 Master Color Logic (ถอด bg-primary/border-primary ออกแล้ว) */
         :root {
             --main-accent: #22c55e;
             --bg-site: #f8fafc;
@@ -64,12 +63,10 @@
             border-radius: 1.1rem; 
             font-weight: 700; 
             transition: 0.3s; 
-            border: none; 
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-glow:hover { filter: brightness(115%); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
-        /* 📱 Mobile Optimized Menu */
         .tab-bar { display: flex; overflow-x: auto; gap: 10px; padding: 10px; scrollbar-width: none; background: rgba(148, 163, 184, 0.1); border-radius: 1.5rem; }
         .tab-bar::-webkit-scrollbar { display: none; }
         .tab-item { flex: 0 0 auto; padding: 12px 22px; border-radius: 1.1rem; font-weight: 700; font-size: 0.85rem; color: #94a3b8; transition: 0.3s; }
@@ -81,7 +78,7 @@
         .dot-flashing { position: relative; width: 6px; height: 6px; border-radius: 5px; background-color: var(--main-accent); animation: dot-flashing 1s infinite linear alternate; }
         @keyframes dot-flashing { 0% { background-color: var(--main-accent); } 50%, 100% { background-color: rgba(148, 163, 184, 0.2); } }
 
-        @media (max-width: 640px) { .app-card { border-radius: 1.5rem; padding: 1.25rem !important; } .btn-glow { width: 100%; height: 50px; } }
+        @media (max-width: 640px) { .app-card { border-radius: 1.5rem; } .btn-glow { width: 100%; min-height: 50px; } }
     </style>
 </head>
 <body class="min-h-screen">
@@ -111,8 +108,8 @@
 
         <div id="view-db" class="animate__animated animate__fadeIn">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-black italic">LIBRARY</h2>
-                <button onclick="fetchExams()" class="text-green-500 font-bold bg-green-50 px-4 py-2 rounded-xl"><i class="fa-solid fa-rotate mr-1"></i> รีเฟรช</button>
+                <h2 class="text-3xl font-black italic uppercase">Library</h2>
+                <button onclick="fetchExams()" class="text-green-500 font-bold bg-green-50 px-4 py-2 rounded-xl"><i class="fa-solid fa-rotate"></i></button>
             </div>
             <div id="examsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
@@ -127,14 +124,15 @@
             <h2 id="ai-name-gen" class="text-3xl font-black mb-6">AI Generator</h2>
             <div class="max-w-md mx-auto space-y-4">
                 <input type="text" id="aiTopic" placeholder="ระบุหัวข้อที่จะสอบ..." class="custom-input text-center font-bold dark:bg-gray-900">
-                <button onclick="generateWithAI()" id="aiGenBtn" class="btn-glow w-full py-4 text-xl shadow-xl"><i class="fa-solid fa-sparkles"></i> สั่ง AI เริ่มสร้าง</button>
+                <button onclick="generateWithAI()" id="aiGenBtn" class="btn-glow w-full py-4 text-xl shadow-xl"><i class="fa-solid fa-sparkles"></i> เริ่มออกข้อสอบ</button>
             </div>
         </div>
 
-        <div id="view-chat" class="hidden app-card p-4 md:p-6 flex flex-col h-[60vh] md:h-[70vh] animate__animated animate__fadeIn">
-            <div id="chatArea" class="flex-1 overflow-y-auto space-y-4 p-2 custom-scroll"></div>
+        <div id="view-chat" class="hidden app-card p-4 md:p-6 flex flex-col h-[60vh] md:h-[75vh] animate__animated animate__fadeIn">
+            <div id="chatArea" class="flex-1 overflow-y-auto space-y-4 p-2 custom-scroll">
+                </div>
             <div class="mt-4 flex gap-2">
-                <input type="text" id="chatIn" class="custom-input flex-1" placeholder="คุยกับ AI / ให้ช่วยเขียน Prompt..." onkeypress="if(event.key=='Enter')sendChat()">
+                <input type="text" id="chatIn" class="custom-input flex-1" placeholder="คุยกับ AI / ช่วยเขียน Prompt..." onkeypress="if(event.key=='Enter')sendChat()">
                 <button onclick="sendChat()" class="btn-glow w-12 h-12 shadow-lg"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
@@ -142,7 +140,7 @@
         <div id="view-editor" class="hidden mt-8 space-y-6 pb-40">
             <div id="editorCards" class="space-y-4"></div>
             <div class="fixed bottom-6 left-4 right-4 max-w-2xl mx-auto bg-white/90 backdrop-blur-lg p-5 rounded-[2.5rem] shadow-2xl border flex flex-col md:flex-row gap-3 items-center z-40 dark:bg-gray-800/90">
-                <input type="text" id="saveExamTitle" placeholder="ตั้งชื่อชุดข้อสอบ" class="custom-input flex-1 font-bold text-center dark:bg-gray-700">
+                <input type="text" id="saveExamTitle" placeholder="ชื่อชุดข้อสอบ" class="custom-input flex-1 font-bold text-center dark:bg-gray-700">
                 <button onclick="saveExam()" class="btn-glow px-12 py-4 w-full md:w-auto">บันทึกคลัง</button>
             </div>
         </div>
@@ -163,7 +161,7 @@
                 </div>
             </div>
             <div id="adminPanel" class="hidden space-y-6 bg-red-50 p-6 rounded-[2.5rem] border border-red-100 dark:bg-red-900/10">
-                <h4 class="font-black text-red-600 text-xs uppercase border-b pb-4">Admin Control (Mark)</h4>
+                <h4 class="font-black text-red-600 text-xs uppercase border-b pb-4">Admin Control</h4>
                 <div class="space-y-4">
                     <input type="password" id="adm-key" placeholder="Gemini API Key" class="custom-input text-xs font-mono bg-white">
                     <input type="text" id="adm-name" placeholder="ชื่อ AI" class="custom-input text-sm bg-white">
@@ -177,27 +175,23 @@
 
     <div id="authModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-md">
         <div class="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-2xl w-full max-w-sm animate__animated animate__zoomIn dark:bg-gray-800">
-            <h3 id="authTitle" class="text-3xl font-black italic text-center mb-8 uppercase tracking-tighter">Auth</h3>
-            
+            <h3 id="authTitle" class="text-2xl font-black text-center mb-8 uppercase tracking-tighter">Login</h3>
             <div class="flex bg-gray-100 p-1.5 rounded-2xl mb-6 dark:bg-gray-700">
                 <button onclick="switchAuthTab('email')" id="tabEmail" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-white shadow-sm">EMAIL</button>
                 <button onclick="switchAuthTab('phone')" id="tabPhone" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-gray-400">PHONE</button>
             </div>
-
             <div class="space-y-4">
-                <div id="socialAuths" class="grid grid-cols-2 gap-3">
-                    <button onclick="handleSocial('google')" class="bg-white border py-3 rounded-2xl font-bold flex justify-center gap-2 hover:bg-gray-50 shadow-sm dark:bg-gray-700 dark:border-gray-600"><img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5"> Google</button>
-                    <button onclick="handleSocial('facebook')" class="bg-[#1877F2] text-white py-3 rounded-2xl font-bold flex justify-center gap-2 shadow-xl"><i class="fa-brands fa-facebook text-xl"></i> Facebook</button>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="handleSocial('google')" class="bg-white border py-3.5 rounded-2xl font-bold flex justify-center gap-2 shadow-sm dark:bg-gray-700 dark:border-gray-600"><img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6"> Google</button>
+                    <button onclick="handleSocial('facebook')" class="bg-[#1877F2] text-white py-3.5 rounded-2xl font-bold flex justify-center gap-2 shadow-xl"><i class="fa-brands fa-facebook text-xl"></i> Facebook</button>
                 </div>
-
                 <div id="emailBox" class="space-y-3">
                     <input type="email" id="emailInp" placeholder="Email" class="custom-input font-bold dark:bg-gray-700">
                     <input type="password" id="passInp" placeholder="Password" class="custom-input font-bold dark:bg-gray-700">
-                    <div id="loginGroup"><button onclick="emailAuth('login')" class="btn-glow w-full py-4 uppercase">LOG IN</button></div>
-                    <div id="signGroup" class="hidden"><button onclick="emailAuth('sign')" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase">CREATE ACCOUNT</button></div>
+                    <div id="loginGrp"><button onclick="emailAuth('login')" class="btn-glow w-full py-4 uppercase">LOG IN</button></div>
+                    <div id="signGrp" class="hidden"><button onclick="emailAuth('sign')" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase">CREATE ACCOUNT</button></div>
                     <p class="text-center text-xs text-gray-400 font-bold">Mode: <a href="javascript:toggleAuth()" class="text-blue-500 underline">Login / Signup</a></p>
                 </div>
-
                 <div id="phoneBox" class="hidden space-y-4">
                     <div id="recaptcha-container"></div>
                     <input type="tel" id="phoneInp" placeholder="09xxxxxxxx" class="custom-input text-center text-lg font-bold">
@@ -208,7 +202,7 @@
                     </div>
                 </div>
             </div>
-            <button onclick="closeAuthModal()" class="w-full mt-10 text-gray-300 text-[10px] font-black uppercase tracking-widest">Cancel</button>
+            <button onclick="closeAuthModal()" class="w-full mt-8 text-gray-300 text-[10px] font-black uppercase tracking-widest">Cancel</button>
         </div>
     </div>
 
@@ -242,7 +236,7 @@
                 slot.innerHTML = `
                     <div class="flex items-center gap-2 bg-white/10 p-1 pr-3 rounded-full border border-gray-200 dark:bg-gray-800">
                         <img src="${p}" class="w-8 h-8 rounded-full border border-white">
-                        <span class="text-[10px] font-bold max-w-[60px] truncate">${user.displayName || 'Mark'}</span>
+                        <span class="text-[10px] font-bold max-w-[80px] truncate">${user.displayName || 'Mark'}</span>
                         <button onclick="auth.signOut()" class="text-red-400 ml-1"><i class="fa-solid fa-power-off"></i></button>
                     </div>
                 `;
@@ -257,7 +251,7 @@
 
         function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
         function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
-        function toggleAuth() { document.getElementById('loginGroup').classList.toggle('hidden'); document.getElementById('signGroup').classList.toggle('hidden'); }
+        function toggleAuth() { document.getElementById('loginGrp').classList.toggle('hidden'); document.getElementById('signGrp').classList.toggle('hidden'); }
         function switchAuthTab(m) {
             document.getElementById('emailBox').classList.toggle('hidden', m==='phone');
             document.getElementById('phoneBox').classList.toggle('hidden', m==='email');
@@ -285,13 +279,12 @@
 
         // 3. AI LOGIC (v1beta + gemini-1.5-flash)
         async function callGemini(prompt) {
-            const key = localStorage.getItem('mk_final_v11_key') || "";
+            const key = localStorage.getItem('mk_final_v12_key') || "";
             if(!key) throw new Error("Mark ครับ! ลืมใส่ API Key ในหน้าแอดมินหรือเปล่า?");
             
-            const persona = localStorage.getItem('mk_final_v11_persona') || "คุณเป็นติวเตอร์อัจฉริยะ และช่วย Mark ออกแบบ Prompt ด้วย";
-            const body = { contents: [{ parts: [{ text: `[System: ${persona}]\n\n${prompt}` }] }] };
+            const persona = localStorage.getItem('mk_final_v12_persona') || "คุณเป็นครูติวเตอร์ที่เก่งที่สุด และช่วย Mark ออกแบบ Prompt ด้วย";
+            const body = { contents: [{ parts: [{ text: `[Persona: ${persona}]\n\n${prompt}` }] }] };
 
-            // 🛑 FIXED TO v1beta + gemini-1.5-flash 🛑
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
 
             try {
@@ -304,7 +297,7 @@
 
         async function generateWithAI() {
             const t = document.getElementById('aiTopic').value; if(!t) return alert("ระบุเรื่องก่อนครับ");
-            const btn = document.getElementById('aiGenBtn'); btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Thinking...`; btn.disabled = true;
+            const btn = document.getElementById('aiGenBtn'); btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Generating...`; btn.disabled = true;
             try {
                 const res = await callGemini(`สร้างข้อสอบ 5 ข้อ เรื่อง "${t}" รูปแบบโค้ดเท่านั้น: question*(คำถาม) *a(ข้อ1)correct *b(ข้อ2)nope *c(ข้อ3)nope *d(ข้อ4)nope`);
                 document.getElementById('bulkInput').value = res; document.getElementById('saveExamTitle').value = t; switchView('import'); parseRawText();
@@ -318,22 +311,23 @@
             const lid = "l-" + Date.now(); box.innerHTML += `<div id="${lid}" class="flex gap-2 p-2"><div class="dot-flashing"></div></div>`;
             try {
                 const res = await callGemini(msg); document.getElementById(lid).remove();
-                const n = localStorage.getItem('mk_final_v11_name') || "AI Tutor";
-                const i = localStorage.getItem('mk_final_v11_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
-                box.innerHTML += `<div class="flex items-start gap-2 animate__animated animate__fadeInLeft"><img src="${i}" class="w-10 h-10 rounded-2xl border-2 border-white object-cover shadow-sm"><div class="bg-white text-gray-700 p-5 rounded-3xl rounded-tl-none max-w-[85%] text-sm border dark:bg-gray-800 dark:text-gray-200 shadow-sm"><p class="text-[10px] font-black text-blue-500 mb-1 uppercase">${n}</p>${res.replace(/\n/g, '<br>')}</div></div>`;
+                // ❌ ai-img-chat / ai-name-chat ลบออกแล้วตามสั่ง
+                const aiImg = localStorage.getItem('mk_final_v12_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
+                const aiName = localStorage.getItem('mk_final_v12_name') || "AI Tutor";
+                box.innerHTML += `<div class="flex items-start gap-2 animate__animated animate__fadeInLeft"><img src="${aiImg}" class="w-9 h-9 rounded-2xl object-cover shadow-sm"><div class="bg-white text-gray-700 p-5 rounded-3xl rounded-tl-none max-w-[85%] text-sm border dark:bg-gray-800 dark:text-gray-200 shadow-sm"><p class="text-[10px] font-black text-blue-500 mb-1 uppercase">${aiName}</p>${res.replace(/\n/g, '<br>')}</div></div>`;
                 box.scrollTop = box.scrollHeight;
             } catch (e) { document.getElementById(lid).innerText = "❌ ERROR: " + e.message; }
         }
 
         // 4. Content & Database
         function parseRawText() {
-            const raw = document.getElementById('bulkInput').value; const editor = document.getElementById('editorContent'); editor.innerHTML = '';
+            const raw = document.getElementById('bulkInput').value; const container = document.getElementById('editorCards'); container.innerHTML = '';
             const blocks = raw.split('question*(').filter(q => q.trim() !== '');
             blocks.forEach((b, i) => {
                 const pts = b.split(')'); if(pts.length < 2) return;
                 const qT = pts[0].trim(); const re = /\*([a-z0-9ก-ฮ])\((.*?)\)(correct|nope)/gi; let m, oH = '';
                 while((m = re.exec(pts[1])) !== null) oH += `<div class="flex items-center gap-4 p-4 bg-gray-50 border border-gray-100 rounded-2xl dark:bg-gray-700"><input type="radio" name="g_${i}" ${m[3].toLowerCase()==='correct'?'checked':''} class="w-6 h-6 accent-blue-500"><span class="font-black text-gray-400 uppercase w-6 text-center text-sm">${m[1]}.</span><input type="text" value="${m[2]}" class="v-opt flex-1 bg-transparent outline-none font-bold text-sm"></div>`;
-                editor.innerHTML += `<div class="q-item app-card fade-up"><textarea class="v-q-val w-full bg-transparent font-black text-xl border-b border-gray-200 pb-4 outline-none focus:border-blue-500 dark:text-white resize-none h-auto">${qT}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">${oH}</div></div>`;
+                container.innerHTML += `<div class="q-item app-card fade-up"><textarea class="v-q-val w-full bg-transparent font-black text-xl border-b border-gray-200 pb-4 outline-none focus:border-blue-500 dark:text-white resize-none h-auto">${qT}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">${oH}</div></div>`;
             });
             document.getElementById('view-editor').classList.remove('hidden');
             window.scrollTo({ top: document.getElementById('view-editor').offsetTop - 50, behavior: 'smooth' });
@@ -350,14 +344,14 @@
         }
 
         async function fetchExams() {
-            const grid = document.getElementById('examsGrid'); grid.innerHTML = '<div class="col-span-full text-center py-20 opacity-30 animate-pulse">Loading...</div>';
+            const grid = document.getElementById('examsGrid'); grid.innerHTML = '<div class="col-span-full text-center py-20 opacity-30 animate-pulse">Loading Library...</div>';
             try {
                 const snap = await db.collection('exams').orderBy('createdAt','desc').get(); grid.innerHTML = '';
                 snap.forEach(doc => {
                     const x = doc.data(); const isM = userC && x.uid === userC.uid;
                     if(isA || isM || x.visibility === 'public') {
                         const dStr = x.createdAt ? x.createdAt.toDate().toLocaleDateString('th-TH') : '-';
-                        grid.innerHTML += `<div class="app-card border border-gray-100 flex flex-col justify-between hover:scale-[1.03] transition-all relative">${(isA || isM) ? `<button onclick="deleteEx('${doc.id}')" class="absolute top-4 right-4 text-red-100 hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>` : ''}<div><span class="text-[9px] font-black px-4 py-1.5 rounded-full uppercase border ${x.visibility==='public'?'bg-green-100 text-green-600 border-green-200':'bg-gray-100 text-gray-500'}">${x.visibility}</span><h3 class="font-black text-xl mt-4 mb-2 dark:text-white line-clamp-2">${x.title}</h3><p class="text-[10px] text-gray-400 mb-6 font-bold uppercase tracking-widest">By: ${x.owner} • ${dStr}</p></div><button class="w-full py-4 bg-gray-50 border border-gray-200 rounded-2xl text-[10px] font-black uppercase text-gray-500 hover:bg-blue-600 hover:text-white transition-all dark:bg-gray-700">Open Exam (${x.questions.length})</button></div>`;
+                        grid.innerHTML += `<div class="app-card border border-gray-100 flex flex-col justify-between hover:scale-[1.03] transition-all relative">${(isA || isM) ? `<button onclick="deleteEx('${doc.id}')" class="absolute top-4 right-4 text-red-100 hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>` : ''}<div><span class="text-[9px] font-black px-4 py-1.5 rounded-full uppercase border ${x.visibility==='public'?'bg-green-100 text-green-600 border-green-200':'bg-gray-100 text-gray-500'}">${x.visibility}</span><h3 class="font-black text-xl mt-4 mb-2 dark:text-white line-clamp-2">${x.title}</h3><p class="text-[10px] text-gray-400 mb-6 font-bold uppercase tracking-widest">By: ${x.owner} • ${dStr}</p></div><button class="w-full py-4 bg-gray-50 border border-gray-200 rounded-2xl text-[10px] font-black uppercase text-gray-500 hover:bg-blue-600 hover:text-white transition-all dark:bg-gray-700">Open Exam</button></div>`;
                     }
                 });
             } catch (e) { grid.innerHTML = 'Error: ' + e.message; }
@@ -367,7 +361,7 @@
 
         // 5. Interface
         function toggleSidebar() { document.getElementById('sideMenu').classList.toggle('translate-x-full'); }
-        function updateTheme(t) { document.body.classList.remove('theme-blue', 'theme-dark'); if(t !== 'green') document.body.classList.add('theme-' + t); localStorage.setItem('mk_v11_theme', t); }
+        function updateTheme(t) { document.body.classList.remove('theme-blue', 'theme-dark'); if(t !== 'green') document.body.classList.add('theme-' + t); localStorage.setItem('mk_v12_theme', t); }
         function switchView(t) {
             ['db','import','ai','chat'].forEach(x => { document.getElementById('view-'+x).classList.add('hidden'); document.getElementById('btn-'+x).classList.remove('active'); });
             document.getElementById('view-'+t).classList.remove('hidden'); document.getElementById('btn-'+t).classList.add('active');
@@ -375,28 +369,26 @@
         }
 
         function saveAdmin() {
-            localStorage.setItem('mk_final_v11_key', document.getElementById('adm-key').value);
-            localStorage.setItem('mk_final_v11_name', document.getElementById('adm-name').value);
-            localStorage.setItem('mk_final_v11_img', document.getElementById('adm-img').value);
-            localStorage.setItem('mk_final_v11_persona', document.getElementById('adm-persona').value);
+            localStorage.setItem('mk_final_v12_key', document.getElementById('adm-key').value);
+            localStorage.setItem('mk_final_v12_name', document.getElementById('adm-name').value);
+            localStorage.setItem('mk_final_v12_img', document.getElementById('adm-img').value);
+            localStorage.setItem('mk_final_v12_persona', document.getElementById('adm-persona').value);
             initUI(); alert("Admin Mark: Config Saved!");
         }
 
         function initUI() {
-            const n = localStorage.getItem('mk_final_v11_name') || "AI Tutor Pro";
-            const i = localStorage.getItem('mk_final_v11_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
+            const n = localStorage.getItem('mk_final_v12_name') || "AI Tutor Pro";
+            const i = localStorage.getItem('mk_final_v12_img') || "https://ui-avatars.com/api/?name=AI&background=22c55e&color=fff";
             document.getElementById('ai-name-gen').innerText = n;
             document.getElementById('ai-img-gen').src = i;
-            document.getElementById('ai-name-chat').innerText = n;
-            document.getElementById('ai-img-chat').src = i;
+            // ❌ ai-name-chat / ai-img-chat ลบออกแล้วตามสั่ง
             document.getElementById('adm-name').value = n;
             document.getElementById('adm-img').value = i;
-            document.getElementById('adm-key').value = localStorage.getItem('mk_final_v11_key') || "";
-            document.getElementById('adm-persona').value = localStorage.getItem('mk_final_v11_persona') || "";
+            document.getElementById('adm-key').value = localStorage.getItem('mk_final_v12_key') || "";
+            document.getElementById('adm-persona').value = localStorage.getItem('mk_final_v12_persona') || "";
         }
 
-        window.onload = function() { if(localStorage.getItem('mk_v11_theme')) updateTheme(localStorage.getItem('mk_v11_theme')); initUI(); switchView('db'); };
+        window.onload = function() { if(localStorage.getItem('mk_v12_theme')) updateTheme(localStorage.getItem('mk_v12_theme')); initUI(); switchView('db'); };
     </script>
 </body>
 </html>
-
