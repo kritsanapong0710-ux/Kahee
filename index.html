@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizBuilder PRO - v21 Smooth Twin</title>
+    <title>QuizBuilder PRO - v22 Hardened</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -16,23 +16,22 @@
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 
     <style>
-        /* 🎨 Theme System (No primary classes) */
-        :root { --accent: #10b981; --bg-site: #f8fafc; --text-main: #1e293b; --card-bg: #ffffff; --input-bg: #f1f5f9; }
-        body.theme-blue { --accent: #3b82f6; --bg-site: #020617; --text-main: #ffffff; --card-bg: #0f172a; --input-bg: #1e293b; }
-        body.theme-dark { --accent: #ffffff; --bg-site: #000000; --text-main: #f8fafc; --card-bg: #111827; --input-bg: #1f2937; }
+        /* 🎨 Digital Twin Theme System */
+        :root { --accent: #10b981; --bg-site: #f8fafc; --text-main: #1e293b; --card-bg: #ffffff; --input-bg: #f1f5f9; --btn-text: #ffffff; }
+        body.theme-blue { --accent: #3b82f6; --bg-site: #020617; --text-main: #ffffff; --card-bg: #0f172a; --input-bg: #1e293b; --btn-text: #ffffff; }
+        body.theme-dark { --accent: #ffffff; --bg-site: #000000; --text-main: #f8fafc; --card-bg: #111827; --input-bg: #1f2937; --btn-text: #000000; }
 
         body { font-family: 'Kanit', sans-serif; background-color: var(--bg-site); color: var(--text-main); transition: 0.4s; overflow-x: hidden; }
         .app-card { background-color: var(--card-bg); border-radius: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.15); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05); }
-        .btn-glow { background-color: var(--accent); color: #fff; border-radius: 1.1rem; font-weight: 700; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; }
-        body.theme-dark .btn-glow { color: #000 !important; }
+        
+        .btn-glow { background-color: var(--accent); color: var(--btn-text); border-radius: 1.1rem; font-weight: 700; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; }
         .btn-glow:hover:not(:disabled) { filter: brightness(115%); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .btn-glow:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-glow:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .tab-bar { display: flex; overflow-x: auto; gap: 10px; padding: 10px; scrollbar-width: none; background: rgba(148, 163, 184, 0.1); border-radius: 1.5rem; }
         .tab-bar::-webkit-scrollbar { display: none; }
         .tab-item { flex: 0 0 auto; padding: 12px 20px; border-radius: 1.1rem; font-weight: 700; font-size: 0.85rem; color: #94a3b8; transition: 0.3s; }
-        .tab-item.active { background-color: var(--accent); color: white !important; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        body.theme-dark .tab-item.active { color: #000 !important; }
+        .tab-item.active { background-color: var(--accent); color: var(--btn-text) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
         .custom-input { background-color: var(--input-bg); border: 2px solid transparent; border-radius: 1.1rem; padding: 14px 18px; width: 100%; outline: none; color: inherit; transition: 0.3s; }
         .custom-input:focus { border-color: var(--accent); background-color: var(--card-bg); }
@@ -41,10 +40,10 @@
         .answer-wrong { background-color: #ef4444 !important; color: white !important; }
         #timer-bar { transition: width 0.1s linear; }
 
-        .dot-flashing { position: relative; width: 6px; height: 6px; border-radius: 5px; background-color: #fff; animation: dot-flashing 1s infinite linear alternate; }
-        @keyframes dot-flashing { 0% { opacity: 1; } 50%, 100% { opacity: 0.2; } }
+        .dot-flashing { position: relative; width: 6px; height: 6px; border-radius: 5px; background-color: currentColor; animation: dot-flashing 1s infinite linear alternate; }
+        @keyframes dot-flashing { 0% { opacity: 1; } 100% { opacity: 0.2; } }
 
-        @media (max-width: 640px) { .app-card { border-radius: 1.5rem; } .btn-glow { width: 100%; min-height: 52px; } }
+        @media (max-width: 640px) { .app-card { border-radius: 1.5rem; } .btn-glow { min-height: 52px; width: 100%; } }
     </style>
 </head>
 <body class="min-h-screen">
@@ -52,7 +51,7 @@
     <nav class="sticky top-0 z-[60] bg-white/70 backdrop-blur-xl border-b border-gray-100 px-4 py-4 md:px-10 dark:bg-gray-900/80 dark:border-gray-800">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div style="background-color: var(--accent);" class="w-10 h-10 flex items-center justify-center rounded-xl text-white shadow-lg"><i class="fa-solid fa-brain"></i></div>
+                <div style="background-color: var(--accent);" class="w-11 h-11 flex items-center justify-center rounded-2xl text-white shadow-lg"><i class="fa-solid fa-graduation-cap"></i></div>
                 <h1 class="text-xl md:text-2xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">PRO</span></h1>
             </div>
             <div id="navAuthSlot"></div>
@@ -62,17 +61,20 @@
     <main class="max-w-6xl mx-auto px-4 md:px-8 mt-6">
         <div class="tab-bar mb-8 dark:bg-gray-800">
             <button onclick="switchView('db')" id="btn-db" class="tab-item active">Library</button>
-            <button onclick="switchView('rank')" id="btn-rank" class="tab-item">Top Score</button>
+            <button onclick="switchView('rank')" id="btn-rank" class="tab-item">Rankings</button>
             <button onclick="switchView('ai')" id="btn-ai" class="tab-item">AI Mark</button>
             <button onclick="switchView('chat')" id="btn-chat" class="tab-item">Chat</button>
         </div>
 
         <div id="view-db" class="animate__animated animate__fadeIn">
-            <div id="examsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="examsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            <div id="loadMoreArea" class="mt-10 flex justify-center hidden">
+                <button onclick="fetchExamsFromCloud(false)" class="btn-glow px-10 py-3 text-xs uppercase">Load More</button>
+            </div>
         </div>
 
         <div id="view-rank" class="hidden animate__animated animate__fadeIn">
-            <h2 class="text-2xl font-bold italic mb-6 uppercase tracking-widest">Global Rankings</h2>
+            <h2 class="text-2xl font-black italic mb-6">GLOBAL TOP PLAYERS</h2>
             <div id="rankingsArea" class="space-y-4"></div>
         </div>
 
@@ -80,7 +82,7 @@
             <img id="ai-img-gen" src="" class="w-24 h-24 rounded-3xl mx-auto mb-6 shadow-2xl border-4 border-white object-cover">
             <h2 id="ai-name-gen" class="text-3xl font-black mb-8">AI Digital Twin</h2>
             <div class="max-w-md mx-auto space-y-4">
-                <input type="text" id="aiTopic" placeholder="ระบุหัวข้อที่จะออกสอบ..." class="custom-input text-center font-bold">
+                <input type="text" id="aiTopic" placeholder="ระบุหัวข้อที่จะสอบ..." class="custom-input text-center font-bold">
                 <button onclick="triggerAIGeneration()" id="aiGenBtn" class="btn-glow w-full py-5 text-lg shadow-xl">สร้างข้อสอบทันที</button>
             </div>
         </div>
@@ -90,17 +92,17 @@
             <div class="p-3 border-t dark:border-gray-700">
                 <div class="flex gap-2">
                     <input type="text" id="chatIn" class="custom-input flex-1" placeholder="คุยกับ AI Mark..." onkeypress="if(event.key=='Enter')sendChatToAI()">
-                    <button onclick="sendChatToAI()" id="btnChatSend" class="btn-glow w-14 h-14 shadow-lg"><i class="fa-solid fa-paper-plane"></i></button>
+                    <button onclick="sendChatToAI()" id="btnChatSend" class="btn-glow w-14 h-14 shadow-lg"><i class="fa-solid fa-paper-plane text-xl"></i></button>
                 </div>
             </div>
         </div>
 
         <div id="view-editor" class="hidden mt-8 space-y-6 pb-40">
             <div id="editorCards" class="space-y-6"></div>
-            <div class="fixed bottom-6 left-4 right-4 max-w-3xl mx-auto bg-white/90 backdrop-blur-lg p-5 rounded-3xl shadow-2xl border flex gap-3 z-40 dark:bg-gray-800">
+            <div class="fixed bottom-6 left-4 right-4 max-w-3xl mx-auto bg-white/90 backdrop-blur-lg p-5 rounded-3xl shadow-2xl border flex gap-3 z-40 dark:bg-gray-800/90">
                 <select id="examVisibility" class="custom-input w-32 font-bold text-xs"><option value="public">PUBLIC</option><option value="private">PRIVATE</option></select>
-                <input type="text" id="saveExamTitle" placeholder="ชื่อวิชา" class="custom-input flex-1 font-bold text-center">
-                <button onclick="saveExamToCloud()" id="btnSaveExam" class="btn-glow px-10 py-4 uppercase">SAVE</button>
+                <input type="text" id="saveExamTitle" placeholder="ชื่อชุดข้อสอบ" class="custom-input flex-1 font-bold text-center">
+                <button onclick="saveExamToCloud()" id="btnSaveExam" class="btn-glow px-10 py-4 uppercase font-black">SAVE</button>
             </div>
         </div>
     </main>
@@ -123,49 +125,47 @@
             <div>
                 <label class="text-[10px] font-black opacity-30 uppercase block mb-4">Themes</label>
                 <div class="flex gap-4">
-                    <button onclick="updateTheme('green')" class="w-10 h-10 rounded-xl bg-green-500 border-2 border-white shadow-lg"></button>
-                    <button onclick="updateTheme('blue')" class="w-10 h-10 rounded-xl bg-blue-600 border-2 border-white shadow-lg"></button>
-                    <button onclick="updateTheme('dark')" class="w-10 h-10 rounded-xl bg-black border-2 border-white shadow-lg"></button>
+                    <button onclick="updateTheme('green')" class="w-11 h-11 rounded-2xl bg-[#10b981] border-2 border-white shadow-lg"></button>
+                    <button onclick="updateTheme('blue')" class="w-11 h-11 rounded-2xl bg-[#3b82f6] border-2 border-white shadow-lg"></button>
+                    <button onclick="updateTheme('dark')" class="w-11 h-11 rounded-2xl bg-black border-2 border-white shadow-lg"></button>
                 </div>
             </div>
             <div id="adminPanel" class="hidden space-y-4 pt-8 border-t">
-                <h4 class="font-black text-red-500 uppercase text-[10px]">Admin config</h4>
-                <input type="password" id="adm-key" placeholder="Gemini API Key" class="custom-input text-xs">
+                <h4 class="font-black text-red-500 uppercase text-[10px]">Admin Intelligence</h4>
+                <input type="password" id="adm-key" placeholder="API Key" class="custom-input text-xs">
                 <input type="text" id="adm-name" placeholder="AI Name" class="custom-input text-xs">
                 <input type="file" id="adm-file-input" onchange="handleImgUpload(this)" class="text-xs block w-full">
-                <textarea id="adm-persona" placeholder="Persona..." class="custom-input text-xs h-32"></textarea>
-                <button onclick="saveAdmin()" class="btn-glow w-full py-4 text-xs font-black">SAVE & REBOOT</button>
+                <textarea id="adm-persona" placeholder="Digital Twin Personality..." class="custom-input text-xs h-32 bg-white"></textarea>
+                <button onclick="saveAdmin()" class="btn-glow w-full py-4 text-xs font-black uppercase">Save Twin</button>
             </div>
         </div>
     </div>
 
-    <div id="authModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4">
+    <div id="authModal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-4">
         <div class="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-sm dark:bg-gray-800">
-            <h2 class="text-2xl font-black text-center mb-8">LOGIN</h2>
+            <h2 class="text-2xl font-black text-center mb-8 italic">LOGIN</h2>
             <div class="space-y-4">
-                <button onclick="handleSocial()" class="w-full bg-gray-50 p-4 rounded-2xl font-bold flex justify-center gap-3 border dark:bg-gray-700 hover:bg-gray-100 transition-all"><img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6"> Google</button>
+                <button onclick="handleSocial()" class="w-full bg-gray-50 p-4 rounded-2xl font-bold flex justify-center gap-3 border dark:bg-gray-700">Google Login</button>
                 <input type="email" id="emailInp" placeholder="Email" class="custom-input font-bold">
                 <input type="password" id="passInp" placeholder="Password" class="custom-input font-bold">
-                <button onclick="emailAuth()" class="btn-glow w-full py-5 uppercase shadow-xl font-black">Sign In</button>
+                <button onclick="emailAuth()" class="btn-glow w-full py-5 uppercase shadow-xl font-black">Go</button>
             </div>
             <button onclick="closeAuthModal()" class="w-full mt-8 text-[10px] font-bold opacity-20 uppercase">Cancel</button>
         </div>
     </div>
 
     <script>
-        // 1. Core State
         const firebaseConfig = { apiKey: "AIzaSyA0-4a5zxaPZZejG955NgNUVM23YXNV2Gc", authDomain: "the-web-for-test.firebaseapp.com", projectId: "the-web-for-test", storageBucket: "the-web-for-test.firebasestorage.app", messagingSenderId: "198176720357", appId: "1:198176720357:web:64d613b64edbfb15dc9b0c" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(), auth = firebase.auth();
         const ADMIN_E = "Kritsanapong0710@gmail.com";
 
-        let userC = null, isA = false, aiAvatarBase64 = "", lastCall = 0;
+        let userC = null, isA = false, aiAvatarBase64 = "", lastDoc = null, lastCall = 0;
         let currentPlayingExam = null, currentQuestionIndex = 0, currentScore = 0, timerInterval = null, answered = false;
 
         function escapeHTML(str){ return str ? str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) : ""; }
         function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
-        // 2. Auth Status
         auth.onAuthStateChanged(user => {
             userC = user;
             const slot = document.getElementById('navAuthSlot');
@@ -175,7 +175,7 @@
                 if(isA) document.getElementById('adminPanel').classList.remove('hidden');
                 closeAuthModal(); fetchExamsFromCloud(true);
             } else {
-                slot.innerHTML = `<button onclick="openAuthModal()" class="btn-glow px-6 py-2 text-[10px] uppercase shadow-lg">Login</button>`;
+                slot.innerHTML = `<button onclick="openAuthModal()" class="btn-glow px-6 py-2 text-[10px] uppercase">Login</button>`;
                 document.getElementById('adminPanel').classList.add('hidden');
                 fetchExamsFromCloud(true);
             }
@@ -191,96 +191,98 @@
         function handleImgUpload(i) { if (i.files && i.files[0]) { const r = new FileReader(); r.onload = e => aiAvatarBase64 = e.target.result; r.readAsDataURL(i.files[0]); } }
 
         // ==========================================
-        // 🤖 AI ENGINE (v21 Fixed Timer & JSON)
+        // 🤖 AI ENGINE (v22 Hardened Logic)
         // ==========================================
         async function callGemini(promptText) {
-            // 🛡️ Fix 6: Throttling 1000ms
-            if (Date.now() - lastCall < 1000) return "AI กำลังพักผ่อนครู่หนึ่ง...";
+            // 🛡️ Fix 4: Enhanced Spam Check (Enter + Button)
+            if (Date.now() - lastCall < 1000) return "AI is resting...";
             lastCall = Date.now();
             
-            const key = localStorage.getItem('mk_v21_key') || "";
-            if(!key) throw new Error("กรุณาใส่ API Key ในหน้า Settings แอดมิน");
+            const key = localStorage.getItem('mk_v22_key') || "";
+            if(!key) throw new Error("Add API Key in Admin Settings");
             
-            const persona = localStorage.getItem('mk_v21_persona') || "คุณคือ AI-Mark ตอบตรงไปตรงมา พลาดบอกพลาด ถ้าถามว่าสวยไหมให้ตอบว่าสำหรับคุณไม่แต่คนอื่นอาจมองต่าง";
-            const reqBody = { contents: [{ parts: [{ text: `[System Personality: ${persona}]\n\nQuestion: ${promptText}` }] }] };
+            const persona = localStorage.getItem('mk_v22_persona') || "คุณคือ AI-Mark ตอบตรงไปตรงมา พลาดบอกพลาด ถ้าถามว่าสวยไหมให้ตอบว่าสำหรับคุณไม่แต่คนอื่นอาจมองต่าง";
+            const reqBody = { contents: [{ parts: [{ text: `[System Instructions: ${persona}]\n\nQuestion: ${promptText}` }] }] };
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
+            const urls = [
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`
+            ];
 
-            try {
-                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
-                const data = await res.json();
-                if (data.candidates && data.candidates[0].content) return data.candidates[0].content.parts[0].text;
-                throw new Error("AI Endpoint Error");
-            } catch (e) { 
-                const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`;
-                const fRes = await fetch(fallbackUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
-                const fData = await fRes.json();
-                return fData.candidates[0].content.parts[0].text;
+            for (let url of urls) {
+                try {
+                    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
+                    const data = await res.json();
+                    if (data.candidates && data.candidates[0]?.content) {
+                        return data.candidates[0].content.parts[0].text;
+                    }
+                } catch (e) { console.warn("Trying fallback..."); }
             }
+            // 🛡️ Fix 3: Fallback Crash Prevention
+            throw new Error("AI Offline or Invalid API Key.");
         }
 
         async function triggerAIGeneration() {
-            const t = document.getElementById('aiTopic').value; if(!t) return alert("ระบุหัวข้อ!");
-            const btn = document.getElementById('aiGenBtn'); btn.disabled = true; 
-            btn.innerHTML = "<div class='dot-flashing'></div>"; // 🛡️ Fix 8: Loading UI
-            
+            const topic = document.getElementById('aiTopic').value; if(!topic) return alert("ระบุวิชาด้วย!");
+            const btn = document.getElementById('aiGenBtn'); btn.disabled = true; btn.innerHTML = "<div class='dot-flashing'></div>";
             try {
-                const prompt = `จงสร้างข้อสอบ 5 ข้อ เรื่อง "${t}" ในรูปแบบ JSON ARRAY เท่านั้น ห้ามพิมพ์คำอธิบายอื่น รูปแบบ: [{"q":"โจทย์","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
+                const prompt = `จงสร้างข้อสอบ 5 ข้อ เรื่อง "${topic}" ในรูปแบบ JSON ARRAY เท่านั้น ห้ามพิมพ์คำอธิบายอื่น รูปแบบ: [{"q":"โจทย์","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
                 const res = await callGemini(prompt);
                 const cleanJson = res.replace(/```json/g, "").replace(/```/g, "").trim();
                 
-                // 🛡️ Fix 2: JSON Guard
+                // 🛡️ Fix 5: Robust JSON Validation
                 let quizData;
                 try {
                     quizData = JSON.parse(cleanJson);
-                    if(!Array.isArray(quizData)) throw new Error();
+                    if (!Array.isArray(quizData) || !quizData[0]?.options || quizData[0].options.length < 2) throw new Error();
                 } catch {
-                    alert("AI ตอบมั่วหรือ Format พัง กรุณาลองใหม่อีกครั้ง");
+                    alert("AI ตอบ Format พัง หรือข้อสอบไม่สมบูรณ์ กรุณาลองใหม่อีกครั้ง");
                     return;
                 }
-
-                renderEditorFromJSON(quizData, t);
+                renderEditorFromJSON(quizData, topic);
             } catch (e) { alert("Error: " + e.message); } finally { btn.disabled = false; btn.innerHTML = "สร้างข้อสอบทันที"; }
         }
 
         async function sendChatToAI() {
             const inp = document.getElementById('chatIn'), box = document.getElementById('chatArea'), btn = document.getElementById('btnChatSend');
-            // 🛡️ Fix 3: Spam click chat
-            if(!inp.value || btn.disabled) return; 
+            if(!inp.value || btn.disabled || Date.now() - lastCall < 1000) return; // 🛡️ Fix 4
             const msg = inp.value; inp.value = ''; btn.disabled = true;
             
-            box.innerHTML += `<div class="flex justify-end animate__animated animate__fadeInRight"><div style="background-color:var(--accent); color:(var(--accent)=='#ffffff'?'#000':'#fff')" class="p-4 rounded-3xl rounded-tr-none text-sm shadow-lg">${escapeHTML(msg)}</div></div>`;
+            box.innerHTML += `<div class="flex justify-end animate__animated animate__fadeInRight"><div style="background-color:var(--accent); color:var(--btn-text)" class="p-4 rounded-3xl rounded-tr-none text-sm shadow-lg">${escapeHTML(msg)}</div></div>`;
             box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
 
             try {
                 const res = await callGemini(msg);
-                const aiName = localStorage.getItem('mk_v21_name') || "AI Mark";
-                const aiImg = localStorage.getItem('mk_v21_img') || "https://ui-avatars.com/api/?name=AI";
-                box.innerHTML += `<div class="flex items-start gap-3 animate__animated animate__fadeInLeft"><img src="${aiImg}" class="w-10 h-10 rounded-2xl object-cover border-2 border-white shadow-sm"><div class="bg-white text-gray-700 p-5 rounded-3xl rounded-tl-none text-sm border shadow-sm dark:bg-gray-800 dark:text-gray-200"><p class="text-[9px] font-bold text-blue-500 mb-2">${aiName}</p>${escapeHTML(res).replace(/\n/g, '<br>')}</div></div>`;
+                const aiName = localStorage.getItem('mk_v22_name') || "AI Mark";
+                const aiImg = localStorage.getItem('mk_v22_img') || "https://ui-avatars.com/api/?name=Mark";
+                box.innerHTML += `<div class="flex items-start gap-3 animate__animated animate__fadeInLeft"><img src="${aiImg}" class="w-10 h-10 rounded-2xl object-cover border-2 border-white shadow-sm"><div class="bg-white text-gray-700 p-5 rounded-3xl rounded-tl-none text-sm border shadow-sm dark:bg-gray-800 dark:text-gray-200"><p class="text-[9px] font-bold text-blue-500 mb-2 uppercase tracking-tighter">${aiName}</p>${escapeHTML(res).replace(/\n/g, '<br>')}</div></div>`;
                 box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
             } catch(e) { alert(e.message); } finally { btn.disabled = false; }
         }
 
         // ==========================================
-        // 🎮 QUIZ PLAYER (Fixed Timer & Spam)
+        // 🎮 QUIZ ENGINE (Fixed Timer & Spam)
         // ==========================================
         async function openQuizById(id, btnEl) {
-            // 🛡️ Fix 5: Button Spam click
-            if(btnEl.disabled) return;
+            if(btnEl.disabled || currentPlayingExam) return; // 🛡️ Fix 7: Global Lock
             btnEl.disabled = true;
+            const area = document.getElementById('quizPlayArea');
+            area.innerHTML = "<div class='text-white animate-pulse font-bold'>SYNCHRONIZING...</div>"; // 🛡️ Fix UX
+
             try {
                 const doc = await db.collection('exams').doc(id).get();
+                if(!doc.exists) throw new Error("Quiz Deleted");
                 currentPlayingExam = { ...doc.data(), id: id };
                 currentPlayingExam.questions = shuffle([...currentPlayingExam.questions]);
                 currentQuestionIndex = 0; currentScore = 0;
                 document.getElementById('quizPlayTitle').innerText = currentPlayingExam.title;
                 document.getElementById('quizPlayerModal').classList.remove('hidden');
                 renderCurrentQuestion();
-            } catch (e) { alert("Error"); } finally { btnEl.disabled = false; }
+            } catch (e) { alert(e.message); area.innerHTML = ""; } finally { btnEl.disabled = false; }
         }
 
         function renderCurrentQuestion() {
-            answered = false; // 🛡️ Fix 3: Reset answered flag
+            answered = false;
             const area = document.getElementById('quizPlayArea');
             const q = currentPlayingExam.questions[currentQuestionIndex];
             if(!q) { finishQuiz(); return; }
@@ -288,10 +290,10 @@
             startTimer();
             area.innerHTML = `
                 <div class="animate__animated animate__fadeInRight text-center w-full">
-                    <p class="text-white/20 text-[10px] font-bold mb-6 uppercase tracking-widest">Question ${currentQuestionIndex+1} / ${currentPlayingExam.questions.length}</p>
+                    <p class="text-white/20 text-[10px] font-bold mb-6 uppercase tracking-[0.4em]">Step ${currentQuestionIndex+1} / ${currentPlayingExam.questions.length}</p>
                     <h2 class="text-3xl text-white font-black mb-16 leading-tight">${escapeHTML(q.q)}</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        ${shuffledOptions.map((opt) => `<button onclick="checkAnswer(${opt.isCorrect}, this)" data-correct="${opt.isCorrect}" class="quiz-btn w-full p-6 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all text-left flex justify-between"><span>${escapeHTML(opt.text)}</span><i class="fa-solid fa-bolt-lightning opacity-10"></i></button>`).join('')}
+                        ${shuffledOptions.map((opt) => `<button onclick="checkAnswer(${opt.isCorrect}, this)" data-correct="${opt.isCorrect}" class="quiz-btn w-full p-6 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all text-left flex justify-between"><span>${escapeHTML(opt.text)}</span><i class="fa-solid fa-bolt opacity-10"></i></button>`).join('')}
                     </div>
                 </div>
             `;
@@ -300,32 +302,23 @@
         function startTimer() {
             clearInterval(timerInterval);
             const bar = document.getElementById('timer-bar');
-            let msLeft = 1500; // 15 seconds
+            let msLeft = 15000; // 🛡️ Fix 1: 15 Seconds
             timerInterval = setInterval(() => {
-                msLeft -= 10;
-                // 🛡️ Fix 1: Precise Timer Bar
-                bar.style.width = (msLeft / 1500 * 100) + "%";
+                msLeft -= 100; // 🛡️ Fix 2: Real Sync
+                bar.style.width = (msLeft / 15000 * 100) + "%"; // 🛡️ Fix 2
                 if(msLeft <= 0) { clearInterval(timerInterval); checkAnswer(false, null); }
             }, 100);
         }
 
         function checkAnswer(isCorrect, btn) {
-            if(answered) return; 
-            answered = true; 
-            clearInterval(timerInterval);
-            
-            const allBtns = document.querySelectorAll('.quiz-btn');
+            if(answered) return; answered = true; clearInterval(timerInterval);
+            const all = document.querySelectorAll('.quiz-btn');
             if(btn) {
-                if(isCorrect) { 
-                    currentScore += 10; 
-                    btn.classList.add('answer-correct'); 
-                    confetti({ particleCount: 20 }); 
-                } else { 
-                    btn.classList.add('answer-wrong'); 
-                    allBtns.forEach(b => { if(b.dataset.correct === "true") b.classList.add('answer-correct'); });
-                }
+                if(isCorrect) { currentScore += 10; btn.classList.add('answer-correct'); confetti({ particleCount: 20 }); }
+                else { btn.classList.add('answer-wrong'); all.forEach(b => { if(b.dataset.correct === "true") b.classList.add('answer-correct'); }); }
             } else { 
-                allBtns.forEach(b => { if(b.dataset.correct === "true") b.classList.add('answer-correct'); });
+                // Timeout case 🛡️ Fix 3
+                all.forEach(b => { if(b.dataset.correct === "true") b.classList.add('answer-correct'); }); 
             }
             document.getElementById('scoreCounter').innerText = `SCORE: ${currentScore}`;
             setTimeout(() => { currentQuestionIndex++; renderCurrentQuestion(); }, 1200);
@@ -333,24 +326,19 @@
 
         async function finishQuiz() {
             const area = document.getElementById('quizPlayArea');
-            // 🛡️ Fix 7: User check and crash protection
+            const maxScore = currentPlayingExam.questions.length * 10;
+            if(currentScore > maxScore) currentScore = maxScore;
+
             if(userC) {
                 try {
-                    await db.collection('scores').add({ 
-                        uid: userC.uid, 
-                        username: userC.email.split('@')[0], 
-                        examId: currentPlayingExam.id, 
-                        examTitle: currentPlayingExam.title, 
-                        score: currentScore, 
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp() 
-                    });
-                } catch { console.log("Score saving failed silently."); }
+                    await db.collection('scores').add({ uid: userC.uid, username: userC.email.split('@')[0], examId: currentPlayingExam.id, examTitle: currentPlayingExam.title, score: currentScore, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+                } catch { console.warn("Score failed to save."); }
             }
-            confetti({ particleCount: 200 });
-            area.innerHTML = `<div class="text-center animate__animated animate__zoomIn"><h2 class="text-5xl text-white font-black mb-4 uppercase">Complete!</h2><p class="text-white/40 mb-10 text-xl uppercase tracking-widest">Final Score: ${currentScore}</p><button onclick="closeQuizPlayer()" class="btn-glow px-12 py-5 mx-auto text-xs uppercase">Library</button></div>`;
+            confetti({ particleCount: 200, origin: {y: 0.6} });
+            area.innerHTML = `<div class="text-center animate__animated animate__zoomIn"><h2 class="text-5xl text-white font-black mb-4 italic">FINISHED!</h2><p class="text-white/40 mb-10 text-xl uppercase tracking-widest font-bold">Total Score: ${currentScore}</p><button onclick="closeQuizPlayer()" class="btn-glow px-12 py-5 mx-auto text-xs uppercase font-black">Library</button></div>`;
         }
 
-        function closeQuizPlayer() { clearInterval(timerInterval); document.getElementById('quizPlayerModal').classList.add('hidden'); }
+        function closeQuizPlayer() { clearInterval(timerInterval); document.getElementById('quizPlayerModal').classList.add('hidden'); currentPlayingExam = null; }
 
         // ==========================================
         // 📊 LIBRARY & RANK
@@ -363,20 +351,20 @@
                 snap.forEach(doc => {
                     const x = doc.data();
                     if(x.visibility === 'public' || isA || (userC && x.uid === userC.uid)) {
-                        grid.innerHTML += `<div class="app-card border border-gray-100 flex flex-col justify-between hover:scale-[1.02] transition-all relative">${(isA || (userC && x.uid === userC.uid)) ? `<button onclick="deleteEx('${doc.id}')" class="absolute top-5 right-5 text-red-200"><i class="fa-solid fa-trash"></i></button>` : ''}<div><span style="color:var(--accent)" class="text-[9px] font-black uppercase border border-gray-100 px-3 py-1 rounded-full mb-4 inline-block tracking-widest">${x.visibility}</span><h3 class="font-black text-xl mb-8 dark:text-white leading-tight">${escapeHTML(x.title)}</h3></div><button onclick="openQuizById('${doc.id}', this)" class="w-full py-4 bg-gray-50 border border-gray-200 rounded-2xl text-[10px] font-black uppercase text-gray-500 hover:bg-blue-600 hover:text-white transition-all dark:bg-gray-700">Open Exam</button></div>`;
+                        grid.innerHTML += `<div class="app-card border border-gray-100 flex flex-col justify-between hover:scale-[1.02] transition-all relative">${(isA || (userC && x.uid === userC.uid)) ? `<button onclick="deleteEx('${doc.id}')" class="absolute top-5 right-5 text-red-100"><i class="fa-solid fa-trash-can"></i></button>` : ''}<div><span style="color:var(--accent)" class="text-[9px] font-black uppercase border border-gray-100 px-3 py-1 rounded-full mb-4 inline-block">${x.visibility}</span><h3 class="font-black text-xl mb-8 dark:text-white">${escapeHTML(x.title)}</h3></div><button onclick="openQuizById('${doc.id}', this)" class="w-full py-4 bg-gray-50 border border-gray-200 rounded-2xl text-[10px] font-black uppercase text-gray-500 hover:bg-blue-600 hover:text-white transition-all dark:bg-gray-700">Open Exam</button></div>`;
                     }
                 });
-            } catch (e) { grid.innerHTML = 'Firestore Error'; }
+            } catch (e) { grid.innerHTML = 'Fetch Error. <button onclick="fetchExamsFromCloud(true)">Retry</button>'; }
         }
 
         async function fetchRankings() {
-            const area = document.getElementById('rankingsArea'); area.innerHTML = 'Loading...';
+            const area = document.getElementById('rankingsArea'); area.innerHTML = 'Loading Rankings...';
             try {
                 const snap = await db.collection('scores').orderBy('score','desc').limit(10).get(); area.innerHTML = '';
                 let rank = 1;
                 snap.forEach(doc => {
                     const s = doc.data();
-                    area.innerHTML += `<div class="app-card flex items-center justify-between mb-3 hover:scale-[1.01] transition-all"><div class="flex items-center gap-4"><span class="text-2xl font-black italic opacity-20">#${rank++}</span><div><h4 class="font-black uppercase">${s.username}</h4><p class="text-[9px] opacity-40">${s.examTitle}</p></div></div><span style="color:var(--accent)" class="text-2xl font-black">${s.score}</span></div>`;
+                    area.innerHTML += `<div class="app-card flex items-center justify-between mb-3 hover:scale-[1.01] transition-all"><div class="flex items-center gap-4"><span class="text-2xl font-black italic opacity-20 w-8">#${rank++}</span><div><h4 class="font-black uppercase">${s.username}</h4><p class="text-[9px] opacity-40 uppercase font-bold">${s.examTitle}</p></div></div><span style="color:var(--accent)" class="text-2xl font-black">${s.score}</span></div>`;
                 });
             } catch (e) { area.innerHTML = 'Rankings Offline.'; }
         }
@@ -391,8 +379,9 @@
         }
 
         async function saveExamToCloud() {
-            const btn = document.getElementById('btnSaveExam'); if(btn.disabled) return; btn.disabled = true;
-            const data = { title: document.getElementById('saveExamTitle').value || "New Exam", uid: userC.uid, owner: userC.email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), visibility: document.getElementById('examVisibility').value, questions: [] };
+            if(!userC) return alert("กรุณาล็อกอินก่อนครับ!"); // 🛡️ Fix 6
+            const btn = document.getElementById('btnSaveExam'); btn.disabled = true;
+            const data = { title: document.getElementById('saveExamTitle').value || "Unnamed", uid: userC.uid, owner: userC.email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), visibility: document.getElementById('examVisibility').value, questions: [] };
             document.querySelectorAll('.q-item').forEach(c => {
                 const opts = []; c.querySelectorAll('.flex.items-center').forEach(r => opts.push({ text: r.querySelector('.v-opt-val').value, isCorrect: r.querySelector('input[type="radio"]').checked }));
                 data.questions.push({ q: c.querySelector('.v-q-val').value, options: opts });
@@ -400,9 +389,9 @@
             try { await db.collection('exams').add(data); confetti({ particleCount: 200 }); switchView('db'); } catch (e) { alert("Save Error"); } finally { btn.disabled = false; }
         }
 
-        async function deleteEx(id) { if(confirm("Delete Permanently?")) { await db.collection('exams').doc(id).delete(); fetchExamsFromCloud(true); } }
+        async function deleteEx(id) { if(confirm("Delete permanently?")) { await db.collection('exams').doc(id).delete(); fetchExamsFromCloud(true); } }
         function toggleSidebar() { document.getElementById('sideMenu').classList.toggle('translate-x-full'); }
-        function updateTheme(t) { document.body.classList.remove('theme-blue', 'theme-dark'); if(t !== 'green') document.body.classList.add('theme-' + t); localStorage.setItem('mk_v21_theme', t); }
+        function updateTheme(t) { document.body.classList.remove('theme-blue', 'theme-dark'); if(t !== 'green') document.body.classList.add('theme-' + t); localStorage.setItem('mk_v22_theme', t); }
         
         function switchView(target) {
             ['db','ai','chat','editor','rank'].forEach(x => document.getElementById('view-'+x).classList.add('hidden'));
@@ -414,24 +403,24 @@
         }
 
         function saveAdmin() {
-            localStorage.setItem('mk_v21_key', document.getElementById('adm-key').value);
-            localStorage.setItem('mk_v21_name', document.getElementById('adm-name').value);
-            localStorage.setItem('mk_v21_persona', document.getElementById('adm-persona').value);
-            if(aiAvatarBase64) localStorage.setItem('mk_v21_img', aiAvatarBase64);
-            initUI(); alert("v21 Digital Twin Synced!");
+            localStorage.setItem('mk_v22_key', document.getElementById('adm-key').value);
+            localStorage.setItem('mk_v22_name', document.getElementById('adm-name').value);
+            localStorage.setItem('mk_v22_persona', document.getElementById('adm-persona').value);
+            if(aiAvatarBase64) localStorage.setItem('mk_v22_img', aiAvatarBase64);
+            initUI(); alert("v22 Digital Twin System Restored!");
         }
 
         function initUI() {
-            const n = localStorage.getItem('mk_v21_name') || "AI Mark";
-            const i = localStorage.getItem('mk_v21_img') || "https://ui-avatars.com/api/?name=Mark";
+            const n = localStorage.getItem('mk_v22_name') || "AI Mark";
+            const i = localStorage.getItem('mk_v22_img') || "https://ui-avatars.com/api/?name=Mark";
             document.getElementById('ai-name-gen').innerText = n;
             document.getElementById('ai-img-gen').src = i;
             document.getElementById('adm-name').value = n;
-            document.getElementById('adm-persona').value = localStorage.getItem('mk_v21_persona') || "";
+            document.getElementById('adm-persona').value = localStorage.getItem('mk_v22_persona') || "";
         }
 
         window.onload = () => {
-            if(localStorage.getItem('mk_v21_theme')) updateTheme(localStorage.getItem('mk_v21_theme'));
+            if(localStorage.getItem('mk_v22_theme')) updateTheme(localStorage.getItem('mk_v22_theme'));
             initUI(); switchView('db');
         };
     </script>
