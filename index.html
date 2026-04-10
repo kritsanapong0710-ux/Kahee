@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizPro ULTIMATE V28</title>
+    <title>QuizPro ULTIMATE V29</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -48,7 +48,7 @@
         @media (min-width: 768px) { .tab-bar { justify-content: center; } }
 
         /* Custom Input - Optimized for Mobile */
-        .custom-input { background-color: rgba(148, 163, 184, 0.1); border: 2px solid transparent; border-radius: 1rem; padding: 16px 20px; width: 100%; outline: none; color: inherit; transition: 0.3s; font-weight: 500; font-size: 16px; /* 16px prevents iOS zoom */ }
+        .custom-input { background-color: rgba(148, 163, 184, 0.1); border: 2px solid transparent; border-radius: 1rem; padding: 16px 20px; width: 100%; outline: none; color: inherit; transition: 0.3s; font-weight: 500; font-size: 16px; }
         .custom-input:focus { border-color: var(--accent); background-color: var(--card-bg); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
 
         .answer-correct { background-color: #22c55e !important; color: white !important; border-color: #22c55e !important; box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4); transform: scale(1.02); }
@@ -56,7 +56,6 @@
         
         #timer-bar { transition: width 0.1s linear; }
 
-        /* Custom Scrollbar for PC */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 10px; }
@@ -69,7 +68,7 @@
         .toast.error { border-left: 4px solid #ef4444; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* AI Markdown Formatting (Enhanced) */
+        /* AI Markdown Formatting */
         .markdown-body { font-size: 1rem; line-height: 1.6; }
         .markdown-body p { margin-bottom: 0.75rem; }
         .markdown-body p:last-child { margin-bottom: 0; }
@@ -90,9 +89,8 @@
 
         @media (max-width: 640px) { 
             .btn-glow { min-height: 54px; width: 100%; }
-            #view-chat { height: calc(100vh - 150px); }
+            #view-chat { height: calc(100vh - 140px); margin-top: 10px; }
             .chat-bubble { max-width: 95%; font-size: 1rem; }
-            .mobile-input-area { padding-bottom: max(1rem, env(safe-area-inset-bottom)); } /* รองรับการลากนิ้วบน iPhone */
         }
         
         /* Print Styles */
@@ -114,7 +112,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 lg:gap-4 cursor-pointer" onclick="switchView('db')">
                 <div style="background-color: var(--accent);" class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl lg:rounded-2xl text-white shadow-lg"><i class="fa-solid fa-bolt text-lg lg:text-xl"></i></div>
-                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80">V28</span></h1>
+                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80">V29</span></h1>
             </div>
             <div id="navAuthSlot">
                 <button onclick="openAuthModal()" class="btn-glow px-4 lg:px-6 py-2 lg:py-2.5 text-[10px] lg:text-xs uppercase tracking-widest shadow-md">Login</button>
@@ -159,7 +157,7 @@
             </div>
         </div>
 
-        <!-- View: AI Chat (V28 Context Memory) -->
+        <!-- View: AI Chat (V29 Bulletproof) -->
         <div id="view-chat" class="hidden app-card flex flex-col h-[80vh] lg:h-[75vh] animate__animated animate__fadeIn max-w-4xl mx-auto p-0 overflow-hidden relative">
             <div class="p-3 lg:p-4 border-b dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/50 shrink-0">
                 <div class="flex items-center gap-3">
@@ -178,7 +176,7 @@
                 <div class="flex justify-center opacity-30 my-4 text-[10px] font-black uppercase tracking-widest">ยินดีต้อนรับสู่ AI Tutor</div>
             </div>
             
-            <div class="p-3 lg:p-5 bg-gray-50 dark:bg-gray-800/50 border-t dark:border-gray-700 shrink-0 mobile-input-area">
+            <div class="p-3 lg:p-5 bg-gray-50 dark:bg-gray-800/50 border-t dark:border-gray-700 shrink-0">
                 <div class="flex gap-2 lg:gap-3 items-center">
                     <input type="text" id="chatIn" class="custom-input flex-1 shadow-inner h-[54px] lg:h-[60px]" placeholder="พิมพ์ข้อความที่นี่..." onkeypress="if(event.key=='Enter')sendChatToAI()">
                     <button onclick="sendChatToAI()" id="btnChatSend" class="btn-glow w-[54px] h-[54px] lg:w-[60px] lg:h-[60px] shadow-lg rounded-xl lg:rounded-2xl shrink-0 transition-all duration-300"><i class="fa-solid fa-paper-plane text-xl"></i></button>
@@ -222,14 +220,14 @@
         </div>
     </div>
 
-    <!-- Side Menu (Settings) -->
+    <!-- Side Menu (Settings + Admin Console) -->
     <div id="sideMenu" class="fixed right-0 top-0 h-full w-full sm:w-[400px] bg-white shadow-[0_0_60px_rgba(0,0,0,0.3)] translate-x-full transition-transform duration-500 z-[100] border-l dark:bg-gray-900 dark:border-gray-800 flex flex-col no-print">
         <div class="p-6 lg:p-8 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
             <h3 class="font-black text-xl lg:text-2xl uppercase tracking-tighter"><i class="fa-solid fa-gear mr-2"></i> Settings</h3>
             <button onclick="toggleSidebar()" class="text-2xl lg:text-3xl opacity-40 hover:opacity-100 w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">&times;</button>
         </div>
         
-        <div class="flex-1 overflow-y-auto p-6 lg:p-8 space-y-8 lg:space-y-10 custom-scroll">
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8 space-y-6 lg:space-y-8 custom-scroll">
             <div>
                 <label class="text-[10px] font-black opacity-40 uppercase tracking-widest block mb-4">Color Palette</label>
                 <div class="flex gap-4">
@@ -239,15 +237,18 @@
                 </div>
             </div>
             
-            <div id="adminPanel" class="hidden space-y-6 pt-6 lg:pt-8 border-t border-gray-100 dark:border-gray-800">
+            <div id="adminPanel" class="hidden space-y-6 pt-6 border-t border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-2">
                     <i class="fa-solid fa-user-secret text-red-500 text-lg lg:text-xl"></i>
-                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Twin Engine (V28 Gemini 2.5)</h4>
+                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Twin Engine (V29 Core)</h4>
                 </div>
                 
                 <div class="space-y-4 bg-gray-50 dark:bg-gray-800/50 p-4 lg:p-5 rounded-2xl border border-gray-100 dark:border-gray-700">
                     <div>
-                        <label class="text-[10px] font-bold opacity-50 uppercase ml-1">Google Gemini API Key</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-[10px] font-bold opacity-50 uppercase ml-1">Google Gemini API Key</label>
+                            <button onclick="testAPIKey()" class="text-[9px] text-blue-500 font-bold hover:underline bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 rounded"><i class="fa-solid fa-vial"></i> Test</button>
+                        </div>
                         <input type="password" id="adm-key" placeholder="AIzaSy..." class="custom-input text-xs font-mono py-2.5 lg:py-3 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm h-[45px]">
                     </div>
                     <div>
@@ -273,7 +274,19 @@
 
                 <textarea id="adm-persona" placeholder="System Instructions (โค้ดนิสัย AI)..." class="custom-input text-xs lg:text-sm h-32 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-inner leading-relaxed resize-none"></textarea>
                 
-                <button onclick="saveAdmin()" class="btn-glow w-full py-4 lg:py-5 text-sm font-black bg-red-500 shadow-lg shadow-red-500/30 uppercase tracking-widest mt-2 lg:mt-4">Save & Deploy Twin</button>
+                <button onclick="saveAdmin()" class="btn-glow w-full py-4 lg:py-5 text-sm font-black bg-red-500 shadow-lg shadow-red-500/30 uppercase tracking-widest mt-2">Save & Deploy Twin</button>
+                
+                <!-- 🚀 V29 System Log Console -->
+                <div class="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-black text-gray-500 uppercase tracking-widest text-[10px]"><i class="fa-solid fa-terminal mr-1"></i> System Diagnostics</h4>
+                        <button onclick="clearDebugLog()" class="text-[9px] text-red-400 font-bold uppercase hover:underline">Clear</button>
+                    </div>
+                    <div id="debugLogArea" class="bg-[#0d1117] rounded-xl p-3 h-28 overflow-y-auto text-[10px] font-mono space-y-1 custom-scroll text-gray-400 shadow-inner border border-gray-800">
+                        <div class="text-green-500">System Initialized V29.</div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -323,6 +336,22 @@
             setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-20px)'; setTimeout(() => toast.remove(), 400); }, 3000);
         }
 
+        // --- V29 System Logger ---
+        function systemLog(msg, type = 'info') {
+            const area = document.getElementById('debugLogArea');
+            if(!area) return;
+            const time = new Date().toLocaleTimeString();
+            let color = 'text-gray-400';
+            if(type === 'error') color = 'text-red-400 font-bold';
+            if(type === 'warn') color = 'text-yellow-400';
+            area.innerHTML += `<div class="${color}">[${time}] ${escapeHTML(msg)}</div>`;
+            area.scrollTo({top: area.scrollHeight});
+            if (type === 'error') console.error(`[QuizMaster Diagnostic] ${msg}`);
+        }
+        function clearDebugLog() {
+            document.getElementById('debugLogArea').innerHTML = '<div class="text-green-500">System Logs Cleared.</div>';
+        }
+
         // 1. Firebase Initialization
         const firebaseConfig = { apiKey: "AIzaSyA0-4a5zxaPZZejG955NgNUVM23YXNV2Gc", authDomain: "the-web-for-test.firebaseapp.com", projectId: "the-web-for-test", storageBucket: "the-web-for-test.firebasestorage.app", messagingSenderId: "198176720357", appId: "1:198176720357:web:64d613b64edbfb15dc9b0c" };
         firebase.initializeApp(firebaseConfig);
@@ -339,13 +368,12 @@
         let currentPlayingExam = null, currentQuestionIndex = 0, currentScore = 0, timerInterval = null, answered = false;
         let voiceEnabled = false;
         
-        // 🔥 V28: CHAT HISTORY (MEMORY)
+        // 🔥 V28-V29: CHAT HISTORY (MEMORY)
         let aiChatHistory = [];
 
-        // Default System Instruction (ถ้ายังไม่เคยตั้งค่า)
+        // Default System Instruction 
         const DEFAULT_PERSONA = "คุณคือ AI ผู้ช่วยอัจฉริยะบนเว็บคลังข้อสอบ 'QuizMaster' เว็บนี้สร้างและพัฒนาโดย Kritsanapong (ครูมาร์ค) คุณมีหน้าที่เป็นติวเตอร์ส่วนตัว ตอบคำถามสั้น กระชับ ตรงไปตรงมา เป็นมิตร และให้กำลังใจผู้ใช้งานเสมอ";
 
-        // Security Helper
         function escapeHTML(str){ return str ? str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) : ""; }
         function shuffle(arr){ let a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
@@ -378,78 +406,120 @@
         function handleImgUpload(i) { if (i.files && i.files[0]) { const r = new FileReader(); r.onload = e => { aiAvatarBase64 = e.target.result; showToast("อัปโหลดรูปสำเร็จ โหลดชั่วคราว"); }; r.readAsDataURL(i.files[0]); } }
 
         // ==========================================
-        // 🚀 SMART FETCH WITH AUTO-RETRY (No Error System)
+        // 🚀 BULLETPROOF FETCH WITH LOGGING (V29)
         // ==========================================
-        async function fetchWithRetry(url, options, maxRetries = 5) {
+        async function fetchWithRetry(url, options, maxRetries = 3) {
             let delay = 1000;
             for (let i = 0; i < maxRetries; i++) {
                 try {
                     const res = await fetch(url, options);
                     if (!res.ok) {
-                        if (res.status === 429 || res.status === 503) {
-                            console.warn(`[AI Engine] API Busy (Status ${res.status}). Auto-retrying...`);
+                        // Retry on overload
+                        if (res.status === 429 || res.status >= 500) {
+                            systemLog(`API Error (${res.status}). กำลังลองใหม่รอบที่ ${i+1}...`, 'warn');
                             await new Promise(resolve => setTimeout(resolve, delay));
-                            delay *= 2; 
+                            delay *= 1.5; 
                             continue;
                         }
-                        // 🛠️ V28 Fix: Read error text properly without crashing if not JSON
-                        let errText = "Unknown API Error";
-                        try {
-                            const errObj = await res.json();
-                            errText = errObj.error?.message || errText;
-                        } catch(parseErr) {
-                            errText = await res.text().catch(() => `HTTP Status ${res.status}`);
-                        }
-                        throw new Error(errText);
+                        // Stop if critical error (Bad key, wrong format)
+                        let errText = "API Error";
+                        try { const errObj = await res.json(); errText = errObj.error?.message || errText; } 
+                        catch(e) { errText = await res.text().catch(() => `HTTP ${res.status}`); }
+                        
+                        throw new Error(`[Status ${res.status}] ${errText}`);
                     }
-                    return res;
+                    return res; // Success! Returns valid Response object always.
                 } catch(e) {
                     if(e.name === 'AbortError') throw e; 
-                    if(i === maxRetries - 1) throw new Error("การเชื่อมต่อ AI ล้มเหลว: " + e.message);
+                    
+                    // If it's a critical error thrown manually above, break loop immediately
+                    if (e.message.includes('[Status 400]') || e.message.includes('[Status 403]') || e.message.includes('[Status 404]')) {
+                        throw e; 
+                    }
+
+                    systemLog(`Network/Retry Error: ${e.message}`, 'error');
+                    if (i === maxRetries - 1) throw e;
+                    await new Promise(resolve => setTimeout(resolve, delay));
                 }
+            }
+            throw new Error("ล้มเหลวในการเชื่อมต่อกับเซิร์ฟเวอร์ AI อย่างสิ้นเชิง");
+        }
+
+        async function testAPIKey() {
+            const key = document.getElementById('adm-key').value;
+            if(!key) return showToast("กรุณาใส่ API Key ในช่องก่อนครับ", "error");
+            systemLog("Testing API Key...");
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: "Hi" }] }] })
+                });
+                if(res.ok) {
+                    showToast("API Key ใช้งานได้สมบูรณ์!");
+                    systemLog("API Key Test: Success.", "info");
+                } else {
+                    const err = await res.json();
+                    throw new Error(err.error?.message || "Invalid Key");
+                }
+            } catch(e) {
+                showToast("Key มีปัญหา ตรวจสอบ System Logs", "error");
+                systemLog("API Test Failed: " + e.message, "error");
             }
         }
 
         // ==========================================
-        // 🤖 AI EXAM GENERATOR (V28)
+        // 🤖 AI EXAM GENERATOR (V29 Enhanced JSON Parser)
         // ==========================================
         async function triggerAIGeneration() {
             const t = document.getElementById('aiTopic').value; if(!t) return showToast("กรุณาระบุเนื้อหาข้อสอบ!", "error");
-            const btn = document.getElementById('aiGenBtn'); btn.disabled = true; btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin mr-2'></i> AI Is Crafting...";
+            const btn = document.getElementById('aiGenBtn'); btn.disabled = true; btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin mr-2'></i> AI กำลังสร้าง...";
             
             try {
                 const key = localStorage.getItem(KEY_STORE) || "";
                 if(!key) throw new Error("ไม่พบ API Key กรุณาติดต่อแอดมิน");
                 
+                systemLog(`กำลังขอ AI สร้างข้อสอบเรื่อง: ${t}`);
                 const persona = localStorage.getItem(PERSONA_STORE) || DEFAULT_PERSONA;
-                const prompt = `จงสร้างข้อสอบ 5 ข้อ เรื่อง "${t}" คืนค่ากลับมาเป็นโครงสร้าง JSON ARRAY เท่านั้น ห้ามมีข้อความอื่นหรือคำอธิบายเด็ดขาด โครงสร้างคือ: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
+                const prompt = `จงสร้างข้อสอบ 5 ข้อ เรื่อง "${t}" คืนค่ากลับมาเป็นโครงสร้าง JSON ARRAY เท่านั้น โครงสร้างคือ: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
                 
                 const reqBody = { 
-                    systemInstruction: { parts: [{ text: persona }] }, // V28: Use proper system instruction field
+                    systemInstruction: { parts: [{ text: persona }] }, 
                     contents: [{ role: "user", parts: [{ text: prompt }] }] 
                 };
                 
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
                 const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
                 
-                // 🛠️ V28 Fix: Safe JSON parsing
                 let data;
-                try { data = await res.json(); } catch { throw new Error("ข้อมูลที่ได้รับจากเซิร์ฟเวอร์ไม่สมบูรณ์ (Parse Error)"); }
+                try { data = await res.json(); } catch { throw new Error("ข้อมูลที่ตอบกลับไม่สามารถอ่านค่าได้"); }
                 
                 const resText = data.candidates[0]?.content?.parts[0]?.text || "";
-                const match = resText.match(/\[[\s\S]*\]/);
-                if(!match) throw new Error("AI ส่งข้อมูลมาผิดรูปแบบ (ไม่มี JSON Array)");
+                
+                // 🔥 V29 Robust JSON Extraction
+                let cleanedText = resText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                const startIdx = cleanedText.indexOf('[');
+                const endIdx = cleanedText.lastIndexOf(']');
+                
+                if(startIdx === -1 || endIdx === -1) {
+                    systemLog(`AI Response Error: ${resText.substring(0, 50)}...`, 'error');
+                    throw new Error("AI ส่งข้อมูลมาผิดรูปแบบ (ไม่พบโครงสร้าง Array)");
+                }
+                
+                cleanedText = cleanedText.substring(startIdx, endIdx + 1);
                 
                 let quizData;
-                try { quizData = JSON.parse(match[0]); } catch { throw new Error("ข้อมูล JSON ที่ AI สร้างมีจุดผิดพลาดทางโครงสร้าง"); }
+                try { quizData = JSON.parse(cleanedText); } catch { throw new Error("ข้อมูล JSON ที่ AI สร้างมีจุดผิดพลาดทางโครงสร้าง (วงเล็บไม่ครบ)"); }
 
                 quizData = quizData.filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2);
                 if(quizData.length === 0) throw new Error("AI ไม่สามารถสร้างคำถามที่สมบูรณ์ได้ ลองเปลี่ยนหัวข้อดูครับ");
 
                 renderEditorFromJSON(quizData, t);
+                systemLog("สร้างข้อสอบสำเร็จ 100%");
                 showToast("สร้างข้อสอบสำเร็จด้วย Gemini 2.5!");
-            } catch (e) { showToast(e.message, "error"); } 
-            finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-bolt"></i> สร้างข้อสอบด้วย AI'; }
+            } catch (e) { 
+                showToast(e.message, "error"); 
+                systemLog(`Exam Gen Error: ${e.message}`, 'error');
+            } finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-bolt"></i> สร้างข้อสอบด้วย AI'; }
         }
 
         async function autoGeneratePersona() {
@@ -463,6 +533,7 @@
                 const key = document.getElementById('adm-key').value || localStorage.getItem(KEY_STORE);
                 if(!key) throw new Error("ใส่ API Key ด้านบนก่อนครับ");
                 
+                systemLog("Auto-Building Persona...");
                 const prompt = `แปลงคำสั่งต่อไปนี้ให้เป็น 'System Instruction' สำหรับสั่งการ AI พิมพ์ตอบมาแค่คำสั่งล้วนๆ ห้ามมีคำอธิบาย หรือเครื่องหมาย quote ครอบ: "${input}"`;
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
                 
@@ -471,12 +542,15 @@
                 
                 document.getElementById('adm-persona').value = data.candidates[0].content.parts[0].text.trim();
                 showToast("สร้าง Persona อัตโนมัติสำเร็จ!");
-            } catch(e) { showToast(e.message, "error"); } 
-            finally { btn.disabled = false; btn.innerHTML = "<i class='fa-solid fa-magic'></i>"; }
+                systemLog("Persona Built successfully.");
+            } catch(e) { 
+                showToast("ล้มเหลว: ตรวจสอบ System Logs", "error"); 
+                systemLog(`Persona Build Error: ${e.message}`, 'error');
+            } finally { btn.disabled = false; btn.innerHTML = "<i class='fa-solid fa-magic'></i>"; }
         }
 
         // ==========================================
-        // 🚀 AI CHAT STREAMING + VOICE TTS + MEMORY (V28)
+        // 🚀 AI CHAT STREAMING + VOICE TTS + MEMORY (V29)
         // ==========================================
         let chatAbortController = null;
 
@@ -498,7 +572,7 @@
             if(!voiceEnabled || !('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
             
-            let cleanText = text.replace(/```[\s\S]*?```/g, 'มีอธิบายโค้ดตามหน้าจอครับ'); 
+            let cleanText = text.replace(/```[\s\S]*?```/g, ' มีโค้ดและคำอธิบายประกอบครับ '); 
             cleanText = cleanText.replace(/[*_#`~]/g, ''); 
             
             const utterance = new SpeechSynthesisUtterance(cleanText);
@@ -511,6 +585,7 @@
             aiChatHistory = [];
             document.getElementById('chatArea').innerHTML = '<div class="flex justify-center opacity-30 my-4 text-[10px] font-black uppercase tracking-widest">ยินดีต้อนรับสู่ AI Tutor (ล้างความจำแล้ว)</div>';
             showToast("ล้างประวัติการคุยแล้ว");
+            systemLog("Chat memory cleared.");
         }
 
         async function sendChatToAI() {
@@ -532,7 +607,6 @@
             box.innerHTML += `<div class="flex justify-end animate__animated animate__fadeInRight mb-4"><div style="background-color:var(--accent); color:var(--btn-txt)" class="chat-bubble shadow-md rounded-2xl rounded-tr-none px-4 py-3 max-w-[85%] break-words">${escapeHTML(msg)}</div></div>`;
             box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
 
-            // 🔥 V28: Store User message in Memory
             aiChatHistory.push({ role: "user", parts: [{ text: msg }] });
 
             // Prepare AI Bubble UI
@@ -562,15 +636,15 @@
 
             try {
                 const key = localStorage.getItem(KEY_STORE) || "";
-                if(!key) throw new Error("ไม่พบ API Key กรุณาตั้งค่าในเมนู Settings");
+                if(!key) throw new Error("ไม่พบ API Key กรุณาติดต่อแอดมินหรือตั้งค่าในระบบ");
                 const persona = localStorage.getItem(PERSONA_STORE) || DEFAULT_PERSONA;
                 
-                // 🔥 V28: Apply Persona explicitly and send full history
                 const reqBody = { 
                     systemInstruction: { parts: [{ text: persona }] },
                     contents: aiChatHistory 
                 };
                 
+                systemLog("ส่งข้อความแชทไปประมวลผล...");
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${key}`;
                 
                 const res = await fetchWithRetry(url, { 
@@ -579,6 +653,9 @@
                     body: JSON.stringify(reqBody),
                     signal: chatAbortController.signal
                 });
+
+                // 🔥 V29 Bulletproof Stream Check
+                if (!res.body) throw new Error("บราวเซอร์ของคุณไม่รองรับการอ่านค่า Streaming จากเซิร์ฟเวอร์");
 
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder("utf-8");
@@ -616,23 +693,23 @@
                 // Final render
                 bubbleEl.innerHTML = DOMPurify.sanitize(marked.parse(fullResponse));
                 
-                // 🔥 V28: Save AI response to Memory
+                // Save AI response to Memory
                 aiChatHistory.push({ role: "model", parts: [{ text: fullResponse }] });
-                
+                systemLog("AI ตอบกลับสมบูรณ์");
                 speakText(fullResponse);
 
             } catch (e) {
                 const bubbleEl = document.getElementById(bubbleId);
-                // Remove the last user message from memory if request failed, to avoid context corruption
-                aiChatHistory.pop(); 
+                aiChatHistory.pop(); // Remove user message if failed
                 
                 if (e.name === 'AbortError') {
                     const currentHtml = bubbleEl.innerHTML.replace('<span class="blinking-cursor"></span>', '');
                     bubbleEl.innerHTML = currentHtml + '<br><span class="text-[10px] text-red-500 font-bold uppercase mt-2 block opacity-70">[ คุณกดหยุดชั่วคราว ]</span>';
-                    // We can choose to save partial response or not. Let's not save partial to memory to keep logic clean.
+                    systemLog("Chat aborted by user.");
                 } else {
-                    showToast(e.message, "error");
-                    bubbleEl.innerHTML = `<span class="text-red-500 font-bold text-sm"><i class="fa-solid fa-triangle-exclamation"></i> ${e.message}</span>`;
+                    showToast("มีปัญหาเกิดขึ้น ดูที่เมนู System Logs", "error");
+                    bubbleEl.innerHTML = `<span class="text-red-500 font-bold text-sm"><i class="fa-solid fa-triangle-exclamation"></i> ขัดข้อง: ${e.message}</span>`;
+                    systemLog(`Chat Error: ${e.message}`, 'error');
                 }
             } finally {
                 btn.innerHTML = '<i class="fa-solid fa-paper-plane text-xl"></i>';
@@ -650,6 +727,7 @@
         // ==========================================
         async function printExam(examId) {
             try {
+                systemLog(`Generating Print PDF for: ${examId}`);
                 const doc = await db.collection('exams').doc(examId).get();
                 if(!doc.exists) throw new Error("ไม่พบข้อสอบ");
                 const exam = doc.data();
@@ -679,8 +757,10 @@
                 
                 printContainer.innerHTML = html;
                 window.print();
+                systemLog("Print Triggered Successfully.");
             } catch (e) {
-                showToast("ปริ้นท์ข้อสอบล้มเหลว: " + e.message, "error");
+                showToast("ปริ้นท์ข้อสอบล้มเหลว", "error");
+                systemLog(`Print Error: ${e.message}`, "error");
             }
         }
 
@@ -705,8 +785,11 @@
                 document.getElementById('scoreCounter').innerHTML = `SCORE: <span class="text-yellow-400">0</span>`;
                 document.getElementById('quizPlayerModal').classList.remove('hidden');
                 renderCurrentQuestion();
-            } catch (e) { showToast(e.message, "error"); } 
-            finally { btnEl.disabled = false; btnEl.innerHTML = originalText; }
+                systemLog(`Started Exam: ${currentPlayingExam.title}`);
+            } catch (e) { 
+                showToast(e.message, "error"); 
+                systemLog(`Exam Load Error: ${e.message}`, "error");
+            } finally { btnEl.disabled = false; btnEl.innerHTML = originalText; }
         }
 
         function renderCurrentQuestion() {
@@ -781,6 +864,8 @@
             const area = document.getElementById('quizPlayArea');
             const maxScore = currentPlayingExam.questions.length * 10;
             if(currentScore > maxScore) currentScore = maxScore;
+            
+            systemLog(`Finished Exam. Score: ${currentScore}`);
 
             if(userC) {
                 try {
@@ -789,8 +874,9 @@
                     if(existing.empty || existing.docs[0].data().score < currentScore) {
                         if(!existing.empty) await scoresRef.doc(existing.docs[0].id).delete();
                         await scoresRef.add({ uid: userC.uid, username: userC.email.split('@')[0], examId: currentPlayingExam.id, examTitle: currentPlayingExam.title, score: currentScore, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+                        systemLog(`Score ${currentScore} saved to cloud.`);
                     }
-                } catch { console.warn("Cloud save issue"); }
+                } catch { systemLog("Failed to save score to cloud (Permissions?).", "warn"); }
             }
 
             confetti({ particleCount: 300, spread: 120, origin: {y:0.5} });
@@ -816,6 +902,7 @@
             if(isRefresh) grid.innerHTML = '<div class="col-span-full py-20 text-center"><i class="fa-solid fa-circle-notch fa-spin text-3xl opacity-50 text-accent"></i></div>';
             
             try {
+                systemLog("Fetching exams from cloud...");
                 const snap = await db.collection('exams').orderBy('createdAt','desc').limit(15).get();
                 grid.innerHTML = '';
                 if(snap.empty) { grid.innerHTML = "<div class='col-span-full py-16 text-center opacity-30 font-black italic text-lg lg:text-xl'>ไม่มีข้อสอบในระบบเลยครับ</div>"; return; }
@@ -843,12 +930,17 @@
                             </div>`;
                     }
                 });
-            } catch (e) { grid.innerHTML = `<div class='col-span-full py-10 text-center text-red-500 font-bold'><i class="fa-solid fa-triangle-exclamation text-2xl lg:text-3xl mb-2 block"></i> Database Error.<br><span class="text-[10px] lg:text-xs opacity-60">กรุณาเช็ค Firestore Rules ให้เป็น Test Mode</span><br><button onclick="fetchExamsFromCloud(true)" class="mt-4 underline text-sm">ลองใหม่</button></div>`; }
+                systemLog("Exams fetched and rendered.");
+            } catch (e) { 
+                grid.innerHTML = `<div class='col-span-full py-10 text-center text-red-500 font-bold'><i class="fa-solid fa-triangle-exclamation text-2xl lg:text-3xl mb-2 block"></i> Database Error.<br><span class="text-[10px] lg:text-xs opacity-60">กรุณาเช็ค Firestore Rules ให้เป็น Test Mode</span><br><button onclick="fetchExamsFromCloud(true)" class="mt-4 underline text-sm">ลองใหม่</button></div>`; 
+                systemLog(`Fetch Exam Error: ${e.message}`, "error");
+            }
         }
 
         async function fetchRankings() {
             const area = document.getElementById('rankingsArea'); area.innerHTML = '<div class="py-20 text-center"><i class="fa-solid fa-circle-notch fa-spin text-3xl opacity-50"></i></div>';
             try {
+                systemLog("Fetching Rankings...");
                 const snap = await db.collection('scores').orderBy('score','desc').limit(10).get(); area.innerHTML = '';
                 let rank = 1;
                 if(snap.empty) { area.innerHTML = "<div class='text-center opacity-30 font-bold italic py-10 text-sm lg:text-base'>ยังไม่มีใครเล่นข้อสอบเลยครับ</div>"; return; }
@@ -868,7 +960,11 @@
                             <span style="color:var(--accent)" class="text-xl md:text-2xl lg:text-3xl font-black tracking-tighter">${s.score}</span>
                         </div>`;
                 });
-            } catch (e) { area.innerHTML = '<div class="text-center text-red-500 font-bold text-sm">Failed to load rankings.</div>'; }
+                systemLog("Rankings loaded.");
+            } catch (e) { 
+                area.innerHTML = '<div class="text-center text-red-500 font-bold text-sm">Failed to load rankings.</div>'; 
+                systemLog(`Ranking Error: ${e.message}`, "error");
+            }
         }
 
         function renderEditorFromJSON(data, title) {
@@ -898,11 +994,28 @@
 
             if(data.questions.length === 0) { btn.disabled = false; return showToast("ข้อสอบว่างเปล่า บันทึกไม่ได้ครับ", "error"); }
 
-            try { await db.collection('exams').add(data); confetti({ particleCount: 200 }); showToast("บันทึกข้อสอบสำเร็จ!"); switchView('db'); } 
-            catch (e) { showToast("Save Error: เช็ค Firestore Rules", "error"); } finally { btn.disabled = false; }
+            try { 
+                systemLog(`Saving Exam: ${data.title}`);
+                await db.collection('exams').add(data); 
+                confetti({ particleCount: 200 }); 
+                showToast("บันทึกข้อสอบสำเร็จ!"); 
+                switchView('db'); 
+            } 
+            catch (e) { 
+                showToast("Save Error: เช็ค Firestore Rules", "error"); 
+                systemLog(`Save Error: ${e.message}`, "error");
+            } finally { btn.disabled = false; }
         }
 
-        async function deleteEx(id) { if(confirm("ต้องการลบข้อสอบนี้ถาวร ใช่หรือไม่?")) { await db.collection('exams').doc(id).delete(); fetchExamsFromCloud(true); showToast("ลบสำเร็จ"); } }
+        async function deleteEx(id) { 
+            if(confirm("ต้องการลบข้อสอบนี้ถาวร ใช่หรือไม่?")) { 
+                systemLog(`Deleting exam ${id}`);
+                await db.collection('exams').doc(id).delete(); 
+                fetchExamsFromCloud(true); 
+                showToast("ลบสำเร็จ"); 
+            } 
+        }
+
         function toggleSidebar() { document.getElementById('sideMenu').classList.toggle('translate-x-full'); }
         function updateTheme(t) { document.body.classList.remove('theme-blue', 'theme-dark'); if(t !== 'green') document.body.classList.add('theme-' + t); localStorage.setItem('MARK_THEME_V25', t); }
         
@@ -923,7 +1036,9 @@
             localStorage.setItem(NAME_STORE, document.getElementById('adm-name').value);
             localStorage.setItem(PERSONA_STORE, document.getElementById('adm-persona').value);
             if(aiAvatarBase64) localStorage.setItem(IMG_STORE, aiAvatarBase64);
-            initUI(); showToast("อัปเดตระบบ AI Twin สำเร็จ!");
+            initUI(); 
+            showToast("อัปเดตระบบ AI Twin สำเร็จ!");
+            systemLog("Admin config saved to LocalStorage.");
         }
 
         function initUI() {
