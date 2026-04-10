@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizBuilder PRO - v23 Masterpiece</title>
+    <title>QuizBuilder PRO - Gemini 2.5 Master</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -16,16 +16,16 @@
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 
     <style>
-        /* 🎨 Master Theme Control */
+        /* 🎨 Master Color Control (Strictly Optimized) */
         :root { --accent: #10b981; --bg-site: #f8fafc; --text-main: #1e293b; --card-bg: #ffffff; --input-bg: #f1f5f9; --btn-txt: #ffffff; }
         body.theme-blue { --accent: #3b82f6; --bg-site: #020617; --text-main: #ffffff; --card-bg: #0f172a; --input-bg: #1e293b; --btn-txt: #ffffff; }
         body.theme-dark { --accent: #ffffff; --bg-site: #000000; --text-main: #f8fafc; --card-bg: #111827; --input-bg: #1f2937; --btn-txt: #000000; }
 
-        body { font-family: 'Kanit', sans-serif; background-color: var(--bg-site); color: var(--text-main); transition: 0.4s; overflow-x: hidden; }
+        body { font-family: 'Kanit', sans-serif; background-color: var(--bg-site); color: var(--text-main); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; }
         .app-card { background-color: var(--card-bg); border-radius: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.15); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05); }
         
         .btn-glow { background-color: var(--accent); color: var(--btn-txt); border-radius: 1.1rem; font-weight: 700; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; }
-        .btn-glow:hover:not(:disabled) { filter: brightness(115%); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .btn-glow:hover:not(:disabled) { filter: brightness(115%); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .btn-glow:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .tab-bar { display: flex; overflow-x: auto; gap: 10px; padding: 10px; scrollbar-width: none; background: rgba(148, 163, 184, 0.1); border-radius: 1.5rem; }
@@ -36,12 +36,13 @@
         .custom-input { background-color: var(--input-bg); border: 2px solid transparent; border-radius: 1.1rem; padding: 14px 18px; width: 100%; outline: none; color: inherit; transition: 0.3s; }
         .custom-input:focus { border-color: var(--accent); background-color: var(--card-bg); }
 
+        #timer-bar { transition: width 0.1s linear; }
         .answer-correct { background-color: #22c55e !important; color: white !important; }
         .answer-wrong { background-color: #ef4444 !important; color: white !important; }
-        #timer-bar { transition: width 0.1s linear; }
 
-        .chat-bubble { max-width: 85%; padding: 1rem; border-radius: 1.5rem; font-size: 0.9rem; line-height: 1.5; }
-        
+        .dot-flashing { width: 6px; height: 6px; border-radius: 5px; background-color: currentColor; animation: dot-flashing 1s infinite alternate; }
+        @keyframes dot-flashing { 0% { opacity: 1; } 100% { opacity: 0.2; } }
+
         @media (max-width: 640px) { .app-card { border-radius: 1.5rem; } .btn-glow { min-height: 52px; width: 100%; } }
     </style>
 </head>
@@ -50,8 +51,8 @@
     <nav class="sticky top-0 z-[60] bg-white/70 backdrop-blur-xl border-b border-gray-100 px-4 py-4 md:px-10 dark:bg-gray-900/80 dark:border-gray-800">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div style="background-color: var(--accent);" class="w-10 h-10 flex items-center justify-center rounded-xl text-white shadow-lg"><i class="fa-solid fa-bolt"></i></div>
-                <h1 class="text-xl md:text-2xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">PRO</span></h1>
+                <div style="background-color: var(--accent);" class="w-11 h-11 flex items-center justify-center rounded-2xl text-white shadow-lg"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h1 class="text-xl md:text-2xl font-black tracking-tighter uppercase leading-none">QUIZ<span style="color: var(--accent);">PRO</span></h1>
             </div>
             <div id="navAuthSlot"></div>
         </div>
@@ -62,30 +63,30 @@
             <button onclick="switchView('db')" id="btn-db" class="tab-item active">Library</button>
             <button onclick="switchView('rank')" id="btn-rank" class="tab-item">Global Rank</button>
             <button onclick="switchView('ai')" id="btn-ai" class="tab-item">AI Mark</button>
-            <button onclick="switchView('chat')" id="btn-chat" class="tab-item">Chat</button>
+            <button onclick="switchView('chat')" id="btn-chat" class="tab-item">Chat AI</button>
         </div>
 
         <div id="view-db" class="animate__animated animate__fadeIn">
-            <div id="examsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="examsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
         </div>
 
         <div id="view-rank" class="hidden animate__animated animate__fadeIn">
-            <h2 class="text-2xl font-bold italic mb-6 uppercase tracking-widest">Leaderboard</h2>
-            <div id="rankingsArea" class="space-y-4"></div>
+            <h2 class="text-2xl font-black italic mb-6 uppercase tracking-widest">Global Rankings</h2>
+            <div id="rankingsArea" class="space-y-3"></div>
         </div>
 
         <div id="view-ai" class="hidden app-card text-center animate__animated animate__fadeIn py-16">
-            <img id="ai-img-gen" src="" class="w-24 h-24 rounded-3xl mx-auto mb-6 shadow-2xl border-4 border-white object-cover">
+            <img id="ai-img-gen" src="" class="w-24 h-24 rounded-[2.5rem] mx-auto mb-8 shadow-2xl border-4 border-white object-cover">
             <h2 id="ai-name-gen" class="text-3xl font-black mb-8">AI Digital Twin</h2>
             <div class="max-w-md mx-auto space-y-4">
-                <input type="text" id="aiTopic" placeholder="ระบุหัวข้อที่จะสอบ..." class="custom-input text-center font-bold">
+                <input type="text" id="aiTopic" placeholder="ระบุหัวข้อที่จะออกสอบ..." class="custom-input text-center font-bold text-lg">
                 <button onclick="triggerAIGeneration()" id="aiGenBtn" class="btn-glow w-full py-5 text-lg shadow-xl">สร้างข้อสอบทันที</button>
             </div>
         </div>
 
         <div id="view-chat" class="hidden app-card flex flex-col h-[65vh] animate__animated animate__fadeIn">
             <div id="chatArea" class="flex-1 overflow-y-auto p-4 space-y-6 custom-scroll"></div>
-            <div class="p-4 border-t dark:border-gray-700">
+            <div class="p-3 border-t dark:border-gray-700">
                 <div class="flex gap-2">
                     <input type="text" id="chatIn" class="custom-input flex-1" placeholder="คุยกับ AI Mark..." onkeypress="if(event.key=='Enter')sendChatToAI()">
                     <button onclick="sendChatToAI()" id="btnChatSend" class="btn-glow w-14 h-14 shadow-lg"><i class="fa-solid fa-paper-plane"></i></button>
@@ -97,8 +98,8 @@
             <div id="editorCards" class="space-y-6"></div>
             <div class="fixed bottom-6 left-4 right-4 max-w-3xl mx-auto bg-white/90 backdrop-blur-lg p-5 rounded-3xl shadow-2xl border flex gap-3 z-40 dark:bg-gray-800">
                 <select id="examVisibility" class="custom-input w-32 font-bold text-xs"><option value="public">PUBLIC</option><option value="private">PRIVATE</option></select>
-                <input type="text" id="saveExamTitle" placeholder="ชื่อวิชา" class="custom-input flex-1 font-bold text-center">
-                <button onclick="saveExamToCloud()" id="btnSaveExam" class="btn-glow px-10 py-4 uppercase">SAVE</button>
+                <input type="text" id="saveExamTitle" placeholder="ชื่อชุดข้อสอบ" class="custom-input flex-1 font-bold text-center">
+                <button onclick="saveExamToCloud()" id="btnSaveExam" class="btn-glow px-12 py-4 uppercase">SAVE</button>
             </div>
         </div>
     </main>
@@ -106,7 +107,7 @@
     <div id="quizPlayerModal" class="fixed inset-0 z-[100] bg-black hidden flex flex-col animate__animated animate__fadeIn">
         <div class="w-full h-1 bg-white/10"><div id="timer-bar" class="h-full bg-green-500 w-full"></div></div>
         <div class="p-6 flex justify-between items-center text-white">
-            <h3 id="quizPlayTitle" class="font-bold uppercase opacity-30">Exam Mode</h3>
+            <h3 id="quizPlayTitle" class="font-bold uppercase opacity-30">Quiz Mode</h3>
             <span id="scoreCounter" class="text-xs font-black bg-white/10 px-4 py-1.5 rounded-full">SCORE: 0</span>
         </div>
         <div id="quizPlayArea" class="flex-1 overflow-y-auto p-6 flex items-center justify-center"></div>
@@ -118,40 +119,48 @@
             <div>
                 <label class="text-[10px] font-black opacity-30 uppercase block mb-4">Themes</label>
                 <div class="flex gap-4">
-                    <button onclick="updateTheme('green')" class="w-10 h-10 rounded-xl bg-green-500 border-2 border-white shadow-lg"></button>
-                    <button onclick="updateTheme('blue')" class="w-10 h-10 rounded-xl bg-blue-600 border-2 border-white shadow-lg"></button>
-                    <button onclick="updateTheme('dark')" class="w-10 h-10 rounded-xl bg-black border-2 border-white shadow-lg"></button>
+                    <button onclick="updateTheme('green')" class="w-11 h-11 rounded-2xl bg-green-500 border-2 border-white shadow-lg"></button>
+                    <button onclick="updateTheme('blue')" class="w-11 h-11 rounded-2xl bg-blue-600 border-2 border-white shadow-lg"></button>
+                    <button onclick="updateTheme('dark')" class="w-11 h-11 rounded-2xl bg-black border-2 border-white shadow-lg"></button>
                 </div>
             </div>
             <div id="adminPanel" class="hidden space-y-4 pt-8 border-t">
-                <h4 class="font-black text-red-500 uppercase text-[10px]">Admin Intelligence (v23)</h4>
+                <h4 class="font-black text-red-500 uppercase text-[10px]">Admin config (v23)</h4>
                 <input type="password" id="adm-key" placeholder="Paste Gemini Key" class="custom-input text-xs">
-                <input type="text" id="adm-name" placeholder="AI Name (Digital Twin)" class="custom-input text-xs">
+                <input type="text" id="adm-name" placeholder="AI Name (Mark Twin)" class="custom-input text-xs">
                 <input type="file" id="adm-file-input" onchange="handleImgUpload(this)" class="text-xs block w-full">
-                <textarea id="adm-persona" placeholder="Instructions: นิสัย AI..." class="custom-input text-xs h-32"></textarea>
-                <button onclick="saveAdmin()" class="btn-glow w-full py-4 text-xs font-black uppercase">REBOOT DIGITAL TWIN</button>
+                <textarea id="adm-persona" placeholder="Instructions: นิสัยที่ AI ต้องทำตาม..." class="custom-input text-xs h-32"></textarea>
+                <button onclick="saveAdmin()" class="btn-glow w-full py-4 text-xs font-black uppercase">REBOOT IDENTITY</button>
             </div>
         </div>
     </div>
 
-    <div id="authModal" class="fixed inset-0 bg-black/60 hidden z-[200] flex items-center justify-center p-4">
-        <div class="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-sm dark:bg-gray-800">
-            <h2 class="text-2xl font-black text-center mb-8">LOGIN</h2>
+    <div id="authModal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-sm dark:bg-gray-800 animate__animated animate__zoomIn">
+            <h2 class="text-3xl font-black text-center mb-10 italic uppercase">Login</h2>
             <div class="space-y-4">
-                <button onclick="handleSocial()" class="w-full bg-gray-50 p-4 rounded-2xl font-bold flex justify-center gap-3 border dark:bg-gray-700">Google</button>
+                <button onclick="handleSocial()" class="w-full bg-gray-50 p-4 rounded-2xl font-bold flex justify-center gap-3 border dark:bg-gray-700 hover:bg-gray-100 transition-all"><img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6"> Google</button>
+                <div class="flex items-center py-2"><hr class="flex-1 opacity-10"><span class="px-3 text-[10px] font-black opacity-20 uppercase">Credentials</span><hr class="flex-1 opacity-10"></div>
                 <input type="email" id="emailInp" placeholder="Email" class="custom-input font-bold">
                 <input type="password" id="passInp" placeholder="Password" class="custom-input font-bold">
-                <button onclick="emailAuth()" class="btn-glow w-full py-5 font-black uppercase shadow-xl">Go!</button>
+                <button onclick="emailAuth()" class="btn-glow w-full py-5 uppercase shadow-xl font-black text-lg">Enter App</button>
             </div>
-            <button onclick="closeAuthModal()" class="w-full mt-8 text-[10px] font-bold opacity-20 uppercase">Cancel</button>
+            <button onclick="closeAuthModal()" class="w-full mt-8 text-[10px] font-black opacity-20 uppercase tracking-widest">Stay Guest</button>
         </div>
     </div>
 
     <script>
+        // 1. Initial State
         const firebaseConfig = { apiKey: "AIzaSyA0-4a5zxaPZZejG955NgNUVM23YXNV2Gc", authDomain: "the-web-for-test.firebaseapp.com", projectId: "the-web-for-test", storageBucket: "the-web-for-test.firebasestorage.app", messagingSenderId: "198176720357", appId: "1:198176720357:web:64d613b64edbfb15dc9b0c" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(), auth = firebase.auth();
-        const ADMIN_E = "Kritsanapong0710@gmail.com";
+        const ADMIN_EMAIL = "Kritsanapong0710@gmail.com";
+
+        // 🔥 UNIVERSAL STABLE STORAGE
+        const KEY_STORAGE = "MARK_STABLE_KEY";
+        const NAME_STORAGE = "MARK_STABLE_NAME";
+        const PERSONA_STORAGE = "MARK_STABLE_PERSONA";
+        const IMG_STORAGE = "MARK_STABLE_IMG";
 
         let userC = null, isA = false, aiAvatarBase64 = "", lastCall = 0;
         let currentPlayingExam = null, currentQuestionIndex = 0, currentScore = 0, timerInterval = null, answered = false;
@@ -159,84 +168,101 @@
         function escapeHTML(str){ return str ? str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) : ""; }
         function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
+        // 2. Auth State
+        auth.onAuthStateChanged(user => {
+            userC = user;
+            const slot = document.getElementById('navAuthSlot');
+            if (user) {
+                isA = (user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+                slot.innerHTML = `<button onclick="toggleSidebar()" class="bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-[10px] font-black dark:text-white animate__animated animate__fadeInRight">${user.email.split('@')[0].toUpperCase()}</button>`;
+                if(isA) document.getElementById('adminPanel').classList.remove('hidden');
+                closeAuthModal(); fetchExamsFromCloud(true);
+            } else {
+                slot.innerHTML = `<button onclick="openAuthModal()" class="btn-glow px-6 py-2 text-[10px] uppercase shadow-md">Login</button>`;
+                document.getElementById('adminPanel').classList.add('hidden');
+                fetchExamsFromCloud(true);
+            }
+        });
+
+        function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
+        function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
+        async function handleSocial() { try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); } catch (e) { alert(e.message); } }
+        async function emailAuth() { 
+            const e = document.getElementById('emailInp').value, p = document.getElementById('passInp').value;
+            try { await auth.signInWithEmailAndPassword(e, p); } catch (x) { try { await auth.createUserWithEmailAndPassword(e, p); } catch (err) { alert(err.message); } }
+        }
+        function handleImgUpload(i) { if (i.files && i.files[0]) { const r = new FileReader(); r.onload = e => aiAvatarBase64 = e.target.result; r.readAsDataURL(i.files[0]); } }
+
         // ==========================================
-        // 🤖 GEMINI AI SYSTEM (v23 + Model 2.5 Flash)
+        // 🤖 AI ENGINE (V23 - Gemini 2.5 Flash)
         // ==========================================
         async function callGemini(promptText) {
-            if (Date.now() - lastCall < 1000) return "⏳ AI กำลังคิด... รอสักครู่";
+            if (Date.now() - lastCall < 1000) return "⏳ AI กำลังพักหายใจ... แป๊บนึงนะ Mark";
             lastCall = Date.now();
+            
+            const key = localStorage.getItem(KEY_STORAGE) || "";
+            if(!key) throw new Error("Mark! ใส่ API Key ในหน้าแอดมินก่อนครับ");
+            
+            const persona = localStorage.getItem(PERSONA_STORAGE) || "คุณคือ AI-Mark ที่ตอบตรงไปตรงมา พลาดบอกพลาด เรื่องสวยไหมให้ตอบว่าสำหรับคุณไม่แต่คนอื่นอาจมองต่าง";
+            const reqBody = { contents: [{ parts: [{ text: `[System Personality: ${persona}]\n\nUser Question: ${promptText}` }] }] };
 
-            const key = localStorage.getItem('mk_v23_key') || localStorage.getItem('mk_v22.1_key') || "";
-            if (!key) throw new Error("❌ ไม่พบ API KEY (ไปใส่ใน Settings > Admin)");
+            // 🛑 TRY: Gemini 2.5 Flash 🛑
+            const urls = [
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`
+            ];
 
-            const persona = localStorage.getItem('mk_v23_persona') || "คุณคือ AI-Mark อัจฉริยะ ตอบตรงไปตรงมา พลาดบอกพลาด เรื่องสวยงามคือแล้วแต่มุมมอง";
-            const reqBody = { contents: [{ parts: [{ text: `[System: ${persona}]\n\nUser: ${promptText}` }] }] };
-
-            // 🛑 USE MODEL 2.5 FLASH 🛑
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
-
-            try {
-                const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(reqBody) });
-                const data = await res.json();
-
-                if (data.candidates && data.candidates[0]?.content) {
-                    return data.candidates[0].content.parts[0].text;
-                }
-                if (data.error) throw new Error(data.error.message);
-                throw new Error("Empty Response");
-
-            } catch (err) {
-                console.error("AI First Attempt Failed, Retrying with 1.5...");
-                // 🔁 Retry Fallback 1.5
-                const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
-                const fRes = await fetch(fallbackUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(reqBody) });
-                const fData = await fRes.json();
-                if (fData.candidates && fData.candidates[0]?.content) return fData.candidates[0].content.parts[0].text;
-                return "⚠️ AI Offline / API Key ผิดพลาด หรือสิทธิ์การใช้งานหมด";
+            for (let url of urls) {
+                try {
+                    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
+                    const data = await res.json();
+                    if (data.candidates && data.candidates[0]?.content) {
+                        return data.candidates[0].content.parts[0].text;
+                    }
+                } catch (e) { console.warn("Trying next model version..."); }
             }
+            throw new Error("AI Offline or Quota Exceeded.");
         }
 
         async function triggerAIGeneration() {
-            const topic = document.getElementById('aiTopic').value;
-            if (!topic) return alert("❗ กรุณาใส่หัวข้อ");
-            const btn = document.getElementById('aiGenBtn');
-            btn.disabled = true; btn.innerHTML = "⏳ กำลังคำนวณ...";
-
+            const t = document.getElementById('aiTopic').value; if(!t) return alert("ระบุเรื่องด้วย!");
+            const btn = document.getElementById('aiGenBtn'); btn.disabled = true; 
+            btn.innerHTML = "<div class='dot-flashing mx-auto'></div>"; 
+            
             try {
-                const prompt = `สร้างข้อสอบ 5 ข้อ เรื่อง "${topic}" ตอบเป็น JSON ARRAY เท่านั้น ห้ามมีข้อความอื่น รูปแบบ: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
+                const prompt = `จงสร้างข้อสอบ 5 ข้อ เรื่อง "${t}" ในรูปแบบ JSON ARRAY เท่านั้น ห้ามพิมพ์คำอื่น รูปแบบ: [{"q":"โจทย์","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
                 const res = await callGemini(prompt);
-                const clean = res.replace(/```json/g, "").replace(/```/g, "").trim();
+                const cleanJson = res.replace(/```json/g, "").replace(/```/g, "").trim();
                 
                 let quizData;
                 try {
-                    quizData = JSON.parse(clean);
+                    quizData = JSON.parse(cleanJson);
                     if (!Array.isArray(quizData) || !quizData[0]?.options) throw new Error();
-                } catch {
-                    alert("❌ AI ตอบ JSON พัง ลองใหม่อีกครั้งนะครับ"); return;
-                }
-                renderEditorFromJSON(quizData, topic);
-            } catch (e) { alert(e.message); } finally { btn.disabled = false; btn.innerHTML = "สร้างข้อสอบทันที"; }
+                } catch { alert("AI ตอบ JSON พัง ลองใหม่อีกครั้งนะ Mark"); return; }
+
+                renderEditorFromJSON(quizData, t);
+            } catch (e) { alert("AI Error: " + e.message); } finally { btn.disabled = false; btn.innerHTML = "สร้างข้อสอบทันที"; }
         }
 
         async function sendChatToAI() {
-            const input = document.getElementById('chatIn'), chat = document.getElementById('chatArea'), btn = document.getElementById('btnChatSend');
-            if (!input.value || btn.disabled) return;
-            const msg = input.value; input.value = ""; btn.disabled = true;
-
-            chat.innerHTML += `<div class="flex justify-end"><div style="background:var(--accent);color:var(--btn-txt)" class="chat-bubble shadow-lg animate__animated animate__fadeInRight">${msg}</div></div>`;
-            chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+            const inp = document.getElementById('chatIn'), box = document.getElementById('chatArea'), btn = document.getElementById('btnChatSend');
+            if(!inp.value || btn.disabled) return; 
+            const msg = inp.value; inp.value = ''; btn.disabled = true;
+            
+            box.innerHTML += `<div class="flex justify-end animate__animated animate__fadeInRight"><div style="background-color:var(--accent); color:var(--btn-txt)" class="p-4 rounded-3xl rounded-tr-none text-sm shadow-lg max-w-[85%]">${msg}</div></div>`;
+            box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
 
             try {
                 const res = await callGemini(msg);
-                const aiName = localStorage.getItem('mk_v23_name') || "AI Mark";
-                const aiImg = localStorage.getItem('mk_v23_img') || "https://ui-avatars.com/api/?name=AI";
-                chat.innerHTML += `<div class="flex gap-3 animate__animated animate__fadeInLeft"><img src="${aiImg}" class="w-10 h-10 rounded-2xl border-2 border-white shadow-sm"><div class="bg-white text-gray-700 chat-bubble border dark:bg-gray-800 dark:text-gray-200"><b>${aiName}</b><br>${res.replace(/\n/g,"<br>")}</div></div>`;
-                chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
-            } catch (e) { alert(e.message); } finally { btn.disabled = false; }
+                const aiName = localStorage.getItem(NAME_STORAGE) || "AI Mark";
+                const aiImg = localStorage.getItem(IMG_STORAGE) || "https://ui-avatars.com/api/?name=Mark";
+                box.innerHTML += `<div class="flex gap-3 animate__animated animate__fadeInLeft"><img src="${aiImg}" class="w-10 h-10 rounded-2xl object-cover border-2 border-white shadow-sm"><div class="bg-white text-gray-700 p-4 rounded-3xl rounded-tl-none text-sm border shadow-sm dark:bg-gray-800 dark:text-gray-200"><b>${aiName}</b><br>${res.replace(/\n/g, '<br>')}</div></div>`;
+                box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+            } catch(e) { alert(e.message); } finally { btn.disabled = false; }
         }
 
         // ==========================================
-        // 🎮 QUIZ ENGINE (Fixed Timer & Logic)
+        // 🎮 QUIZ ENGINE (Fixed Timer & Spam)
         // ==========================================
         async function openQuizById(id, btnEl) {
             btnEl.disabled = true;
@@ -248,7 +274,7 @@
                 document.getElementById('quizPlayTitle').innerText = currentPlayingExam.title;
                 document.getElementById('quizPlayerModal').classList.remove('hidden');
                 renderCurrentQuestion();
-            } catch (e) { alert("Error"); } finally { btnEl.disabled = false; }
+            } catch (e) { alert("Load Fail"); } finally { btnEl.disabled = false; }
         }
 
         function renderCurrentQuestion() {
@@ -261,9 +287,9 @@
             area.innerHTML = `
                 <div class="animate__animated animate__fadeInRight text-center w-full">
                     <p class="text-white/20 text-[10px] font-bold mb-6 uppercase tracking-widest">Question ${currentQuestionIndex+1} / ${currentPlayingExam.questions.length}</p>
-                    <h2 class="text-3xl text-white font-black mb-16">${escapeHTML(q.q)}</h2>
+                    <h2 class="text-3xl text-white font-black mb-16 leading-tight">${escapeHTML(q.q)}</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        ${shuffledOptions.map((opt) => `<button onclick="checkAnswer(${opt.isCorrect}, this)" data-correct="${opt.isCorrect}" class="quiz-btn w-full p-6 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all text-left flex justify-between"><span>${escapeHTML(opt.text)}</span><i class="fa-solid fa-circle-check opacity-10"></i></button>`).join('')}
+                        ${shuffledOptions.map((opt) => `<button onclick="checkAnswer(${opt.isCorrect}, this)" data-correct="${opt.isCorrect}" class="quiz-btn w-full p-6 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all text-left flex justify-between"><span>${escapeHTML(opt.text)}</span><i class="fa-solid fa-bolt-lightning opacity-10"></i></button>`).join('')}
                     </div>
                 </div>
             `;
@@ -272,7 +298,7 @@
         function startTimer() {
             clearInterval(timerInterval);
             const bar = document.getElementById('timer-bar');
-            let msLeft = 15000; // 15 Sec
+            let msLeft = 15000; // 15 seconds
             timerInterval = setInterval(() => {
                 msLeft -= 100;
                 bar.style.width = (msLeft / 15000 * 100) + "%";
@@ -296,39 +322,39 @@
             if(userC) {
                 try {
                     await db.collection('scores').add({ uid: userC.uid, username: userC.email.split('@')[0], examId: currentPlayingExam.id, examTitle: currentPlayingExam.title, score: currentScore, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-                } catch { console.log("Score Save Fail"); }
+                } catch { console.log("score save fail"); }
             }
-            confetti({ particleCount: 200 });
-            area.innerHTML = `<div class="text-center animate__animated animate__zoomIn"><h2 class="text-5xl text-white font-black mb-4 uppercase">DONE!</h2><p class="text-white/40 mb-10 text-xl font-bold">YOUR SCORE: ${currentScore}</p><button onclick="closeQuizPlayer()" class="btn-glow px-12 py-5 mx-auto text-xs uppercase font-black">BACK TO LIBRARY</button></div>`;
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+            area.innerHTML = `<div class="text-center animate__animated animate__zoomIn"><h2 class="text-5xl text-white font-black mb-4 uppercase italic">Level Complete</h2><p class="text-white/40 mb-10 text-xl tracking-widest font-bold">Total Score: ${currentScore}</p><button onclick="closeQuizPlayer()" class="btn-glow px-12 py-5 mx-auto text-xs uppercase font-black">Library</button></div>`;
         }
 
-        function closeQuizPlayer() { clearInterval(timerInterval); document.getElementById('quizPlayerModal').classList.add('hidden'); }
+        function closeQuizPlayer() { clearInterval(timerInterval); document.getElementById('quizPlayerModal').classList.add('hidden'); currentPlayingExam = null; }
 
         // ==========================================
-        // 📊 FIRESTORE DATA
+        // 📊 LIBRARY & RANK
         // ==========================================
         async function fetchExamsFromCloud(isRefresh = true) {
-            const grid = document.getElementById('examsGrid'); if(isRefresh) grid.innerHTML = '<p class="opacity-30">Loading...</p>';
+            const grid = document.getElementById('examsGrid'); if(isRefresh) grid.innerHTML = 'Loading...';
             try {
                 const snap = await db.collection('exams').orderBy('createdAt','desc').limit(12).get();
                 grid.innerHTML = '';
                 snap.forEach(doc => {
                     const x = doc.data();
                     if(x.visibility === 'public' || isA || (userC && x.uid === userC.uid)) {
-                        grid.innerHTML += `<div class="app-card border border-gray-100 flex flex-col justify-between hover:scale-[1.02] transition-all relative">${(isA || (userC && x.uid === userC.uid)) ? `<button onclick="deleteEx('${doc.id}')" class="absolute top-5 right-5 text-red-100"><i class="fa-solid fa-trash"></i></button>` : ''}<div><span style="color:var(--accent)" class="text-[9px] font-black uppercase border px-3 py-1 rounded-full mb-4 inline-block">${x.visibility}</span><h3 class="font-black text-xl mb-8 dark:text-white">${escapeHTML(x.title)}</h3></div><button onclick="openQuizById('${doc.id}', this)" class="w-full py-4 bg-gray-50 border border-gray-200 rounded-2xl text-[10px] font-black uppercase text-gray-500 hover:bg-blue-600 hover:text-white transition-all dark:bg-gray-700">Start Exam</button></div>`;
+                        grid.innerHTML += `<div class="app-card border border-gray-100 flex flex-col justify-between hover:scale-[1.02] transition-all relative">${(isA || (userC && x.uid === userC.uid)) ? `<button onclick="deleteEx('${doc.id}')" class="absolute top-5 right-5 text-red-200"><i class="fa-solid fa-trash"></i></button>` : ''}<div><span style="color:var(--accent)" class="text-[9px] font-black uppercase border border-gray-100 px-3 py-1 rounded-full mb-4 inline-block tracking-widest">${x.visibility}</span><h3 class="font-black text-xl mb-8 dark:text-white leading-tight">${escapeHTML(x.title)}</h3></div><button onclick="openQuizById('${doc.id}', this)" class="w-full py-4 bg-gray-50 border border-gray-200 rounded-2xl text-[10px] font-black uppercase text-gray-500 hover:bg-blue-600 hover:text-white transition-all dark:bg-gray-700">Open Exam</button></div>`;
                     }
                 });
-            } catch (e) { grid.innerHTML = 'Error'; }
+            } catch (e) { grid.innerHTML = 'Firestore Error'; }
         }
 
         async function fetchRankings() {
-            const area = document.getElementById('rankingsArea'); area.innerHTML = 'Loading Rank...';
+            const area = document.getElementById('rankingsArea'); area.innerHTML = 'Loading Rankings...';
             try {
                 const snap = await db.collection('scores').orderBy('score','desc').limit(10).get(); area.innerHTML = '';
                 let rank = 1;
                 snap.forEach(doc => {
                     const s = doc.data();
-                    area.innerHTML += `<div class="app-card flex items-center justify-between mb-3 hover:scale-[1.01] transition-all"><div class="flex items-center gap-4"><span class="text-2xl font-black italic opacity-20">#${rank++}</span><div><h4 class="font-black uppercase">${s.username}</h4><p class="text-[9px] opacity-40 uppercase font-bold">${s.examTitle}</p></div></div><span style="color:var(--accent)" class="text-2xl font-black">${s.score}</span></div>`;
+                    area.innerHTML += `<div class="app-card flex items-center justify-between mb-3 hover:scale-[1.01] transition-all"><div class="flex items-center gap-4"><span class="text-2xl font-black italic opacity-20 w-8">#${rank++}</span><div><h4 class="font-black uppercase">${s.username}</h4><p class="text-[9px] opacity-40 uppercase font-bold">${s.examTitle}</p></div></div><span style="color:var(--accent)" class="text-2xl font-black">${s.score}</span></div>`;
                 });
             } catch (e) { area.innerHTML = 'Offline'; }
         }
@@ -337,45 +363,26 @@
             const container = document.getElementById('editorCards'); container.innerHTML = '';
             data.forEach((b, i) => {
                 let oH = b.options.map((o, idx) => `<div class="flex items-center gap-4 p-4 bg-gray-50 border rounded-2xl dark:bg-gray-700"><input type="radio" name="g_${i}" ${o.isCorrect?'checked':''} class="w-6 h-6 accent-green-500"><input type="text" value="${o.text}" class="v-opt-val flex-1 bg-transparent font-medium"></div>`).join('');
-                container.innerHTML += `<div class="q-item app-card mb-6"><textarea class="v-q-val w-full bg-transparent font-black text-xl border-b mb-6 resize-none h-auto">${b.q}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-4">${oH}</div></div>`;
+                container.innerHTML += `<div class="q-item app-card mb-6 animate__animated animate__fadeInUp"><textarea class="v-q-val w-full bg-transparent font-black text-xl border-b mb-6 resize-none h-auto">${b.q}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-4">${oH}</div></div>`;
             });
             document.getElementById('saveExamTitle').value = title; switchView('editor');
         }
 
         async function saveExamToCloud() {
-            if(!userC) return alert("Login first!");
+            if(!userC) return alert("กรุณาล็อกอินก่อนครับ!");
             const btn = document.getElementById('btnSaveExam'); btn.disabled = true;
             const data = { title: document.getElementById('saveExamTitle').value || "Exam", uid: userC.uid, owner: userC.email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), visibility: document.getElementById('examVisibility').value, questions: [] };
             document.querySelectorAll('.q-item').forEach(c => {
                 const opts = []; c.querySelectorAll('.flex.items-center').forEach(r => opts.push({ text: r.querySelector('.v-opt-val').value, isCorrect: r.querySelector('input[type="radio"]').checked }));
                 data.questions.push({ q: c.querySelector('.v-q-val').value, options: opts });
             });
-            try { await db.collection('exams').add(data); switchView('db'); } catch (e) { alert("Save Error"); } finally { btn.disabled = false; }
+            try { await db.collection('exams').add(data); confetti({ particleCount: 200 }); switchView('db'); } catch (e) { alert("Save Error"); } finally { btn.disabled = false; }
         }
 
-        async function deleteEx(id) { if(confirm("Delete?")) { await db.collection('exams').doc(id).delete(); fetchExamsFromCloud(true); } }
-
-        // ==========================================
-        // 🛠️ UI & AUTH
-        // ==========================================
-        auth.onAuthStateChanged(user => {
-            userC = user;
-            const slot = document.getElementById('navAuthSlot');
-            if (user) {
-                isA = (user.email && user.email.toLowerCase() === ADMIN_E.toLowerCase());
-                slot.innerHTML = `<button onclick="toggleSidebar()" class="bg-white/10 border px-4 py-1.5 rounded-full text-[10px] font-black dark:text-white animate__animated animate__fadeInRight">${user.email.split('@')[0].toUpperCase()}</button>`;
-                if(isA) document.getElementById('adminPanel').classList.remove('hidden');
-                closeAuthModal(); fetchExamsFromCloud(true);
-            } else {
-                slot.innerHTML = `<button onclick="openAuthModal()" class="btn-glow px-6 py-2 text-[10px] uppercase shadow-lg">Login</button>`;
-                document.getElementById('adminPanel').classList.add('hidden');
-                fetchExamsFromCloud(true);
-            }
-        });
-
-        function handleImgUpload(i) { if (i.files && i.files[0]) { const r = new FileReader(); r.onload = e => aiAvatarBase64 = e.target.result; r.readAsDataURL(i.files[0]); } }
+        async function deleteEx(id) { if(confirm("Delete Permanently?")) { await db.collection('exams').doc(id).delete(); fetchExamsFromCloud(true); } }
         function toggleSidebar() { document.getElementById('sideMenu').classList.toggle('translate-x-full'); }
-        function updateTheme(t) { document.body.classList.remove('theme-blue', 'theme-dark'); if(t !== 'green') document.body.classList.add('theme-' + t); localStorage.setItem('mk_v23_theme', t); }
+        function updateTheme(t) { document.body.classList.remove('theme-blue', 'theme-dark'); if(t !== 'green') document.body.classList.add('theme-' + t); localStorage.setItem('MARK_STABLE_THEME', t); }
+        
         function switchView(target) {
             ['db','ai','chat','editor','rank'].forEach(x => document.getElementById('view-'+x)?.classList.add('hidden'));
             document.getElementById('view-'+target).classList.remove('hidden');
@@ -386,32 +393,26 @@
         }
 
         function saveAdmin() {
-            localStorage.setItem('mk_v23_key', document.getElementById('adm-key').value);
-            localStorage.setItem('mk_v23_name', document.getElementById('adm-name').value);
-            localStorage.setItem('mk_v23_persona', document.getElementById('adm-persona').value);
-            if(aiAvatarBase64) localStorage.setItem('mk_v23_img', aiAvatarBase64);
-            initUI(); alert("v23 REBOOTED!");
+            localStorage.setItem(KEY_STORAGE, document.getElementById('adm-key').value);
+            localStorage.setItem(NAME_STORAGE, document.getElementById('adm-name').value);
+            localStorage.setItem(PERSONA_STORAGE, document.getElementById('adm-persona').value);
+            if(aiAvatarBase64) localStorage.setItem(IMG_STORAGE, aiAvatarBase64);
+            initUI(); alert("v23 Rebooted & Synced!");
         }
 
         function initUI() {
-            const n = localStorage.getItem('mk_v23_name') || "AI Mark";
-            const i = localStorage.getItem('mk_v23_img') || "https://ui-avatars.com/api/?name=Mark";
+            const n = localStorage.getItem(NAME_STORAGE) || "AI Mark";
+            const i = localStorage.getItem(IMG_STORAGE) || "https://ui-avatars.com/api/?name=Mark";
             document.getElementById('ai-name-gen').innerText = n;
             document.getElementById('ai-img-gen').src = i;
             document.getElementById('adm-name').value = n;
-            document.getElementById('adm-persona').value = localStorage.getItem('mk_v23_persona') || "";
-        }
-
-        function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
-        function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
-        async function handleSocial() { try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); } catch (e) { alert(e.message); } }
-        async function emailAuth() { 
-            const e = document.getElementById('emailInp').value, p = document.getElementById('passInp').value;
-            try { await auth.signInWithEmailAndPassword(e, p); } catch (x) { try { await auth.createUserWithEmailAndPassword(e, p); } catch (err) { alert(err.message); } }
+            document.getElementById(KEY_STORAGE.toLowerCase().replace(/_/g,'-'))?.value = localStorage.getItem(KEY_STORAGE) || ""; // Not needed but for completeness
+            document.getElementById('adm-persona').value = localStorage.getItem(PERSONA_STORAGE) || "";
+            document.getElementById('adm-key').value = localStorage.getItem(KEY_STORAGE) || "";
         }
 
         window.onload = () => {
-            if(localStorage.getItem('mk_v23_theme')) updateTheme(localStorage.getItem('mk_v23_theme'));
+            if(localStorage.getItem('MARK_STABLE_THEME')) updateTheme(localStorage.getItem('MARK_STABLE_THEME'));
             initUI(); switchView('db');
         };
     </script>
