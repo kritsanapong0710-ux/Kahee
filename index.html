@@ -107,14 +107,14 @@
             <h2 id="ai-name-gen" class="text-4xl font-black mb-10 tracking-tighter">AI Mark Twin</h2>
             <div class="space-y-6 w-full px-4">
                 <input type="text" id="aiTopic" placeholder="พิมพ์เนื้อหาที่อยากออกสอบ (เช่น ประวัติศาสตร์ไทย ม.3)..." class="custom-input text-center font-bold text-xl py-5 shadow-inner">
-                <button onclick="triggerAIGeneration()" id="aiGenBtn" class="btn-glow w-full py-5 text-xl shadow-xl tracking-wide uppercase"><i class="fa-solid fa-bolt"></i> สร้างข้อสอบด้วย Gemini</button>
+                <button onclick="triggerAIGeneration()" id="aiGenBtn" class="btn-glow w-full py-5 text-xl shadow-xl tracking-wide uppercase"><i class="fa-solid fa-bolt"></i> สร้างข้อสอบด้วย Gemini 2.5</button>
             </div>
         </div>
 
         <div id="view-chat" class="hidden app-card flex flex-col h-[70vh] lg:h-[75vh] animate__animated animate__fadeIn max-w-4xl mx-auto p-0 overflow-hidden">
             <div class="p-4 border-b dark:border-gray-800 flex items-center gap-3 bg-gray-50/50 dark:bg-gray-800/50">
                 <i class="fa-solid fa-robot text-gray-400 text-xl"></i>
-                <span class="font-bold opacity-50 uppercase tracking-widest text-xs">Tutor Session</span>
+                <span class="font-bold opacity-50 uppercase tracking-widest text-xs">Tutor Session (Gemini 2.5)</span>
             </div>
             <div id="chatArea" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
             <div class="p-4 lg:p-6 bg-gray-50 dark:bg-gray-800/50 border-t dark:border-gray-700">
@@ -179,7 +179,7 @@
             <div id="adminPanel" class="hidden space-y-6 pt-8 border-t border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-2">
                     <i class="fa-solid fa-user-secret text-red-500 text-xl"></i>
-                    <h4 class="font-black text-red-500 uppercase tracking-widest text-sm">Twin Engine (V25)</h4>
+                    <h4 class="font-black text-red-500 uppercase tracking-widest text-sm">Twin Engine (Gemini 2.5)</h4>
                 </div>
                 
                 <div class="space-y-4 bg-gray-50 dark:bg-gray-800/50 p-5 rounded-2xl border border-gray-100 dark:border-gray-700">
@@ -299,7 +299,7 @@
         function handleImgUpload(i) { if (i.files && i.files[0]) { const r = new FileReader(); r.onload = e => { aiAvatarBase64 = e.target.result; showToast("อัปโหลดรูปสำเร็จ โหลดชั่วคราว"); }; r.readAsDataURL(i.files[0]); } }
 
         // ==========================================
-        // 🤖 UNBREAKABLE AI ENGINE (V25)
+        // 🤖 UNBREAKABLE AI ENGINE (PURE GEMINI 2.5 FLASH)
         // ==========================================
         async function callGemini(promptText) {
             if (Date.now() - lastCall < 1500) throw new Error("⚠️ AI กำลังพักประมวลผล กรุณารอ 1-2 วินาทีแล้วลองใหม่ครับ");
@@ -308,27 +308,25 @@
             const key = localStorage.getItem(KEY_STORE) || "";
             if(!key) throw new Error("ไม่พบ API Key กรุณาตั้งค่าในหน้าแอดมิน");
             
-            // ✅ BUG FIXED: แก้ไขตัวแปรให้ตรงกัน
+            // ✅ BUGS FIXED: Referenced PERSONA_STORE Correctly
             const persona = localStorage.getItem(PERSONA_STORE) || "คุณคือ AI อัจฉริยะ ตอบสั้น กระชับ ตรงไปตรงมา";
             const reqBody = { contents: [{ parts: [{ text: `[System Instruction: ${persona}]\n\nUser: ${promptText}` }] }] };
 
-            const urls = [
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`
-            ];
+            // 🛑 STRICTLY USE ONLY GEMINI 2.5 FLASH (NO FALLBACKS) 🛑
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
 
-            let lastErrorMsg = "";
-            for (let url of urls) {
-                try {
-                    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
-                    const data = await res.json();
-                    
-                    // 🛡️ Ultimate API Error Handling
-                    if (!res.ok) { lastErrorMsg = data.error?.message || "Unknown API Error"; continue; }
-                    if (data.candidates && data.candidates[0]?.content) return data.candidates[0].content.parts[0].text;
-                } catch (e) { lastErrorMsg = "Network Error หรือเชื่อมต่อไม่ได้"; }
+            try {
+                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
+                const data = await res.json();
+                
+                // 🛡️ Ultimate API Error Handling
+                if (!res.ok) throw new Error(data.error?.message || "Unknown API Error");
+                if (data.candidates && data.candidates[0]?.content) return data.candidates[0].content.parts[0].text;
+                
+                throw new Error("ไม่มีข้อมูลส่งกลับมาจาก AI");
+            } catch (e) {
+                throw new Error(`AI Offline/Error: ${e.message}`);
             }
-            throw new Error(`AI Offline: ${lastErrorMsg}`);
         }
 
         async function autoGeneratePersona() {
@@ -381,7 +379,7 @@
                 renderEditorFromJSON(quizData, t);
                 showToast("สร้างข้อสอบสำเร็จ!");
             } catch (e) { showToast(e.message, "error"); } 
-            finally { btn.disabled = false; btn.innerHTML = "สร้างข้อสอบด้วย Gemini"; }
+            finally { btn.disabled = false; btn.innerHTML = "<i class='fa-solid fa-bolt'></i> สร้างข้อสอบด้วย Gemini"; }
         }
 
         async function sendChatToAI() {
