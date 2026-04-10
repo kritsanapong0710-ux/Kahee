@@ -1,19 +1,26 @@
+```html
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizPro ULTIMATE V26</title>
+    <title>QuizPro ULTIMATE V27</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    
+    <!-- Syntax Highlighter for AI Code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
@@ -33,7 +40,7 @@
         .btn-glow { background-color: var(--accent); color: var(--btn-txt); border-radius: 1rem; font-weight: 700; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; }
         .btn-glow:hover:not(:disabled) { filter: brightness(115%); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .btn-glow:active:not(:disabled) { transform: translateY(0px); }
-        .btn-glow:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-glow:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(50%); }
 
         .tab-bar { display: flex; overflow-x: auto; gap: 10px; padding: 10px; scrollbar-width: none; background: rgba(148, 163, 184, 0.1); border-radius: 1.5rem; }
         .tab-bar::-webkit-scrollbar { display: none; }
@@ -62,39 +69,51 @@
         .toast.error { border-left: 4px solid #ef4444; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* AI Markdown Formatting */
+        /* AI Markdown Formatting (Enhanced) */
         .markdown-body { font-size: 0.95rem; line-height: 1.6; }
         .markdown-body p { margin-bottom: 0.75rem; }
         .markdown-body p:last-child { margin-bottom: 0; }
         .markdown-body strong { font-weight: 800; color: inherit; }
         .markdown-body ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.75rem; }
         .markdown-body ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.75rem; }
-        .markdown-body pre { background: rgba(0, 0, 0, 0.05); padding: 1rem; border-radius: 0.75rem; overflow-x: auto; margin: 0.75rem 0; font-size: 0.85rem; }
-        .dark .markdown-body pre { background: rgba(255, 255, 255, 0.05); }
+        .markdown-body pre { background: #0d1117; padding: 1rem; border-radius: 0.75rem; overflow-x: auto; margin: 0.75rem 0; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.1); }
         .markdown-body code { background: rgba(0, 0, 0, 0.05); padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.85em; color: var(--accent); }
-        .dark .markdown-body code { background: rgba(255, 255, 255, 0.1); }
-        .markdown-body pre code { background: transparent; padding: 0; color: inherit; }
+        .dark .markdown-body code { background: rgba(255, 255, 255, 0.1); color: #60a5fa; }
+        .markdown-body pre code { background: transparent; padding: 0; color: inherit; border: none; }
         
         .blinking-cursor { display: inline-block; width: 8px; height: 1em; background-color: var(--accent); vertical-align: text-bottom; animation: blink 1s step-end infinite; margin-left: 2px; }
         @keyframes blink { 50% { opacity: 0; } }
+        
+        /* Voice Anim */
+        .voice-active { animation: pulseVoice 1.5s infinite; color: var(--accent) !important; }
+        @keyframes pulseVoice { 0% { transform: scale(1); } 50% { transform: scale(1.2); text-shadow: 0 0 10px var(--accent); } 100% { transform: scale(1); } }
 
-        /* Mobile specific adjustments */
         @media (max-width: 640px) { 
             .btn-glow { min-height: 54px; width: 100%; }
-            #view-chat { height: calc(100vh - 180px); } /* Safe area for mobile keyboard */
+            #view-chat { height: calc(100vh - 180px); }
             .chat-bubble { max-width: 90%; }
+        }
+        
+        /* Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { position: absolute; left: 0; top: 0; width: 100%; color: black !important; background: white !important; }
+            .no-print { display: none !important; }
+            .app-card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
         }
     </style>
 </head>
 <body class="min-h-screen relative flex flex-col">
 
     <div id="toast-container"></div>
+    <div id="printArea" class="hidden p-8 bg-white text-black"></div>
 
-    <nav class="sticky top-0 z-[60] bg-white/80 backdrop-blur-lg border-b border-gray-100 px-4 py-4 lg:px-10 dark:bg-gray-900/90 dark:border-gray-800 transition-colors">
+    <nav class="sticky top-0 z-[60] bg-white/80 backdrop-blur-lg border-b border-gray-100 px-4 py-4 lg:px-10 dark:bg-gray-900/90 dark:border-gray-800 transition-colors no-print">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 lg:gap-4 cursor-pointer" onclick="switchView('db')">
-                <div style="background-color: var(--accent);" class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl lg:rounded-2xl text-white shadow-lg"><i class="fa-solid fa-graduation-cap text-lg lg:text-xl"></i></div>
-                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span></h1>
+                <div style="background-color: var(--accent);" class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl lg:rounded-2xl text-white shadow-lg"><i class="fa-solid fa-bolt text-lg lg:text-xl"></i></div>
+                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80">V27</span></h1>
             </div>
             <div id="navAuthSlot">
                 <button onclick="openAuthModal()" class="btn-glow px-4 lg:px-6 py-2 lg:py-2.5 text-[10px] lg:text-xs uppercase tracking-widest shadow-md">Login</button>
@@ -102,7 +121,7 @@
         </div>
     </nav>
 
-    <main class="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-8 mt-6 lg:mt-8 pb-10">
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-8 mt-6 lg:mt-8 pb-10 no-print">
         <div class="tab-bar mb-8 lg:mb-10 dark:bg-gray-800/50 backdrop-blur-sm">
             <button onclick="switchView('db')" id="btn-db" class="tab-item active"><i class="fa-solid fa-book-open mr-2"></i> คลังข้อสอบ</button>
             <button onclick="switchView('rank')" id="btn-rank" class="tab-item"><i class="fa-solid fa-trophy mr-2"></i> จัดอันดับ</button>
@@ -110,6 +129,7 @@
             <button onclick="switchView('chat')" id="btn-chat" class="tab-item"><i class="fa-solid fa-messages mr-2"></i> ติวกับ AI</button>
         </div>
 
+        <!-- View: Library -->
         <div id="view-db" class="animate__animated animate__fadeIn">
             <div class="flex justify-between items-center mb-6 lg:mb-8 px-2">
                 <h2 class="text-2xl lg:text-3xl font-black italic uppercase tracking-widest opacity-80">Library</h2>
@@ -118,31 +138,41 @@
             <div id="examsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8"></div>
         </div>
 
+        <!-- View: Ranking -->
         <div id="view-rank" class="hidden animate__animated animate__fadeIn max-w-4xl mx-auto">
             <h2 class="text-2xl lg:text-3xl font-black italic mb-6 lg:mb-8 uppercase text-center tracking-widest text-yellow-500"><i class="fa-solid fa-crown"></i> Hall of Fame</h2>
             <div id="rankingsArea" class="space-y-3 lg:space-y-4"></div>
         </div>
 
-        <div id="view-ai" class="hidden app-card text-center animate__animated animate__fadeIn py-10 lg:py-20 max-w-3xl mx-auto">
+        <!-- View: AI Exam Gen -->
+        <div id="view-ai" class="hidden app-card text-center animate__animated animate__fadeIn py-10 lg:py-20 max-w-3xl mx-auto border-t-4 border-t-purple-500">
             <div class="relative w-24 h-24 lg:w-32 lg:h-32 mx-auto mb-6 lg:mb-8">
                 <img id="ai-img-gen" src="" class="w-full h-full rounded-full shadow-2xl border-4 border-white object-cover bg-gray-100 dark:border-gray-700">
                 <div style="background-color: var(--accent);" class="absolute bottom-0 right-0 w-6 h-6 lg:w-8 lg:h-8 rounded-full border-[3px] border-white dark:border-gray-800 flex items-center justify-center text-white text-[10px] lg:text-xs"><i class="fa-solid fa-check"></i></div>
             </div>
-            <h2 id="ai-name-gen" class="text-3xl lg:text-4xl font-black mb-8 lg:mb-10 tracking-tighter">AI Mark Twin</h2>
+            <h2 id="ai-name-gen" class="text-3xl lg:text-4xl font-black mb-2 tracking-tighter">AI Twin Generator</h2>
+            <p class="text-xs lg:text-sm opacity-50 mb-8 font-bold text-purple-500">Powered by Gemini 2.5 Flash</p>
             <div class="space-y-4 lg:space-y-6 w-full px-2 lg:px-4">
-                <input type="text" id="aiTopic" placeholder="พิมพ์เนื้อหาที่อยากออกสอบ (เช่น ประวัติศาสตร์ไทย ม.3)..." class="custom-input text-center font-bold text-lg lg:text-xl py-4 lg:py-5 shadow-inner">
-                <button onclick="triggerAIGeneration()" id="aiGenBtn" class="btn-glow w-full py-4 lg:py-5 text-lg lg:text-xl shadow-xl tracking-wide uppercase"><i class="fa-solid fa-bolt"></i> สร้างข้อสอบด้วย AI</button>
+                <input type="text" id="aiTopic" placeholder="พิมพ์เนื้อหาที่อยากออกสอบ (เช่น ประวัติศาสตร์ไทย ม.3)..." class="custom-input text-center font-bold text-lg lg:text-xl py-4 lg:py-5 shadow-inner border-purple-200 dark:border-purple-900 focus:border-purple-500">
+                <button onclick="triggerAIGeneration()" id="aiGenBtn" class="btn-glow w-full py-4 lg:py-5 text-lg lg:text-xl shadow-xl tracking-wide uppercase bg-gradient-to-r from-purple-500 to-indigo-500"><i class="fa-solid fa-bolt"></i> สร้างข้อสอบด้วย AI</button>
             </div>
         </div>
 
+        <!-- View: AI Chat (Upgraded) -->
         <div id="view-chat" class="hidden app-card flex flex-col h-[75vh] animate__animated animate__fadeIn max-w-4xl mx-auto p-0 overflow-hidden relative">
-            <div class="p-3 lg:p-4 border-b dark:border-gray-800 flex items-center gap-3 bg-gray-50/50 dark:bg-gray-800/50 shrink-0">
-                <i class="fa-solid fa-robot text-gray-400 text-lg lg:text-xl"></i>
-                <span class="font-bold opacity-50 uppercase tracking-widest text-[10px] lg:text-xs">Tutor Session (Streaming)</span>
+            <div class="p-3 lg:p-4 border-b dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/50 shrink-0">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-robot text-purple-500 text-lg lg:text-xl"></i>
+                    <span class="font-bold opacity-50 uppercase tracking-widest text-[10px] lg:text-xs text-purple-600 dark:text-purple-400">Tutor Session (Gemini 2.5)</span>
+                </div>
+                <button onclick="toggleVoice()" id="voiceToggleBtn" class="w-8 h-8 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center text-gray-400">
+                    <i class="fa-solid fa-volume-xmark text-sm"></i>
+                </button>
             </div>
             
             <div id="chatArea" class="flex-1 overflow-y-auto p-4 lg:p-6 space-y-6 custom-scroll">
-                </div>
+                <div class="flex justify-center opacity-30 my-4 text-[10px] font-black uppercase tracking-widest">ยินดีต้อนรับสู่ AI Tutor</div>
+            </div>
             
             <div class="p-3 lg:p-6 bg-gray-50 dark:bg-gray-800/50 border-t dark:border-gray-700 shrink-0">
                 <div class="flex gap-2 lg:gap-3 items-center">
@@ -152,6 +182,7 @@
             </div>
         </div>
 
+        <!-- View: Editor -->
         <div id="view-editor" class="hidden mt-6 lg:mt-8 space-y-6 pb-40 max-w-4xl mx-auto">
             <div class="flex items-center justify-between mb-6 lg:mb-8 px-2 lg:px-4">
                 <h2 class="text-2xl lg:text-3xl font-black italic">ตรวจสอบข้อสอบ</h2>
@@ -169,7 +200,8 @@
         </div>
     </main>
 
-    <div id="quizPlayerModal" class="fixed inset-0 z-[100] bg-[#0f172a] hidden flex flex-col animate__animated animate__fadeIn">
+    <!-- Quiz Player Modal -->
+    <div id="quizPlayerModal" class="fixed inset-0 z-[100] bg-[#0f172a] hidden flex flex-col animate__animated animate__fadeIn no-print">
         <div class="w-full h-1.5 bg-white/10"><div id="timer-bar" class="h-full bg-green-500 w-full rounded-r-full shadow-[0_0_10px_#22c55e]"></div></div>
         
         <div class="p-4 lg:p-8 flex justify-between items-center text-white border-b border-white/5 bg-black/20">
@@ -186,7 +218,8 @@
         </div>
     </div>
 
-    <div id="sideMenu" class="fixed right-0 top-0 h-full w-full sm:w-[400px] bg-white shadow-[0_0_60px_rgba(0,0,0,0.3)] translate-x-full transition-transform duration-500 z-[100] border-l dark:bg-gray-900 dark:border-gray-800 flex flex-col">
+    <!-- Side Menu (Settings) -->
+    <div id="sideMenu" class="fixed right-0 top-0 h-full w-full sm:w-[400px] bg-white shadow-[0_0_60px_rgba(0,0,0,0.3)] translate-x-full transition-transform duration-500 z-[100] border-l dark:bg-gray-900 dark:border-gray-800 flex flex-col no-print">
         <div class="p-6 lg:p-8 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
             <h3 class="font-black text-xl lg:text-2xl uppercase tracking-tighter"><i class="fa-solid fa-gear mr-2"></i> Settings</h3>
             <button onclick="toggleSidebar()" class="text-2xl lg:text-3xl opacity-40 hover:opacity-100 w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">&times;</button>
@@ -205,7 +238,7 @@
             <div id="adminPanel" class="hidden space-y-6 pt-6 lg:pt-8 border-t border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-2">
                     <i class="fa-solid fa-user-secret text-red-500 text-lg lg:text-xl"></i>
-                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Twin Engine (V26 Streaming)</h4>
+                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Twin Engine (V27 Gemini 2.5)</h4>
                 </div>
                 
                 <div class="space-y-4 bg-gray-50 dark:bg-gray-800/50 p-4 lg:p-5 rounded-2xl border border-gray-100 dark:border-gray-700">
@@ -241,7 +274,8 @@
         </div>
     </div>
 
-    <div id="authModal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-md">
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-md no-print">
         <div class="bg-white p-6 lg:p-12 rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl w-full max-w-md dark:bg-gray-800 animate__animated animate__zoomIn border border-white/10">
             <h2 class="text-3xl lg:text-4xl font-black text-center mb-1 lg:mb-2 tracking-tighter uppercase italic">Welcome</h2>
             <p class="text-center text-[10px] lg:text-xs opacity-40 font-bold mb-8 lg:mb-10 uppercase tracking-widest">Sign in to QuizMaster</p>
@@ -265,6 +299,15 @@
     </div>
 
     <script>
+        // --- Setup Markdown & Code Highlight ---
+        marked.setOptions({
+            highlight: function(code, lang) {
+                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                return hljs.highlight(code, { language }).value;
+            },
+            breaks: true
+        });
+
         // --- Custom Premium Toast Notification ---
         function showToast(msg, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -290,6 +333,7 @@
 
         let userC = null, isA = false, aiAvatarBase64 = "", lastCall = 0;
         let currentPlayingExam = null, currentQuestionIndex = 0, currentScore = 0, timerInterval = null, answered = false;
+        let voiceEnabled = false;
 
         // Security Helper
         function escapeHTML(str){ return str ? str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) : ""; }
@@ -325,38 +369,68 @@
         function handleImgUpload(i) { if (i.files && i.files[0]) { const r = new FileReader(); r.onload = e => { aiAvatarBase64 = e.target.result; showToast("อัปโหลดรูปสำเร็จ โหลดชั่วคราว"); }; r.readAsDataURL(i.files[0]); } }
 
         // ==========================================
-        // 🤖 AI ENGINE (Legacy JSON Fetcher for Quiz)
+        // 🚀 SMART FETCH WITH AUTO-RETRY (No Error System)
         // ==========================================
-        async function callGemini(promptText) {
-            if (Date.now() - lastCall < 1500) throw new Error("⚠️ AI กำลังพักประมวลผล กรุณารอ 1-2 วินาที");
-            lastCall = Date.now();
-            
-            const key = localStorage.getItem(KEY_STORE) || "";
-            if(!key) throw new Error("ไม่พบ API Key กรุณาตั้งค่าในหน้าแอดมิน");
-            
-            const persona = localStorage.getItem(PERSONA_STORE) || "คุณคือ AI อัจฉริยะ ตอบสั้น กระชับ ตรงไปตรงมา";
-            const reqBody = { contents: [{ parts: [{ text: `[System Instruction: ${persona}]\n\nUser: ${promptText}` }] }] };
-
-            const models = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-flash-8b"];
-            let lastErrorMsg = "";
-            for (let model of models) {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            let delay = 1000;
+            for (let i = 0; i < maxRetries; i++) {
                 try {
-                    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
-                    const data = await res.json();
-                    
-                    if (!res.ok) { 
-                        lastErrorMsg = data.error?.message || "Unknown API Error"; 
-                        if(res.status === 429 || res.status === 503 || lastErrorMsg.includes("quota")) continue;
-                        throw new Error(lastErrorMsg); 
+                    const res = await fetch(url, options);
+                    if (!res.ok) {
+                        // If rate limit (429) or Service Unavailable (503), retry!
+                        if (res.status === 429 || res.status === 503) {
+                            console.warn(`[AI Engine] API Busy (Status ${res.status}). Auto-retrying in ${delay}ms... (Attempt ${i+1}/${maxRetries})`);
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            delay *= 2; // Exponential backoff (1s, 2s, 4s, 8s, 16s)
+                            continue;
+                        }
+                        // Other errors (e.g. 400 Bad Request, API Key wrong) -> fail fast
+                        const errData = await res.json().catch(()=>({}));
+                        throw new Error(errData.error?.message || `API Error HTTP ${res.status}`);
                     }
-                    if (data.candidates && data.candidates[0]?.content) return data.candidates[0].content.parts[0].text;
-                } catch (e) { 
-                    if(e.message.includes("quota") || e.message.includes("Offline")) continue;
-                    lastErrorMsg = e.message; 
+                    return res;
+                } catch(e) {
+                    if(e.name === 'AbortError') throw e; // User cancelled
+                    if(i === maxRetries - 1) throw new Error("AI เซิร์ฟเวอร์หนาแน่นเกินไป กรุณาลองใหม่ภายหลังครับ");
                 }
             }
-            throw new Error(`ระบบ AI คนล้นเซิร์ฟเวอร์ชั่วคราวครับ โปรดรอสักครู่ (Error: ${lastErrorMsg})`);
+        }
+
+        // ==========================================
+        // 🤖 AI ENGINE (V27 - Gemini 2.5 Flash + JSON Builder)
+        // ==========================================
+        async function triggerAIGeneration() {
+            const t = document.getElementById('aiTopic').value; if(!t) return showToast("กรุณาระบุเนื้อหาข้อสอบ!", "error");
+            const btn = document.getElementById('aiGenBtn'); btn.disabled = true; btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin mr-2'></i> AI Is Crafting (Auto-Retry)...";
+            
+            try {
+                const key = localStorage.getItem(KEY_STORE) || "";
+                if(!key) throw new Error("ไม่พบ API Key กรุณาตั้งค่าในหน้าแอดมิน");
+                
+                const prompt = `จงสร้างข้อสอบ 5 ข้อ เรื่อง "${t}" คืนค่ากลับมาเป็นโครงสร้าง JSON ARRAY เท่านั้น ห้ามมีข้อความอื่นหรือคำอธิบายเด็ดขาด โครงสร้างคือ: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
+                const reqBody = { contents: [{ parts: [{ text: prompt }] }] };
+                
+                // Using Gemini 2.5 Flash
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
+                
+                const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
+                const data = await res.json();
+                
+                const resText = data.candidates[0]?.content?.parts[0]?.text || "";
+                
+                const match = resText.match(/\[[\s\S]*\]/);
+                if(!match) throw new Error("AI ส่งข้อมูลมาผิดรูปแบบ (ไม่มี JSON Array)");
+                
+                let quizData;
+                try { quizData = JSON.parse(match[0]); } catch { throw new Error("ข้อมูล JSON ที่ AI สร้างมีจุดผิดพลาด (Syntax Error)"); }
+
+                quizData = quizData.filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2);
+                if(quizData.length === 0) throw new Error("AI ไม่สามารถสร้างคำถามที่สมบูรณ์ได้ ลองเปลี่ยนหัวข้อดูครับ");
+
+                renderEditorFromJSON(quizData, t);
+                showToast("สร้างข้อสอบสำเร็จด้วย Gemini 2.5!");
+            } catch (e) { showToast(e.message, "error"); } 
+            finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-bolt"></i> สร้างข้อสอบด้วย AI'; }
         }
 
         async function autoGeneratePersona() {
@@ -371,13 +445,10 @@
                 if(!key) throw new Error("ใส่ API Key ด้านบนก่อนครับ");
                 
                 const prompt = `แปลงคำสั่งต่อไปนี้ให้เป็น 'System Instruction' สำหรับสั่งการ AI พิมพ์ตอบมาแค่คำสั่งล้วนๆ ห้ามมีคำอธิบาย หรือเครื่องหมาย quote ครอบ: "${input}"`;
-                const body = { contents: [{ parts: [{ text: prompt }] }] };
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
                 
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, { 
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) 
-                });
+                const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
                 const data = await res.json();
-                if(!data.candidates) throw new Error("API Error");
                 
                 document.getElementById('adm-persona').value = data.candidates[0].content.parts[0].text.trim();
                 showToast("สร้าง Persona อัตโนมัติสำเร็จ!");
@@ -385,33 +456,38 @@
             finally { btn.disabled = false; btn.innerHTML = "<i class='fa-solid fa-magic'></i>"; }
         }
 
-        async function triggerAIGeneration() {
-            const t = document.getElementById('aiTopic').value; if(!t) return showToast("กรุณาระบุเนื้อหาข้อสอบ!", "error");
-            const btn = document.getElementById('aiGenBtn'); btn.disabled = true; btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin mr-2'></i> AI Is Crafting...";
-            
-            try {
-                const prompt = `จงสร้างข้อสอบ 5 ข้อ เรื่อง "${t}" คืนค่ากลับมาเป็นโครงสร้าง JSON ARRAY เท่านั้น ห้ามมีข้อความอื่นหรือคำอธิบายเด็ดขาด โครงสร้างคือ: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
-                const res = await callGemini(prompt);
-                
-                const match = res.match(/\[[\s\S]*\]/);
-                if(!match) throw new Error("AI ส่งข้อมูลมาผิดรูปแบบ (ไม่มี JSON Array)");
-                
-                let quizData;
-                try { quizData = JSON.parse(match[0]); } catch { throw new Error("ข้อมูล JSON ที่ AI สร้างมีจุดผิดพลาด (Syntax Error)"); }
-
-                quizData = quizData.filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2);
-                if(quizData.length === 0) throw new Error("AI ไม่สามารถสร้างคำถามที่สมบูรณ์ได้ ลองเปลี่ยนหัวข้อดูครับ");
-
-                renderEditorFromJSON(quizData, t);
-                showToast("สร้างข้อสอบสำเร็จ!");
-            } catch (e) { showToast(e.message, "error"); } 
-            finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-bolt"></i> สร้างข้อสอบด้วย AI'; }
-        }
-
         // ==========================================
-        // 🚀 NEW: STREAMING AI CHAT & MARKDOWN
+        // 🚀 AI CHAT STREAMING + VOICE TTS (V27)
         // ==========================================
         let chatAbortController = null;
+
+        function toggleVoice() {
+            voiceEnabled = !voiceEnabled;
+            const btn = document.getElementById('voiceToggleBtn');
+            if(voiceEnabled) {
+                btn.innerHTML = '<i class="fa-solid fa-volume-high text-sm voice-active"></i>';
+                btn.classList.add('bg-purple-100', 'dark:bg-purple-900/30');
+                showToast("เปิดเสียงอ่านอัตโนมัติแล้ว");
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-volume-xmark text-sm"></i>';
+                btn.classList.remove('bg-purple-100', 'dark:bg-purple-900/30');
+                window.speechSynthesis.cancel(); // Stop playing immediately
+            }
+        }
+
+        function speakText(text) {
+            if(!voiceEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            
+            // Clean text for speech (Remove Markdown symbols, code blocks)
+            let cleanText = text.replace(/```[\s\S]*?```/g, 'มีโค้ดตัวอย่างในข้อความ'); // Remove code blocks
+            cleanText = cleanText.replace(/[*_#`~]/g, ''); // Remove formatting
+            
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'th-TH'; // Thai voice
+            utterance.rate = 1.1;
+            window.speechSynthesis.speak(utterance);
+        }
 
         async function sendChatToAI() {
             const inp = document.getElementById('chatIn');
@@ -427,6 +503,7 @@
             if(!inp.value.trim()) return;
             const msg = inp.value.trim(); 
             inp.value = ''; 
+            window.speechSynthesis.cancel(); // stop current speech when asking new question
             
             // Render User Message
             box.innerHTML += `<div class="flex justify-end animate__animated animate__fadeInRight mb-4"><div style="background-color:var(--accent); color:var(--btn-txt)" class="chat-bubble shadow-md rounded-2xl rounded-tr-none px-4 py-3 max-w-[85%] break-words text-sm lg:text-base">${escapeHTML(msg)}</div></div>`;
@@ -436,11 +513,15 @@
             const aiName = localStorage.getItem(NAME_STORE) || "AI Mark";
             const aiImg = localStorage.getItem(IMG_STORE) || "https://ui-avatars.com/api/?name=AI";
             const bubbleId = 'ai-msg-' + Date.now();
+            const iconId = 'ai-icon-' + Date.now();
             
             box.innerHTML += `<div class="flex items-start gap-2 lg:gap-3 animate__animated animate__fadeInLeft mb-6">
-                <img src="${aiImg}" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full object-cover border-2 border-gray-100 shadow-sm bg-white shrink-0">
-                <div class="bg-white text-gray-800 border dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 shadow-sm max-w-[85%] rounded-2xl rounded-tl-none px-4 py-3 overflow-hidden">
-                    <p class="text-[9px] lg:text-[10px] font-black text-blue-500 mb-1.5 uppercase tracking-widest">${escapeHTML(aiName)}</p>
+                <div class="relative shrink-0">
+                    <img src="${aiImg}" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full object-cover border-2 border-purple-200 dark:border-purple-800 shadow-sm bg-white">
+                    <div id="${iconId}" class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800 animate-pulse"></div>
+                </div>
+                <div class="bg-white text-gray-800 border border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 shadow-lg max-w-[85%] rounded-2xl rounded-tl-none px-4 py-3 overflow-hidden">
+                    <p class="text-[9px] lg:text-[10px] font-black text-purple-500 mb-1.5 uppercase tracking-widest">${escapeHTML(aiName)} <span class="opacity-50 text-[8px]">(v2.5)</span></p>
                     <div id="${bubbleId}" class="markdown-body"><span class="blinking-cursor"></span></div>
                 </div>
             </div>`;
@@ -461,20 +542,15 @@
                 
                 const reqBody = { contents: [{ role: "user", parts: [{ text: `[System Instruction: ${persona}]\n\nUser: ${msg}` }] }] };
                 
-                // Using Streaming Endpoint
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${key}`;
+                // V27: Using Gemini 2.5 Flash Streaming + Auto Retry Wrapper
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${key}`;
                 
-                const res = await fetch(url, { 
+                const res = await fetchWithRetry(url, { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json' }, 
                     body: JSON.stringify(reqBody),
                     signal: chatAbortController.signal
                 });
-
-                if (!res.ok) {
-                    const errData = await res.json();
-                    throw new Error(errData.error?.message || "API Server Error");
-                }
 
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder("utf-8");
@@ -514,6 +590,9 @@
                 // Final render (Remove cursor)
                 bubbleEl.innerHTML = DOMPurify.sanitize(marked.parse(fullResponse));
                 
+                // Play Voice
+                speakText(fullResponse);
+
             } catch (e) {
                 const bubbleEl = document.getElementById(bubbleId);
                 if (e.name === 'AbortError') {
@@ -522,20 +601,62 @@
                     bubbleEl.innerHTML = currentHtml + '<br><span class="text-[10px] text-red-500 font-bold uppercase mt-2 block opacity-70">[ Stopped by User ]</span>';
                 } else {
                     showToast(e.message, "error");
-                    bubbleEl.innerHTML = `<span class="text-red-500 font-bold text-sm">Error: ${e.message}</span>`;
+                    bubbleEl.innerHTML = `<span class="text-red-500 font-bold text-sm"><i class="fa-solid fa-triangle-exclamation"></i> Error: ${e.message}</span>`;
                 }
             } finally {
                 // Restore button state
                 btn.innerHTML = '<i class="fa-solid fa-paper-plane text-xl lg:text-2xl"></i>';
                 btn.classList.replace('bg-red-500', 'btn-glow');
                 btn.style.boxShadow = '';
+                document.getElementById(iconId)?.classList.remove('bg-green-500', 'animate-pulse');
+                document.getElementById(iconId)?.classList.add('bg-gray-400'); // Status to idle
                 chatAbortController = null;
                 setTimeout(() => box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' }), 100);
             }
         }
 
         // ==========================================
-        // 🎮 QUIZ PLAYER (v26)
+        // 🖨️ PRINT EXAM FEATURE (V27)
+        // ==========================================
+        async function printExam(examId) {
+            try {
+                const doc = await db.collection('exams').doc(examId).get();
+                if(!doc.exists) throw new Error("ไม่พบข้อสอบ");
+                const exam = doc.data();
+                
+                const printContainer = document.getElementById('printArea');
+                let html = `
+                    <div class="text-center mb-8">
+                        <h1 class="text-3xl font-bold mb-2">${escapeHTML(exam.title)}</h1>
+                        <p class="text-gray-500">สร้างโดย: ${escapeHTML(exam.owner.split('@')[0])} | จำนวน: ${exam.questions.length} ข้อ</p>
+                        <hr class="mt-4 border-gray-300">
+                    </div>
+                `;
+                
+                exam.questions.forEach((q, idx) => {
+                    let optsHtml = q.options.map((o, i) => {
+                        const char = String.fromCharCode(65 + i); // A, B, C, D
+                        // ถ้าอยากพิมพ์เฉลยด้วยให้เปิดอันนี้ -> return `<p class="${o.isCorrect ? 'font-bold text-green-600' : ''}"> ${char}. ${escapeHTML(o.text)} </p>`;
+                        return `<p class="ml-4 mb-1"> ${char}. ${escapeHTML(o.text)} </p>`;
+                    }).join('');
+                    
+                    html += `
+                        <div class="mb-6 break-inside-avoid">
+                            <p class="font-bold text-lg mb-2">${idx + 1}. ${escapeHTML(q.q)}</p>
+                            ${optsHtml}
+                        </div>
+                    `;
+                });
+                
+                printContainer.innerHTML = html;
+                window.print();
+            } catch (e) {
+                showToast("ปริ้นท์ข้อสอบล้มเหลว: " + e.message, "error");
+            }
+        }
+
+        // ==========================================
+        // 🎮 QUIZ PLAYER
         // ==========================================
         async function openQuizById(id, btnEl) {
             if(btnEl.disabled) return; btnEl.disabled = true;
@@ -663,7 +784,7 @@
         // ==========================================
         async function fetchExamsFromCloud(isRefresh = true) {
             const grid = document.getElementById('examsGrid'); 
-            if(isRefresh) grid.innerHTML = '<div class="col-span-full py-20 text-center"><i class="fa-solid fa-circle-notch fa-spin text-3xl opacity-50"></i></div>';
+            if(isRefresh) grid.innerHTML = '<div class="col-span-full py-20 text-center"><i class="fa-solid fa-circle-notch fa-spin text-3xl opacity-50 text-accent"></i></div>';
             
             try {
                 const snap = await db.collection('exams').orderBy('createdAt','desc').limit(15).get();
@@ -675,22 +796,25 @@
                     if(x.visibility === 'public' || isA || (userC && x.uid === userC.uid)) {
                         const qCount = x.questions ? x.questions.length : 0;
                         grid.innerHTML += `
-                            <div class="app-card flex flex-col justify-between hover:scale-[1.02] transition-all relative group overflow-hidden">
+                            <div class="app-card flex flex-col justify-between hover:scale-[1.02] transition-all relative group overflow-hidden border border-gray-100 dark:border-gray-800">
                                 <div class="absolute top-0 left-0 w-full h-1" style="background-color: var(--accent);"></div>
-                                ${(isA || (userC && x.uid === userC.uid)) ? `<button onclick="deleteEx('${doc.id}')" class="absolute top-4 right-4 text-gray-300 dark:text-gray-600 hover:text-red-500 transition-colors z-10 p-2"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                <div class="absolute top-4 right-4 flex gap-2 z-10">
+                                    <button onclick="printExam('${doc.id}')" title="Print/PDF" class="text-gray-300 dark:text-gray-600 hover:text-blue-500 transition-colors p-2 bg-white/50 dark:bg-black/50 rounded-full backdrop-blur-sm"><i class="fa-solid fa-print"></i></button>
+                                    ${(isA || (userC && x.uid === userC.uid)) ? `<button onclick="deleteEx('${doc.id}')" title="Delete" class="text-gray-300 dark:text-gray-600 hover:text-red-500 transition-colors p-2 bg-white/50 dark:bg-black/50 rounded-full backdrop-blur-sm"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                </div>
                                 <div class="mb-6 lg:mb-8 pt-2">
-                                    <div class="flex items-center gap-2 mb-3 lg:mb-4">
-                                        <span style="color:var(--accent)" class="text-[8px] lg:text-[9px] font-black uppercase border border-gray-100 dark:border-gray-700 px-2 lg:px-3 py-1 rounded-full tracking-widest">${x.visibility}</span>
+                                    <div class="flex items-center gap-2 mb-3 lg:mb-4 mt-2">
+                                        <span style="color:var(--accent)" class="text-[8px] lg:text-[9px] font-black uppercase border border-gray-200 dark:border-gray-700 px-2 lg:px-3 py-1 rounded-full tracking-widest bg-gray-50 dark:bg-gray-800">${x.visibility}</span>
                                         <span class="text-[8px] lg:text-[9px] font-bold opacity-40 uppercase bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">${qCount} Qs</span>
                                     </div>
-                                    <h3 class="font-black text-lg md:text-xl lg:text-2xl dark:text-white leading-tight tracking-tight line-clamp-2 pr-6">${escapeHTML(x.title)}</h3>
+                                    <h3 class="font-black text-lg md:text-xl lg:text-2xl dark:text-white leading-tight tracking-tight line-clamp-2 pr-16">${escapeHTML(x.title)}</h3>
                                     <p class="text-[9px] lg:text-[10px] mt-2 lg:mt-3 opacity-40 font-bold uppercase truncate"><i class="fa-solid fa-user mr-1"></i> ${escapeHTML(x.owner.split('@')[0])}</p>
                                 </div>
                                 <button onclick="openQuizById('${doc.id}', this)" class="w-full py-3 lg:py-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-[10px] lg:text-xs font-black uppercase text-gray-600 dark:text-gray-300 group-hover:bg-[#10b981] group-hover:text-white group-hover:border-[#10b981] transition-all shadow-sm"><i class="fa-solid fa-play mr-2"></i> Play Now</button>
                             </div>`;
                     }
                 });
-            } catch (e) { grid.innerHTML = `<div class='col-span-full py-10 text-center text-red-500 font-bold'><i class="fa-solid fa-triangle-exclamation text-2xl lg:text-3xl mb-2 block"></i> Database Rules Error.<br><span class="text-[10px] lg:text-xs opacity-60">กรุณาเช็ค Firestore Rules ให้เป็น Test Mode</span><br><button onclick="fetchExamsFromCloud(true)" class="mt-4 underline text-sm">ลองใหม่</button></div>`; }
+            } catch (e) { grid.innerHTML = `<div class='col-span-full py-10 text-center text-red-500 font-bold'><i class="fa-solid fa-triangle-exclamation text-2xl lg:text-3xl mb-2 block"></i> Database Error.<br><span class="text-[10px] lg:text-xs opacity-60">กรุณาเช็ค Firestore Rules ให้เป็น Test Mode</span><br><button onclick="fetchExamsFromCloud(true)" class="mt-4 underline text-sm">ลองใหม่</button></div>`; }
         }
 
         async function fetchRankings() {
@@ -702,9 +826,9 @@
                 
                 snap.forEach(doc => {
                     const s = doc.data();
-                    let medal = rank === 1 ? 'text-yellow-400 scale-110' : rank === 2 ? 'text-gray-300' : rank === 3 ? 'text-orange-400' : 'text-gray-400 opacity-40';
+                    let medal = rank === 1 ? 'text-yellow-400 scale-110 drop-shadow-lg' : rank === 2 ? 'text-gray-300' : rank === 3 ? 'text-orange-400' : 'text-gray-400 opacity-40';
                     area.innerHTML += `
-                        <div class="app-card flex items-center justify-between mb-3 hover:scale-[1.01] transition-all py-3 lg:py-4 px-4 lg:px-6">
+                        <div class="app-card flex items-center justify-between mb-3 hover:scale-[1.01] transition-all py-3 lg:py-4 px-4 lg:px-6 border border-transparent hover:border-gray-100 dark:hover:border-gray-800">
                             <div class="flex items-center gap-4 lg:gap-5">
                                 <span class="text-2xl lg:text-3xl font-black italic ${medal} w-8 lg:w-10 text-center">${rank++}</span>
                                 <div>
@@ -760,6 +884,8 @@
             if(document.getElementById('btn-'+target)) document.getElementById('btn-'+target).classList.add('active');
             if(target==='db') fetchExamsFromCloud(true);
             if(target==='rank') fetchRankings();
+            
+            window.speechSynthesis.cancel(); // stop voice when switching tabs
             window.scrollTo({top:0, behavior:'smooth'});
         }
 
@@ -788,3 +914,5 @@
     </script>
 </body>
 </html>
+
+```
