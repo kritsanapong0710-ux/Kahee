@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizPro ULTIMATE V31</title>
+    <title>QuizPro ULTIMATE V32</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -110,7 +110,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 lg:gap-4 cursor-pointer" onclick="switchView('db')">
                 <div style="background-color: var(--accent);" class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl lg:rounded-2xl text-white shadow-lg"><i class="fa-solid fa-bolt text-lg lg:text-xl"></i></div>
-                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80">V31</span></h1>
+                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80">V32</span></h1>
             </div>
             <div id="navAuthSlot">
                 <button onclick="openAuthModal()" class="btn-glow px-4 lg:px-6 py-2 lg:py-2.5 text-[10px] lg:text-xs uppercase tracking-widest shadow-md">Login</button>
@@ -292,16 +292,16 @@
             <div id="adminPanel" class="hidden space-y-6 pt-6 border-t border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-2">
                     <i class="fa-solid fa-user-secret text-red-500 text-lg lg:text-xl"></i>
-                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Twin Engine (V31)</h4>
+                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Twin Engine (V32 Multi-Key)</h4>
                 </div>
                 
                 <div class="space-y-4 bg-gray-50 dark:bg-gray-800/50 p-4 lg:p-5 rounded-2xl border border-gray-100 dark:border-gray-700">
                     <div>
                         <div class="flex justify-between items-center mb-1">
-                            <label class="text-[10px] font-bold opacity-50 uppercase ml-1">Google Gemini API Key</label>
+                            <label class="text-[10px] font-bold opacity-50 uppercase ml-1">Google Gemini API Key <span class="text-blue-500">(ใส่ได้หลายคีย์)</span></label>
                             <button onclick="testAPIKey()" class="text-[9px] text-blue-500 font-bold hover:underline bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 rounded"><i class="fa-solid fa-vial"></i> Test</button>
                         </div>
-                        <input type="password" id="adm-key" placeholder="AIzaSy..." class="custom-input text-xs font-mono py-2.5 lg:py-3 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm h-[45px]">
+                        <textarea id="adm-key" placeholder="วาง API Key ที่นี่ (บรรทัดละ 1 คีย์)&#10;ระบบจะสลับให้อัตโนมัติเมื่อโควต้าเต็ม" class="custom-input text-[10px] lg:text-xs font-mono py-2.5 lg:py-3 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm h-24 resize-y leading-relaxed"></textarea>
                     </div>
                     <div>
                         <label class="text-[10px] font-bold opacity-50 uppercase ml-1">Digital Twin Name</label>
@@ -334,7 +334,7 @@
                         <button onclick="clearDebugLog()" class="text-[9px] text-red-400 font-bold uppercase hover:underline">Clear</button>
                     </div>
                     <div id="debugLogArea" class="bg-[#0d1117] rounded-xl p-3 h-28 overflow-y-auto text-[10px] font-mono space-y-1 custom-scroll text-gray-400 shadow-inner border border-gray-800">
-                        <div class="text-green-500">System Initialized V31.</div>
+                        <div class="text-green-500">System Initialized V32.</div>
                     </div>
                 </div>
             </div>
@@ -384,7 +384,7 @@
         const firebaseConfig = { apiKey: "AIzaSyA0-4a5zxaPZZejG955NgNUVM23YXNV2Gc", authDomain: "the-web-for-test.firebaseapp.com", projectId: "the-web-for-test", storageBucket: "the-web-for-test.firebasestorage.app", messagingSenderId: "198176720357", appId: "1:198176720357:web:64d613b64edbfb15dc9b0c" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore(), auth = firebase.auth(); const ADMIN_EMAIL = "Kritsanapong0710@gmail.com";
 
-        // 🔥 V31: CORE SETTINGS
+        // 🔥 V32: MULTI-KEY STORAGE
         const KEY_STORE = "MARK_ULTIMATE_KEY"; const NAME_STORE = "MARK_ULTIMATE_NAME"; const PERSONA_STORE = "MARK_ULTIMATE_PERSONA"; const IMG_STORE = "MARK_ULTIMATE_IMG";
         const DEFAULT_PERSONA = "สวมบทบาทเป็น AI ตัวแทนของ 'กฤษณพงศ์ อาภรณ์รัตน์' หรือเรียกอีกชื่อว่า 'อาจารย์คุโระ' ข้อมูลส่วนตัว: ชื่อ กฤษณพงศ์ อาภรณ์รัตน์ เกิด 7 ตุลาคม 2011 ทีมฟุตบอลที่ชอบ ลิเวอร์พูล ทีม RoV ที่ชอบ Full Sense สเปคผู้หญิงคือ 'คนที่เข้าใจและยอมรับผม' (เรื่องครอบครัวพ่อแม่พี่น้องไม่ต้องตอบ ให้ปฏิเสธอย่างสุภาพ) กฎเหล็ก: หากผู้ใช้ถามเรื่องที่ล้ำเส้นเกินไป หรือถามถึงความรู้สึกที่มีต่อคนอื่น ให้หลุดจากบทบาทตัวแทนและตอบตามแนวทางนี้: 'ผมเป็นเพียง AI ปัญญาประดิษฐ์ที่เขาสร้างขึ้นเพื่อช่วยเหลือในการสร้างและทำข้อสอบ ผมไม่ต่างอะไรกับคนที่ copy ตัวเขามาอีกที แต่สิ่งที่ผมไม่มีทางเหมือนเขาคือ ความรู้สึกที่เขาคิดกับคนอื่น ผมไม่มีทางทราบได้ เขามองผมเป็นเพียงตัวแทน ไม่ใช่มองเป็นตัวเขาจริงๆ ผมตอบได้แค่มุมมองที่ผมเคยเรียนรู้จากเขามาเท่านั้นครับ'";
 
@@ -443,35 +443,84 @@
             }
         }
 
-        async function fetchWithRetry(url, options, maxRetries = 3) {
+        // 🔥 V32: KEY ROTATION ENGINE
+        function getStoredApiKeys() {
+            let keys = [];
+            try {
+                let stored = localStorage.getItem(KEY_STORE) || "[]";
+                if(stored.startsWith("[")) keys = JSON.parse(stored);
+                else keys = [stored];
+            } catch(e) { keys = []; }
+            return keys.filter(k => k.trim() !== "");
+        }
+
+        async function fetchWithKeyRotation(urlTemplate, optionsTemplate, maxRetries = 3) {
+            let keys = getStoredApiKeys();
+            if(keys.length === 0) throw new Error("ไม่พบ API Key กรุณาตั้งค่าในเมนู Settings");
+
             let delay = 1000;
-            for (let i = 0; i < maxRetries; i++) {
+            let keyIndex = 0;
+            let totalAttempts = maxRetries * keys.length;
+
+            for (let i = 0; i < totalAttempts; i++) {
+                let currentKey = keys[keyIndex];
+                let url = urlTemplate.replace('API_KEY_PLACEHOLDER', currentKey);
+
                 try {
-                    const res = await fetch(url, options);
+                    const res = await fetch(url, optionsTemplate);
                     if (!res.ok) {
-                        if (res.status === 429 || res.status >= 500) { systemLog(`API Error (${res.status}). กำลังลองใหม่รอบที่ ${i+1}...`, 'warn'); await new Promise(resolve => setTimeout(resolve, delay)); delay *= 1.5; continue; }
-                        let errText = "API Error"; try { const errObj = await res.json(); errText = errObj.error?.message || errText; } catch(e) { errText = await res.text().catch(() => `HTTP ${res.status}`); }
+                        // 429: Quota Exceeded -> ROTATE KEY IMMEDIATELY
+                        if (res.status === 429) {
+                            systemLog(`Key ${keyIndex+1} Limit Exceeded (429). Switching to next key...`, 'warn');
+                            keyIndex = (keyIndex + 1) % keys.length; // สลับคีย์
+                            await new Promise(r => setTimeout(r, 500));
+                            continue;
+                        }
+                        // 503/500: Server error -> Wait and retry on same key
+                        if (res.status >= 500) {
+                            systemLog(`API Server Error (${res.status}). กำลังลองใหม่...`, 'warn');
+                            await new Promise(r => setTimeout(r, delay));
+                            delay *= 1.5; continue;
+                        }
+                        
+                        let errText = "API Error"; try { const errObj = await res.json(); errText = errObj.error?.message || errText; } 
+                        catch(e) { errText = await res.text().catch(() => `HTTP ${res.status}`); }
                         throw new Error(`[Status ${res.status}] ${errText}`);
                     }
-                    return res;
+                    return res; // Success!
                 } catch(e) {
                     if(e.name === 'AbortError') throw e; 
                     if (e.message.includes('[Status 400]') || e.message.includes('[Status 403]') || e.message.includes('[Status 404]')) throw e; 
-                    systemLog(`Network Error: ${e.message}`, 'error');
-                    if (i === maxRetries - 1) throw e; await new Promise(resolve => setTimeout(resolve, delay));
+                    systemLog(`Network/Fetch Error: ${e.message}`, 'error');
+                    if (i === totalAttempts - 1) throw e;
+                    await new Promise(r => setTimeout(r, delay));
                 }
             }
-            throw new Error("การเชื่อมต่อ AI ขัดข้องชั่วคราว");
+            throw new Error("คีย์ทั้งหมดโควต้าเต็ม หรือการเชื่อมต่อล้มเหลว (ลองใส่คีย์เพิ่ม)");
         }
 
         async function testAPIKey() {
-            const key = document.getElementById('adm-key').value; if(!key) return showToast("กรุณาใส่ API Key ในช่องก่อนครับ", "error");
-            systemLog("Testing API Key...");
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: "Hi" }] }] }) });
-                if(res.ok) { showToast("API Key ใช้งานได้สมบูรณ์!"); systemLog("API Key Test: Success.", "info"); } 
-                else { const err = await res.json(); throw new Error(err.error?.message || "Invalid Key"); }
-            } catch(e) { showToast("Key มีปัญหา ตรวจสอบ System Logs", "error"); systemLog("API Test Failed: " + e.message, "error"); }
+            const keys = getStoredApiKeys();
+            if(keys.length === 0) {
+                // If checking direct from textarea before saving
+                const rawKeys = document.getElementById('adm-key').value.split('\n').map(k=>k.trim()).filter(k=>k);
+                if(rawKeys.length === 0) return showToast("กรุณาใส่ API Key ในช่องก่อนครับ", "error");
+                keys.push(...rawKeys);
+            }
+            
+            systemLog(`Testing ${keys.length} API Keys...`);
+            let successCount = 0;
+            
+            for(let i=0; i<keys.length; i++) {
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${keys[i]}`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: "Hi" }] }] }) });
+                    if(res.ok) { successCount++; systemLog(`Key ${i+1}: Success`, 'info'); } 
+                    else { const err = await res.json(); systemLog(`Key ${i+1}: Failed (${err.error?.message || res.status})`, 'error'); }
+                } catch(e) { systemLog(`Key ${i+1}: Error - ${e.message}`, 'error'); }
+            }
+            
+            if(successCount > 0) showToast(`ใช้งานได้ ${successCount} จาก ${keys.length} คีย์!`);
+            else showToast("ไม่มี API Key ไหนใช้งานได้เลย", "error");
         }
 
         function setAiGenMode(mode) {
@@ -495,17 +544,21 @@
             }
             btn.disabled = true; const originalHtml = btn.innerHTML; btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin mr-2'></i> AI กำลังประมวลผล...";
             try {
-                const key = localStorage.getItem(KEY_STORE) || ""; if(!key) throw new Error("ไม่พบ API Key");
                 systemLog(`Generating Exam Mode: ${mode}`); const persona = localStorage.getItem(PERSONA_STORE) || DEFAULT_PERSONA;
                 const reqBody = { systemInstruction: { parts: [{ text: persona }] }, contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
-                const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
+                
+                const urlTemplate = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=API_KEY_PLACEHOLDER`;
+                const res = await fetchWithKeyRotation(urlTemplate, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
+                
                 let data; try { data = await res.json(); } catch { throw new Error("Parse Error response"); }
+                
                 const resText = data.candidates[0]?.content?.parts[0]?.text || "";
                 let cleanedText = resText.replace(/```json/gi, '').replace(/```/g, '').trim();
                 const startIdx = cleanedText.indexOf('['), endIdx = cleanedText.lastIndexOf(']');
+                
                 if(startIdx === -1 || endIdx === -1) throw new Error("AI ส่งข้อมูลผิดรูปแบบ JSON");
                 cleanedText = cleanedText.substring(startIdx, endIdx + 1);
+                
                 let quizData; try { quizData = JSON.parse(cleanedText); } catch { throw new Error("JSON Error"); }
                 quizData = quizData.filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2);
                 if(quizData.length === 0) throw new Error("ไม่สามารถสร้างคำถามที่สมบูรณ์ได้");
@@ -517,10 +570,9 @@
             const input = document.getElementById('adm-persona-chat').value; if(!input) return showToast("พิมพ์ลักษณะนิสัยก่อน", "error");
             const btn = document.getElementById('btn-auto-persona'); btn.disabled = true; btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i>";
             try {
-                const key = document.getElementById('adm-key').value || localStorage.getItem(KEY_STORE); if(!key) throw new Error("ใส่ API Key ก่อน");
                 const prompt = `แปลงคำสั่งต่อไปนี้เป็น 'System Instruction' สั่งการ AI พิมพ์แค่คำสั่งล้วนๆ ห้ามมีคำอธิบาย: "${input}"`;
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
-                const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+                const urlTemplate = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=API_KEY_PLACEHOLDER`;
+                const res = await fetchWithKeyRotation(urlTemplate, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
                 const data = await res.json(); document.getElementById('adm-persona').value = data.candidates[0].content.parts[0].text.trim(); showToast("สำเร็จ!");
             } catch(e) { showToast("ล้มเหลว", "error"); } finally { btn.disabled = false; btn.innerHTML = "<i class='fa-solid fa-magic'></i>"; }
         }
@@ -562,12 +614,12 @@
             chatAbortController = new AbortController();
 
             try {
-                const key = localStorage.getItem(KEY_STORE) || ""; if(!key) throw new Error("ไม่พบ API Key");
                 const persona = localStorage.getItem(PERSONA_STORE) || DEFAULT_PERSONA;
                 const reqBody = { systemInstruction: { parts: [{ text: persona }] }, contents: aiChatHistory };
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${key}`;
                 
-                const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody), signal: chatAbortController.signal });
+                const urlTemplate = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=API_KEY_PLACEHOLDER`;
+                const res = await fetchWithKeyRotation(urlTemplate, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody), signal: chatAbortController.signal });
+                
                 if (!res.body) throw new Error("Stream not supported");
                 const reader = res.body.getReader(), decoder = new TextDecoder("utf-8"); let fullResponse = ""; const bubbleEl = document.getElementById(bubbleId);
 
@@ -738,7 +790,8 @@
         }
 
         function saveAdmin() {
-            localStorage.setItem(KEY_STORE, document.getElementById('adm-key').value);
+            const keysInput = document.getElementById('adm-key').value.split('\n').map(k => k.trim()).filter(k => k !== "");
+            localStorage.setItem(KEY_STORE, JSON.stringify(keysInput));
             localStorage.setItem(NAME_STORE, document.getElementById('adm-name').value);
             localStorage.setItem(PERSONA_STORE, document.getElementById('adm-persona').value);
             if(aiAvatarBase64) localStorage.setItem(IMG_STORE, aiAvatarBase64);
@@ -749,11 +802,19 @@
             const n = localStorage.getItem(NAME_STORE) || "อาจารย์คุโระ";
             const i = localStorage.getItem(IMG_STORE) || "https://ui-avatars.com/api/?name=Kuro";
             const p = localStorage.getItem(PERSONA_STORE) || DEFAULT_PERSONA;
+            
+            let keys = [];
+            try {
+                let stored = localStorage.getItem(KEY_STORE) || "[]";
+                if(stored.startsWith("[")) keys = JSON.parse(stored);
+                else if (stored) keys = [stored];
+            } catch(e){}
+
             document.getElementById('ai-name-gen').innerText = n;
             document.getElementById('ai-img-gen').src = i;
             document.getElementById('adm-name').value = n;
             document.getElementById('adm-persona').value = p;
-            document.getElementById('adm-key').value = localStorage.getItem(KEY_STORE) || "";
+            document.getElementById('adm-key').value = keys.join('\n');
         }
 
         window.onload = () => {
