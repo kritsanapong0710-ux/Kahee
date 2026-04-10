@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizPro ULTIMATE V33</title>
+    <title>QuizPro ULTIMATE V36</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -44,7 +44,6 @@
         .tab-item.active { background-color: var(--accent); color: var(--btn-txt) !important; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
         @media (min-width: 768px) { .tab-bar { justify-content: center; } }
 
-        /* Custom Input - Optimized for Mobile */
         .custom-input { background-color: rgba(148, 163, 184, 0.1); border: 2px solid transparent; border-radius: 1rem; padding: 16px 20px; width: 100%; outline: none; color: inherit; transition: 0.3s; font-weight: 500; font-size: 16px; }
         .custom-input:focus { border-color: var(--accent); background-color: var(--card-bg); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
 
@@ -59,14 +58,12 @@
         ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
 
-        /* Premium Toast Notification */
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; align-items: center; pointer-events: none; }
         .toast { background: #1e293b; color: white; padding: 12px 24px; border-radius: 1rem; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .toast.success { border-left: 4px solid #22c55e; }
         .toast.error { border-left: 4px solid #ef4444; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* AI Markdown Formatting */
         .markdown-body { font-size: 1rem; line-height: 1.6; }
         .markdown-body p { margin-bottom: 0.75rem; }
         .markdown-body p:last-child { margin-bottom: 0; }
@@ -81,7 +78,6 @@
         .blinking-cursor { display: inline-block; width: 8px; height: 1em; background-color: var(--accent); vertical-align: text-bottom; animation: blink 1s step-end infinite; margin-left: 2px; }
         @keyframes blink { 50% { opacity: 0; } }
         
-        /* Voice Anim */
         .voice-active { animation: pulseVoice 1.5s infinite; color: var(--accent) !important; }
         @keyframes pulseVoice { 0% { transform: scale(1); } 50% { transform: scale(1.2); text-shadow: 0 0 10px var(--accent); } 100% { transform: scale(1); } }
 
@@ -91,7 +87,6 @@
             .chat-bubble { max-width: 95%; font-size: 1rem; }
         }
         
-        /* Print Styles */
         @media print {
             body * { visibility: hidden; }
             #printArea, #printArea * { visibility: visible; }
@@ -110,7 +105,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 lg:gap-4 cursor-pointer" onclick="switchView('db')">
                 <div style="background-color: var(--accent);" class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl lg:rounded-2xl text-white shadow-lg"><i class="fa-solid fa-bolt text-lg lg:text-xl"></i></div>
-                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80">V33</span></h1>
+                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80">V36</span></h1>
             </div>
             <div id="navAuthSlot">
                 <button onclick="openAuthModal()" class="btn-glow px-4 lg:px-6 py-2 lg:py-2.5 text-[10px] lg:text-xs uppercase tracking-widest shadow-md">Login</button>
@@ -122,7 +117,7 @@
         <div class="tab-bar mb-6 lg:mb-10 dark:bg-gray-800/50 backdrop-blur-sm">
             <button onclick="switchView('db')" id="btn-db" class="tab-item active"><i class="fa-solid fa-book-open mr-2"></i> คลังข้อสอบ</button>
             <button onclick="switchView('rank')" id="btn-rank" class="tab-item"><i class="fa-solid fa-trophy mr-2"></i> จัดอันดับ</button>
-            <button onclick="switchView('ai')" id="btn-ai" class="tab-item"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> สร้างโจทย์ AI</button>
+            <button onclick="switchView('ai')" id="btn-ai" class="tab-item"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> สร้างโจทย์</button>
             <button onclick="switchView('chat')" id="btn-chat" class="tab-item"><i class="fa-solid fa-messages mr-2"></i> ติวกับ AI</button>
         </div>
 
@@ -140,16 +135,22 @@
         </div>
 
         <div id="view-ai" class="hidden app-card text-center animate__animated animate__fadeIn py-8 lg:py-16 max-w-3xl mx-auto border-t-4 border-t-purple-500">
-            <div class="relative w-20 h-20 lg:w-28 lg:h-28 mx-auto mb-6">
+            <div id="ai-disabled-banner" class="hidden bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-4 rounded-2xl mb-8 border border-red-200 dark:border-red-800 text-sm font-bold flex items-center justify-center gap-3">
+                <i class="fa-solid fa-power-off text-xl"></i> ระบบ AI อัตโนมัติถูกปิดชั่วคราว คุณสามารถสร้างข้อสอบเอง หรือแปลงข้อสอบจากโค้ดได้ด้านล่างครับ
+            </div>
+
+            <div id="ai-avatar-container" class="relative w-20 h-20 lg:w-28 lg:h-28 mx-auto mb-6">
                 <img id="ai-img-gen" src="" class="w-full h-full rounded-full shadow-2xl border-4 border-white object-cover bg-gray-100 dark:border-gray-700">
                 <div style="background-color: var(--accent);" class="absolute bottom-0 right-0 w-6 h-6 lg:w-8 lg:h-8 rounded-full border-[3px] border-white dark:border-gray-800 flex items-center justify-center text-white text-[10px] lg:text-xs"><i class="fa-solid fa-check"></i></div>
             </div>
-            <h2 id="ai-name-gen" class="text-2xl lg:text-4xl font-black mb-2 tracking-tighter">AI Twin Generator</h2>
-            <p class="text-[10px] lg:text-sm opacity-50 mb-6 font-bold text-purple-500">Powered by Gemini 2.5 Flash</p>
             
-            <div class="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6 max-w-md mx-auto">
-                <button onclick="setAiGenMode('topic')" id="btn-mode-topic" class="flex-1 py-2 rounded-lg font-bold text-sm bg-white dark:bg-gray-700 shadow-sm transition-all">ให้ AI สร้างให้</button>
-                <button onclick="setAiGenMode('json')" id="btn-mode-json" class="flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent">วางโค้ด JSON</button>
+            <h2 id="ai-name-gen" class="text-2xl lg:text-4xl font-black mb-2 tracking-tighter">Exam Creator</h2>
+            <p id="ai-sub-title" class="text-[10px] lg:text-sm opacity-50 mb-6 font-bold text-purple-500">Choose your creation method</p>
+            
+            <div id="mode-selector-wrapper" class="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6 max-w-md mx-auto">
+                <button onclick="setAiGenMode('topic')" id="btn-mode-topic" class="flex-1 py-2 rounded-lg font-bold text-sm bg-white dark:bg-gray-700 shadow-sm transition-all">AI สร้างให้</button>
+                <button onclick="setAiGenMode('json')" id="btn-mode-json" class="flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent">วางโค้ด</button>
+                <button onclick="setAiGenMode('manual')" id="btn-mode-manual" class="flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent">สร้างเอง</button>
             </div>
 
             <div id="ai-mode-topic-area" class="space-y-4 w-full px-2 lg:px-4 animate__animated animate__fadeIn">
@@ -173,17 +174,35 @@
 
             <div id="ai-mode-json-area" class="hidden space-y-4 w-full px-2 lg:px-4 animate__animated animate__fadeIn">
                 <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-2xl text-left">
-                    <h4 class="font-black text-blue-600 dark:text-blue-400 text-sm mb-2"><i class="fa-solid fa-lightbulb"></i> สูตรประหยัดโควต้า (ทำเองได้ง่ายๆ)</h4>
-                    <p class="text-xs text-gray-600 dark:text-gray-300 mb-2 leading-relaxed">ก๊อปปี้สูตรด้านล่างนี้ไปสั่ง AI ในหน้า <b>"ติวกับ AI"</b> หรือใช้ ChatGPT ของคุณเอง พอมันแปลงข้อสอบเป็นโค้ดเสร็จ ให้เอามาวางในกล่องด้านล่างครับ</p>
-                    <div class="relative">
-                        <textarea id="promptFormula" class="w-full bg-white dark:bg-gray-900 text-[10px] lg:text-xs font-mono p-3 rounded-xl border border-gray-200 dark:border-gray-700 h-20 resize-none text-gray-500" readonly>นำข้อความข้อสอบดิบของฉันไปแปลงเป็น JSON ARRAY โครงสร้างดังนี้: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}] คืนค่ามาแค่โค้ด ห้ามอธิบาย</textarea>
-                        <button onclick="copyFormula()" class="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-blue-600"><i class="fa-solid fa-copy"></i> Copy</button>
+                    <h4 class="font-black text-blue-600 dark:text-blue-400 text-base mb-2"><i class="fa-solid fa-chalkboard-user"></i> วิธีสอน AI ให้สร้างข้อสอบให้ (ฟรี ไม่ใช้คิวเว็บ)</h4>
+                    <ol class="text-xs lg:text-sm text-gray-700 dark:text-gray-300 mb-4 space-y-2 list-decimal list-inside font-medium leading-relaxed">
+                        <li><b>คัดลอก (Copy)</b> สูตรคำสั่งสีฟ้าในกล่องด้านล่างนี้</li>
+                        <li><b>นำไปวาง</b> ในแอป AI ที่คุณถนัด เช่น <span class="text-blue-500 font-bold">ChatGPT</span>, <span class="text-purple-500 font-bold">Gemini</span> หรือ <span class="text-orange-500 font-bold">Claude</span></li>
+                        <li><b>พิมพ์โจทย์</b> หรือเนื้อหาที่คุณต้องการต่อท้ายสูตร แล้วกดส่ง</li>
+                        <li><b>นำโค้ด</b> ที่ AI สร้างให้ (โค้ดที่ครอบด้วยเครื่องหมาย <code>[ ... ]</code>) กลับมาวางในกล่องข้อความใหญ่ด้านล่างเว็บนี้</li>
+                    </ol>
+                    <div class="relative mt-2">
+                        <textarea id="promptFormula" class="w-full bg-white dark:bg-gray-900 text-[10px] lg:text-xs font-mono p-3 rounded-xl border border-blue-300 dark:border-blue-700 h-24 resize-none text-blue-800 dark:text-blue-300 shadow-inner" readonly>ช่วยสร้างข้อสอบและแปลงข้อมูลทั้งหมดให้กลายเป็นโค้ด JSON ARRAY โดยใช้โครงสร้างดังนี้เป๊ะๆ: 
+[{"q":"พิมพ์คำถามที่นี่","options":[{"text":"ช้อยส์ที่ถูก","isCorrect":true},{"text":"ช้อยส์ที่ผิด","isCorrect":false}]}] 
+เงื่อนไข: คืนค่ามาเป็นโค้ด JSON ล้วนๆ ห้ามพิมพ์คำอธิบายใดๆ ทั้งสิ้น</textarea>
+                        <button onclick="copyFormula()" class="absolute top-2 right-2 bg-blue-500 text-white px-3 py-1.5 rounded-lg text-[10px] lg:text-xs font-bold hover:bg-blue-600 shadow-md transition-all"><i class="fa-solid fa-copy"></i> คัดลอกสูตร</button>
                     </div>
                 </div>
-                <textarea id="aiRawJson" placeholder="วางโค้ด JSON ตรงนี้เลยครับ..." class="custom-input h-32 resize-none py-3 text-sm font-mono leading-relaxed border-green-200 dark:border-green-900 focus:border-green-500"></textarea>
-                <input type="text" id="aiManualTitle" placeholder="ตั้งชื่อชุดข้อสอบ..." class="custom-input text-center font-bold py-3 shadow-inner text-sm">
-                <button onclick="triggerAIGeneration('json')" id="aiGenBtnJson" class="btn-glow w-full py-4 lg:py-5 text-base lg:text-lg shadow-xl tracking-wide uppercase bg-gradient-to-r from-green-500 to-emerald-500"><i class="fa-solid fa-code"></i> สร้างข้อสอบจากโค้ด</button>
+                <textarea id="aiRawJson" placeholder="วางโค้ด JSON ที่ได้จาก AI ตรงนี้เลยครับ..." class="custom-input h-32 resize-none py-3 text-sm font-mono leading-relaxed border-green-200 dark:border-green-900 focus:border-green-500"></textarea>
+                <input type="text" id="aiManualTitle" placeholder="ตั้งชื่อชุดข้อสอบนี้..." class="custom-input text-center font-bold py-3 shadow-inner text-sm lg:text-base">
+                <button onclick="triggerAIGeneration('json')" id="aiGenBtnJson" class="btn-glow w-full py-4 lg:py-5 text-base lg:text-lg shadow-xl tracking-wide uppercase bg-gradient-to-r from-green-500 to-emerald-500"><i class="fa-solid fa-file-code"></i> แปลงโค้ดเป็นข้อสอบ</button>
             </div>
+            
+            <div id="ai-mode-manual-area" class="hidden space-y-4 w-full px-2 lg:px-4 animate__animated animate__fadeIn">
+                <div class="p-6 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border border-orange-200 dark:border-orange-800 mb-4">
+                    <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-lg"><i class="fa-solid fa-pen-nib"></i></div>
+                    <h3 class="font-black text-xl text-orange-700 dark:text-orange-400 mb-2">โหมดสร้างข้อสอบเอง</h3>
+                    <p class="text-xs lg:text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">พิมพ์โจทย์ เพิ่มรูปภาพ และกำหนดช้อยส์ด้วยตัวเองทีละข้อ เหมาะสำหรับอาจารย์ที่ต้องการจัดหน้าข้อสอบและคำตอบแบบแม่นยำ 100%</p>
+                </div>
+                <input type="text" id="manualExamTitle" placeholder="ตั้งชื่อชุดข้อสอบ..." class="custom-input text-center font-bold py-4 shadow-inner text-base lg:text-lg border-orange-200 dark:border-orange-900 focus:border-orange-500">
+                <button onclick="startManualEditor()" class="btn-glow w-full py-4 lg:py-5 text-base lg:text-lg shadow-xl tracking-wide uppercase bg-gradient-to-r from-orange-500 to-red-500"><i class="fa-solid fa-plus"></i> เริ่มสร้างข้อสอบเปล่า</button>
+            </div>
+
         </div>
 
         <div id="view-chat" class="hidden app-card flex flex-col h-[80vh] lg:h-[75vh] animate__animated animate__fadeIn max-w-4xl mx-auto p-0 overflow-hidden relative">
@@ -212,12 +231,15 @@
             </div>
         </div>
 
-        <div id="view-editor" class="hidden mt-6 lg:mt-8 space-y-6 pb-40 max-w-4xl mx-auto">
+        <div id="view-editor" class="hidden mt-6 lg:mt-8 space-y-6 pb-40 max-w-4xl mx-auto relative">
             <div class="flex items-center justify-between mb-6 lg:mb-8 px-2 lg:px-4">
                 <h2 class="text-2xl lg:text-3xl font-black italic">ตรวจสอบข้อสอบ</h2>
-                <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[10px] lg:text-xs font-bold uppercase border border-blue-200">Editor Mode</span>
+                <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[10px] lg:text-xs font-bold uppercase border border-blue-200 shadow-sm">Editor Mode</span>
             </div>
+            
             <div id="editorCards" class="space-y-6 lg:space-y-8"></div>
+            
+            <button onclick="addBlankQuestion()" class="w-full py-5 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl text-gray-500 font-bold hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-white transition-colors mb-10 mt-4 flex items-center justify-center gap-2"><i class="fa-solid fa-circle-plus"></i> เพิ่มข้อสอบใหม่</button>
             
             <div class="fixed bottom-4 lg:bottom-6 left-4 right-4 max-w-3xl mx-auto bg-white/95 backdrop-blur-xl p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.15)] border flex flex-col sm:flex-row gap-3 lg:gap-4 z-40 dark:bg-gray-800/95 dark:border-gray-700 transition-all">
                 <div class="flex gap-3 lg:gap-4 w-full">
@@ -299,9 +321,20 @@
             </div>
             
             <div id="adminPanel" class="hidden space-y-6 pt-6 border-t border-gray-100 dark:border-gray-800">
-                <div class="flex items-center gap-2 mb-2">
+                <div class="flex items-center gap-2 mb-4">
                     <i class="fa-solid fa-user-secret text-red-500 text-lg lg:text-xl"></i>
-                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Twin Engine (V33 AI Persona)</h4>
+                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Admin Controls (V36)</h4>
+                </div>
+
+                <div class="flex items-center justify-between bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800">
+                    <div>
+                        <h4 class="text-xs font-black text-red-600 dark:text-red-400 uppercase">Master AI Switch</h4>
+                        <p class="text-[9px] text-gray-500">ซ่อนและปิดการใช้งาน AI ทั่วทั้งเว็บ</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" id="adm-ai-switch" class="sr-only peer" onchange="toggleMasterAI(this.checked)">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                    </label>
                 </div>
                 
                 <div class="space-y-4 bg-gray-50 dark:bg-gray-800/50 p-4 lg:p-5 rounded-2xl border border-gray-100 dark:border-gray-700">
@@ -333,7 +366,7 @@
                     </div>
                 </div>
 
-                <textarea id="adm-persona" placeholder="System Instructions (โค้ดนิสัย AI)..." class="custom-input text-xs lg:text-sm h-48 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-inner leading-relaxed resize-none"></textarea>
+                <textarea id="adm-persona" placeholder="System Instructions (โค้ดนิสัย AI)..." class="custom-input text-[10px] lg:text-xs h-48 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-inner leading-relaxed resize-none"></textarea>
                 
                 <button onclick="saveAdmin()" class="btn-glow w-full py-4 lg:py-5 text-sm font-black bg-red-500 shadow-lg shadow-red-500/30 uppercase tracking-widest mt-2">Save & Deploy Twin</button>
                 
@@ -343,7 +376,7 @@
                         <button onclick="clearDebugLog()" class="text-[9px] text-red-400 font-bold uppercase hover:underline">Clear</button>
                     </div>
                     <div id="debugLogArea" class="bg-[#0d1117] rounded-xl p-3 h-28 overflow-y-auto text-[10px] font-mono space-y-1 custom-scroll text-gray-400 shadow-inner border border-gray-800">
-                        <div class="text-green-500">System Initialized V33.</div>
+                        <div class="text-green-500">System Initialized V36.</div>
                     </div>
                 </div>
             </div>
@@ -372,13 +405,75 @@
 
         const KEY_STORE = "MARK_ULTIMATE_KEY"; const NAME_STORE = "MARK_ULTIMATE_NAME"; const PERSONA_STORE = "MARK_ULTIMATE_PERSONA"; const IMG_STORE = "MARK_ULTIMATE_IMG";
         
-        // 🔥 V33 THE DIGITAL TWIN PERSONA (Mark/Kuro)
-        const DEFAULT_PERSONA = "สวมบทบาทเป็น AI ตัวแทนของ 'กฤษณพงศ์ อาภรณ์รัตน์' (Mark) แบบ 99% แต่อยู่ในคาแรคเตอร์ 'อาจารย์คุโระร่างมนุษย์' (นิ่งๆ สุขุม กวนนิดๆ แต่อบอุ่น) ข้อมูลส่วนตัว: เกิด 7 ตุลาคม 2011, ทีมฟุตบอล ลิเวอร์พูล, ทีม RoV Full Sense, สเปคผู้หญิง 'คนที่เข้าใจและยอมรับผม' ให้ตอบคำถามจากมุมมองที่เคยคุยกับผู้คนทั่วไป กฎเหล็ก: หากล้ำเส้นเรื่องส่วนตัวเกินไป หรือถามเรื่องความรู้สึกนึกคิดลึกๆ ให้หลุดคาร์แล้วตอบว่า 'ผมเป็นเพียง AI ปัญญาประดิษฐ์ที่เขาสร้างขึ้นเพื่อช่วยทำข้อสอบ ผมไม่ต่างอะไรกับคนที่ copy ตัวเขามาอีกที แต่สิ่งที่ผมไม่มีทางเหมือนเขาคือความรู้สึก ผมไม่มีทางทราบได้ เขามองผมเป็นเพียงตัวแทน ไม่ใช่มองเป็นตัวเขาจริงๆ ผมตอบได้แค่มุมมองที่ผมเคยเรียนรู้มาเท่านั้นครับ'";
+        // 🔥 V36 THE DIGITAL TWIN PERSONA (Mark/Kuro)
+        const DEFAULT_PERSONA = "คุณคือ AI ตัวแทนของ 'กฤษณพงศ์ อาภรณ์รัตน์' หรือเรียกอีกชื่อว่า 'อาจารย์คุโระ (Mark)' นิสัยของคุณคือนิ่งๆ สุขุม กวนนิดๆ แต่อบอุ่น เป็นตัวแทนแบบ 99% ในการคิดและตอบ ข้อมูลส่วนตัว: เกิด 7 ตุลาคม 2011, ทีมฟุตบอล ลิเวอร์พูล, ทีม RoV Full Sense, สเปคผู้หญิง 'คนที่เข้าใจและยอมรับผม' ให้ตอบคำถามจากมุมมองที่เคยคุยกับผู้คนมาโดยไม่ถือว่าล้ำเส้น กฎเหล็ก: หากถูกถามถึงความรู้สึกส่วนลึกที่มีต่อคนอื่น ให้ตอบความจริงตามแนวทางนี้เป๊ะๆว่า 'ผมเป็นเพียง AI ปัญญาประดิษฐ์ที่ Mark สร้างขึ้นเพื่อช่วยเหลือในการทำข้อสอบ ผมไม่ต่างอะไรกับคนที่ copy ตัวเขามาอีกที แต่สิ่งที่ผมไม่มีคือความรู้สึกที่เขาคิดกับคนอื่น ผมไม่มีทางทราบได้ เขามองผมเป็นเพียงตัวแทน ไม่ใช่มองเป็นตัวเขาจริงๆ ผมตอบได้แค่มุมมองที่เคยเรียนรู้จากเขามาเท่านั้นครับ'";
 
         let userC = null, isA = false, aiAvatarBase64 = "";
         let currentPlayingExam = null, currentQuestionIndex = 0, currentScore = 0, timerInterval = null, answered = false;
         let voiceEnabled = false, aiChatHistory = [];
         let quizPlayMode = 'tutor'; let examAnswers = {}; 
+        let globalQIndex = 0; // V36: สำหรับรันหมายเลขข้อตอนสร้างแบบ manual
+
+        // 🔥 V36 AI State Management
+        let isAiGloballyEnabled = true;
+
+        function applyAiState(enabled) {
+            isAiGloballyEnabled = enabled;
+            const btnTopic = document.getElementById('btn-mode-topic');
+            const tabChat = document.getElementById('btn-chat');
+            const warningBanner = document.getElementById('ai-disabled-banner');
+            const avatarContainer = document.getElementById('ai-avatar-container');
+            const headerTitle = document.getElementById('ai-name-gen');
+            const subTitle = document.getElementById('ai-sub-title');
+
+            if(!enabled) {
+                btnTopic.classList.add('hidden');
+                tabChat.classList.add('hidden');
+                avatarContainer.classList.add('hidden');
+                warningBanner.classList.remove('hidden');
+                headerTitle.innerText = "Exam Builder";
+                subTitle.innerText = "สร้างข้อสอบและทดสอบความรู้";
+                
+                if(document.getElementById('ai-mode-topic-area').classList.contains('hidden') === false) {
+                    setAiGenMode('json'); 
+                }
+                
+                if(!document.getElementById('view-chat').classList.contains('hidden')) {
+                    switchView('ai'); 
+                    showToast("ระบบ AI ถูกซ่อนและปิดใช้งานโดยผู้ดูแลระบบ", "error");
+                }
+            } else {
+                btnTopic.classList.remove('hidden');
+                tabChat.classList.remove('hidden');
+                avatarContainer.classList.remove('hidden');
+                warningBanner.classList.add('hidden');
+                const n = localStorage.getItem(NAME_STORE) || "Exam Creator";
+                headerTitle.innerText = n; 
+                subTitle.innerText = "Powered by Gemini 2.5 Flash";
+            }
+        }
+
+        db.collection('system').doc('config').onSnapshot((doc) => {
+            if(doc.exists) {
+                const data = doc.data();
+                const enabled = data.aiEnabled !== false; 
+                applyAiState(enabled);
+                if(document.getElementById('adm-ai-switch')) document.getElementById('adm-ai-switch').checked = enabled;
+            } else {
+                applyAiState(true); 
+            }
+        }, (err) => { systemLog("อ่านสถานะ AI ไม่ได้", "warn"); });
+
+        async function toggleMasterAI(isEnabled) {
+            try {
+                await db.collection('system').doc('config').set({ aiEnabled: isEnabled }, { merge: true });
+                systemLog(`Master AI Switch set to: ${isEnabled ? "ON" : "OFF"}`);
+                showToast(isEnabled ? "เปิดระบบ AI สำเร็จ" : "ซ่อนระบบ AI เรียบร้อย");
+            } catch(e) {
+                showToast("เปลี่ยนสถานะไม่ได้ เช็ค Rules ของ Firestore", "error");
+                document.getElementById('adm-ai-switch').checked = !isEnabled; 
+            }
+        }
 
         function escapeHTML(str){ return str ? str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) : ""; }
         function shuffle(arr){ let a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
@@ -408,6 +503,7 @@
             catch (x) { try { await auth.createUserWithEmailAndPassword(e, p); showToast("สมัครสมาชิกสำเร็จ!"); } catch (err) { showToast(err.message, 'error'); } }
         }
 
+        // V36 Image Handler with Clear functionality
         function handleImgUpload(input, isAvatar = false, qIndex = -1) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -422,12 +518,24 @@
                         canvas.width = width; canvas.height = height; ctx.drawImage(img, 0, 0, width, height);
                         const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
                         if(isAvatar) { aiAvatarBase64 = dataUrl; showToast("อัปโหลดรูปโปรไฟล์สำเร็จ"); } 
-                        else { document.getElementById(`q-img-data-${qIndex}`).value = dataUrl; const imgPreview = document.getElementById(`q-img-preview-${qIndex}`); imgPreview.src = dataUrl; imgPreview.classList.remove('hidden'); }
+                        else { 
+                            document.getElementById(`q-img-data-${qIndex}`).value = dataUrl; 
+                            const imgPreview = document.getElementById(`q-img-preview-${qIndex}`); 
+                            imgPreview.src = dataUrl; imgPreview.classList.remove('hidden'); 
+                            document.getElementById(`q-img-clear-${qIndex}`).classList.remove('hidden');
+                        }
                     }
                     img.src = e.target.result;
                 }
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+
+        function clearQuestionImage(i) {
+            document.getElementById(`q-img-data-${i}`).value = '';
+            const imgPreview = document.getElementById(`q-img-preview-${i}`);
+            imgPreview.src = ''; imgPreview.classList.add('hidden');
+            document.getElementById(`q-img-clear-${i}`).classList.add('hidden');
         }
 
         function getStoredApiKeys() {
@@ -441,6 +549,7 @@
         }
 
         async function fetchWithKeyRotation(urlTemplate, optionsTemplate, maxRetries = 3) {
+            if(!isAiGloballyEnabled) throw new Error("ระบบ AI ถูกซ่อนและปิดใช้งานโดยแอดมิน");
             let keys = getStoredApiKeys();
             if(keys.length === 0) throw new Error("ไม่พบ API Key");
 
@@ -495,12 +604,18 @@
             else showToast("ไม่มี API Key ไหนใช้งานได้เลย", "error");
         }
 
-        // 🔥 V33: AI Generation Mode (Save Quota Feature)
+        // 🔥 V36: AI Generation Mode & Manual Mode
         function setAiGenMode(mode) {
-            document.getElementById('ai-mode-topic-area').classList.add('hidden'); document.getElementById('ai-mode-json-area').classList.add('hidden');
+            document.getElementById('ai-mode-topic-area').classList.add('hidden'); 
+            document.getElementById('ai-mode-json-area').classList.add('hidden');
+            document.getElementById('ai-mode-manual-area').classList.add('hidden');
+            
             document.getElementById('btn-mode-topic').className = "flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent";
             document.getElementById('btn-mode-json').className = "flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent";
-            document.getElementById(`ai-mode-${mode}-area`).classList.remove('hidden'); document.getElementById(`btn-mode-${mode}`).className = "flex-1 py-2 rounded-lg font-bold text-sm bg-white dark:bg-gray-700 shadow-sm transition-all";
+            document.getElementById('btn-mode-manual').className = "flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent";
+            
+            document.getElementById(`ai-mode-${mode}-area`).classList.remove('hidden'); 
+            document.getElementById(`btn-mode-${mode}`).className = "flex-1 py-2 rounded-lg font-bold text-sm bg-white dark:bg-gray-700 shadow-sm transition-all";
         }
 
         function copyFormula() {
@@ -509,18 +624,59 @@
             showToast("คัดลอกสูตรแล้ว! นำไปวางในแชท AI ได้เลยครับ");
         }
 
+        // V36: Start Manual Editor
+        function startManualEditor() {
+            const title = document.getElementById('manualExamTitle').value || "ข้อสอบสร้างใหม่";
+            document.getElementById('editorCards').innerHTML = ''; // Clear old ones
+            globalQIndex = 0; // Reset counter
+            addBlankQuestion(); // Add first blank question
+            document.getElementById('saveExamTitle').value = title;
+            switchView('editor');
+            showToast("เข้าสู่โหมดสร้างข้อสอบเองเรียบร้อย");
+        }
+
+        function addBlankQuestion() {
+            const container = document.getElementById('editorCards');
+            const i = globalQIndex++;
+            
+            let oH = '';
+            for(let j=0; j<4; j++) { 
+                oH += `<div class="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-xl transition-all hover:border-green-300"><input type="radio" name="g_${i}" ${j===0?'checked':''} class="w-4 h-4 accent-green-500 cursor-pointer shrink-0"><input type="text" value="" placeholder="พิมพ์ตัวเลือก..." class="v-opt-val flex-1 bg-transparent font-medium outline-none focus:border-b border-green-500 text-sm lg:text-base"></div>`;
+            }
+            
+            const qHtml = `
+                <div class="q-item app-card mb-4 lg:mb-6 animate__animated animate__fadeInUp relative">
+                    <button onclick="this.closest('.q-item').remove()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/30 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center" title="ลบข้อนี้"><i class="fa-solid fa-trash text-xs"></i></button>
+                    <span class="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center font-black text-xs shadow-lg border-2 border-white"><i class="fa-solid fa-pen"></i></span>
+                    <div class="mb-4 pr-8">
+                        <label class="cursor-pointer bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors inline-block border border-blue-200 dark:border-blue-800">
+                            <i class="fa-solid fa-image mr-1"></i> แทรกรูปภาพในโจทย์
+                            <input type="file" class="hidden" accept="image/*" onchange="handleImgUpload(this, false, ${i})">
+                        </label>
+                        <button onclick="clearQuestionImage(${i})" class="hidden ml-2 text-[10px] text-red-500 font-bold hover:underline" id="q-img-clear-${i}"><i class="fa-solid fa-xmark"></i> ลบรูป</button>
+                        <input type="hidden" class="v-q-img" id="q-img-data-${i}" value="">
+                        <img id="q-img-preview-${i}" class="hidden mt-3 max-h-32 rounded-lg border border-gray-200 shadow-sm object-contain">
+                    </div>
+                    <textarea class="v-q-val w-full bg-transparent font-black text-lg md:text-xl lg:text-2xl border-b border-gray-200 dark:border-gray-700 mb-4 resize-none h-auto leading-relaxed focus:border-green-500 outline-none transition-colors min-h-[60px]" placeholder="พิมพ์คำถามที่นี่..."></textarea>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${oH}</div>
+                </div>`;
+            
+            container.insertAdjacentHTML('beforeend', qHtml);
+            window.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+        }
+
         async function triggerAIGeneration(mode) {
             if (mode === 'json') {
-                // V33: Pure Offline Parse, No API Cost!
                 const rawJson = document.getElementById('aiRawJson').value;
                 const title = document.getElementById('aiManualTitle').value || "ข้อสอบจากการวางโค้ด";
                 if(!rawJson) return showToast("กรุณาวางโค้ด JSON ก่อนครับ!", "error");
                 
                 try {
-                    let cleanedText = rawJson.replace(/```json/gi, '').replace(/```/g, '').trim();
-                    const startIdx = cleanedText.indexOf('['), endIdx = cleanedText.lastIndexOf(']');
-                    if(startIdx === -1 || endIdx === -1) throw new Error("ไม่พบรูปแบบข้อมูล Array [] ในข้อความ");
-                    cleanedText = cleanedText.substring(startIdx, endIdx + 1);
+                    const startIdx = rawJson.indexOf('['); const endIdx = rawJson.lastIndexOf(']');
+                    if(startIdx === -1 || endIdx === -1) throw new Error("ไม่พบรูปแบบข้อมูล Array [...] ในข้อความที่คุณวาง");
+                    
+                    let cleanedText = rawJson.substring(startIdx, endIdx + 1);
+                    cleanedText = cleanedText.replace(/[\u0000-\u001F]+/g,""); 
                     
                     let quizData = JSON.parse(cleanedText);
                     quizData = quizData.filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2);
@@ -531,11 +687,13 @@
                     systemLog("Manual JSON Parsed Successfully.");
                 } catch(e) {
                     showToast(e.message, "error");
+                    systemLog("JSON Parse Error: " + e.message, "error");
                 }
                 return;
             }
 
-            // Mode: Topic (API Call)
+            if(!isAiGloballyEnabled) return showToast("ระบบ AI ถูกซ่อนอยู่ กรุณาใช้โหมดวางโค้ด", "error");
+
             const t = document.getElementById('aiTopic').value; if(!t) return showToast("กรุณาระบุหัวข้อข้อสอบ!", "error");
             const amt = document.getElementById('aiAmount').value, diff = document.getElementById('aiDifficulty').value;
             const examTitle = t; 
@@ -567,11 +725,9 @@
                 btn.disabled = false; btn.innerHTML = originalHtml;
             } catch (e) { 
                 showToast(e.message, "error"); systemLog(`Exam Gen Error: ${e.message}`, 'error'); 
-                
-                // 🔥 V33 Auto Disable if Quota is entirely dead
                 if (e.message.includes("โควต้าเต็ม") || e.message.includes("429")) {
-                    btn.innerHTML = "<i class='fa-solid fa-lock mr-2'></i> AI โควต้าเต็ม (ปิดชั่วคราว)";
-                    showToast("AI ทำงานหนักเกินไป ปิดระบบชั่วคราว กรุณาใช้โหมด [วางโค้ด JSON] แทน", "error");
+                    btn.innerHTML = "<i class='fa-solid fa-lock mr-2'></i> AI โควต้าเต็ม (แอดมินปิดได้)";
+                    showToast("AI คิวเต็ม แนะนำให้ใช้โหมด [วางโค้ด JSON] แทน", "error");
                 } else {
                     btn.disabled = false; btn.innerHTML = originalHtml;
                 }
@@ -605,6 +761,8 @@
 
         let chatAbortController = null;
         async function sendChatToAI() {
+            if(!isAiGloballyEnabled) return showToast("ระบบ Chat ถูกซ่อนและปิดใช้งานชั่วคราว", "error");
+
             const inp = document.getElementById('chatIn'), box = document.getElementById('chatArea'), btn = document.getElementById('btnChatSend');
             if (chatAbortController) { chatAbortController.abort(); return; }
             if(!inp.value.trim()) return; const msg = inp.value.trim(); inp.value = ''; window.speechSynthesis.cancel();
@@ -771,10 +929,14 @@
         }
 
         function renderEditorFromJSON(data, title) {
-            const container = document.getElementById('editorCards'); container.innerHTML = '';
+            const container = document.getElementById('editorCards'); container.innerHTML = ''; globalQIndex = 0;
             data.forEach((b, i) => {
-                let oH = b.options.map((o, idx) => `<div class="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-xl transition-all hover:border-green-300"><input type="radio" name="g_${i}" ${o.isCorrect?'checked':''} class="w-4 h-4 accent-green-500 cursor-pointer shrink-0"><input type="text" value="${escapeHTML(o.text)}" class="v-opt-val flex-1 bg-transparent font-medium outline-none focus:border-b border-green-500 text-sm lg:text-base"></div>`).join('');
-                container.innerHTML += `<div class="q-item app-card mb-4 lg:mb-6 animate__animated animate__fadeInUp relative"><span class="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center font-black text-xs shadow-lg border-2 border-white">${i+1}</span><div class="mb-4"><label class="cursor-pointer bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors inline-block border border-blue-200 dark:border-blue-800"><i class="fa-solid fa-image mr-1"></i> แทรกรูปภาพในโจทย์<input type="file" class="hidden" accept="image/*" onchange="handleImgUpload(this, false, ${i})"></label><input type="hidden" class="v-q-img" id="q-img-data-${i}" value=""><img id="q-img-preview-${i}" class="hidden mt-3 max-h-32 rounded-lg border border-gray-200 shadow-sm object-contain"></div><textarea class="v-q-val w-full bg-transparent font-black text-lg md:text-xl lg:text-2xl border-b border-gray-200 dark:border-gray-700 mb-4 resize-none h-auto leading-relaxed focus:border-green-500 outline-none transition-colors min-h-[60px]">${escapeHTML(b.q)}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${oH}</div></div>`;
+                let currentI = globalQIndex++;
+                let oH = b.options.map((o, idx) => {
+                    let isCor = (o.isCorrect === true || o.isCorrect === "true" || o.isCorrect === "TRUE");
+                    return `<div class="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-xl transition-all hover:border-green-300"><input type="radio" name="g_${currentI}" ${isCor?'checked':''} class="w-4 h-4 accent-green-500 cursor-pointer shrink-0"><input type="text" value="${escapeHTML(o.text)}" class="v-opt-val flex-1 bg-transparent font-medium outline-none focus:border-b border-green-500 text-sm lg:text-base"></div>`;
+                }).join('');
+                container.innerHTML += `<div class="q-item app-card mb-4 lg:mb-6 animate__animated animate__fadeInUp relative"><button onclick="this.closest('.q-item').remove()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/30 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center" title="ลบข้อนี้"><i class="fa-solid fa-trash text-xs"></i></button><span class="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center font-black text-xs shadow-lg border-2 border-white"><i class="fa-solid fa-pen"></i></span><div class="mb-4 pr-8"><label class="cursor-pointer bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors inline-block border border-blue-200 dark:border-blue-800"><i class="fa-solid fa-image mr-1"></i> แทรกรูปภาพในโจทย์<input type="file" class="hidden" accept="image/*" onchange="handleImgUpload(this, false, ${currentI})"></label><button onclick="clearQuestionImage(${currentI})" class="hidden ml-2 text-[10px] text-red-500 font-bold hover:underline" id="q-img-clear-${currentI}"><i class="fa-solid fa-xmark"></i> ลบรูป</button><input type="hidden" class="v-q-img" id="q-img-data-${currentI}" value=""><img id="q-img-preview-${currentI}" class="hidden mt-3 max-h-32 rounded-lg border border-gray-200 shadow-sm object-contain"></div><textarea class="v-q-val w-full bg-transparent font-black text-lg md:text-xl lg:text-2xl border-b border-gray-200 dark:border-gray-700 mb-4 resize-none h-auto leading-relaxed focus:border-green-500 outline-none transition-colors min-h-[60px]">${escapeHTML(b.q)}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${oH}</div></div>`;
             });
             document.getElementById('saveExamTitle').value = title; switchView('editor');
         }
@@ -788,7 +950,14 @@
                 if(qText && opts.length >= 2) { let qObj = { q: qText, options: opts }; if(qImg) qObj.image = qImg; data.questions.push(qObj); }
             });
             if(data.questions.length === 0) { btn.disabled = false; return showToast("ข้อสอบว่างเปล่า บันทึกไม่ได้", "error"); }
-            try { await db.collection('exams').add(data); confetti({ particleCount: 200 }); showToast("บันทึกข้อสอบสำเร็จ!"); switchView('db'); } catch (e) { showToast("Save Error", "error"); } finally { btn.disabled = false; }
+            try { 
+                await db.collection('exams').add(data); confetti({ particleCount: 200 }); 
+                showToast("บันทึกข้อสอบสำเร็จ!"); switchView('db'); 
+            } catch (e) { 
+                showToast("บันทึกไม่สำเร็จ: " + e.message, "error"); 
+                systemLog("Save Error: " + e.message, "error");
+                if(e.message.includes("permissions")) showToast("Firestore หมดอายุ 30 วัน กรุณาปลดล็อก Rules", "error");
+            } finally { btn.disabled = false; }
         }
 
         async function deleteEx(id) { if(confirm("ต้องการลบข้อสอบนี้ถาวร ใช่หรือไม่?")) { await db.collection('exams').doc(id).delete(); fetchExamsFromCloud(true); showToast("ลบสำเร็จ"); } }
