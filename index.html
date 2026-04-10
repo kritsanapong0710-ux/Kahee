@@ -308,7 +308,8 @@
             const key = localStorage.getItem(KEY_STORE) || "";
             if(!key) throw new Error("ไม่พบ API Key กรุณาตั้งค่าในหน้าแอดมิน");
             
-            const persona = localStorage.getItem(MASTER_PERSONA) || "คุณคือ AI อัจฉริยะ ตอบสั้น กระชับ ตรงไปตรงมา";
+            // ✅ BUG FIXED: แก้ไขตัวแปรให้ตรงกัน
+            const persona = localStorage.getItem(PERSONA_STORE) || "คุณคือ AI อัจฉริยะ ตอบสั้น กระชับ ตรงไปตรงมา";
             const reqBody = { contents: [{ parts: [{ text: `[System Instruction: ${persona}]\n\nUser: ${promptText}` }] }] };
 
             const urls = [
@@ -338,9 +339,19 @@
             btn.disabled = true; btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i>";
             
             try {
+                const key = document.getElementById('adm-key').value || localStorage.getItem(KEY_STORE);
+                if(!key) throw new Error("ใส่ API Key ด้านบนก่อนครับ");
+                
                 const prompt = `แปลงคำสั่งต่อไปนี้ให้เป็น 'System Instruction' สำหรับสั่งการ AI พิมพ์ตอบมาแค่คำสั่งล้วนๆ ห้ามมีคำอธิบาย หรือเครื่องหมาย quote ครอบ: "${input}"`;
-                const res = await callGemini(prompt);
-                document.getElementById('adm-persona').value = res.trim();
+                const body = { contents: [{ parts: [{ text: prompt }] }] };
+                
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, { 
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) 
+                });
+                const data = await res.json();
+                if(!data.candidates) throw new Error("API Error");
+                
+                document.getElementById('adm-persona').value = data.candidates[0].content.parts[0].text.trim();
                 showToast("สร้าง Persona อัตโนมัติสำเร็จ!");
             } catch(e) { showToast(e.message, "error"); } 
             finally { btn.disabled = false; btn.innerHTML = "<i class='fa-solid fa-magic'></i>"; }
@@ -623,7 +634,7 @@
         function saveAdmin() {
             localStorage.setItem(KEY_STORE, document.getElementById('adm-key').value);
             localStorage.setItem(NAME_STORE, document.getElementById('adm-name').value);
-            localStorage.setItem(MASTER_PERSONA, document.getElementById('adm-persona').value);
+            localStorage.setItem(PERSONA_STORE, document.getElementById('adm-persona').value);
             if(aiAvatarBase64) localStorage.setItem(IMG_STORE, aiAvatarBase64);
             initUI(); showToast("อัปเดตระบบ AI Twin สำเร็จ!");
         }
@@ -634,7 +645,7 @@
             document.getElementById('ai-name-gen').innerText = n;
             document.getElementById('ai-img-gen').src = i;
             document.getElementById('adm-name').value = n;
-            document.getElementById('adm-persona').value = localStorage.getItem(MASTER_PERSONA) || "";
+            document.getElementById('adm-persona').value = localStorage.getItem(PERSONA_STORE) || "";
             document.getElementById('adm-key').value = localStorage.getItem(KEY_STORE) || "";
         }
 
