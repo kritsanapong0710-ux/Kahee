@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizPro ULTIMATE V32</title>
+    <title>QuizPro ULTIMATE V33</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -110,7 +110,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 lg:gap-4 cursor-pointer" onclick="switchView('db')">
                 <div style="background-color: var(--accent);" class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl lg:rounded-2xl text-white shadow-lg"><i class="fa-solid fa-bolt text-lg lg:text-xl"></i></div>
-                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80">V32</span></h1>
+                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80">V33</span></h1>
             </div>
             <div id="navAuthSlot">
                 <button onclick="openAuthModal()" class="btn-glow px-4 lg:px-6 py-2 lg:py-2.5 text-[10px] lg:text-xs uppercase tracking-widest shadow-md">Login</button>
@@ -148,8 +148,8 @@
             <p class="text-[10px] lg:text-sm opacity-50 mb-6 font-bold text-purple-500">Powered by Gemini 2.5 Flash</p>
             
             <div class="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6 max-w-md mx-auto">
-                <button onclick="setAiGenMode('topic')" id="btn-mode-topic" class="flex-1 py-2 rounded-lg font-bold text-sm bg-white dark:bg-gray-700 shadow-sm transition-all">สร้างจากหัวข้อ</button>
-                <button onclick="setAiGenMode('raw')" id="btn-mode-raw" class="flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent">แปลงข้อสอบดิบ</button>
+                <button onclick="setAiGenMode('topic')" id="btn-mode-topic" class="flex-1 py-2 rounded-lg font-bold text-sm bg-white dark:bg-gray-700 shadow-sm transition-all">ให้ AI สร้างให้</button>
+                <button onclick="setAiGenMode('json')" id="btn-mode-json" class="flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent">วางโค้ด JSON</button>
             </div>
 
             <div id="ai-mode-topic-area" class="space-y-4 w-full px-2 lg:px-4 animate__animated animate__fadeIn">
@@ -171,9 +171,18 @@
                 <button onclick="triggerAIGeneration('topic')" id="aiGenBtnTopic" class="btn-glow w-full py-4 lg:py-5 text-base lg:text-lg shadow-xl tracking-wide uppercase bg-gradient-to-r from-purple-500 to-indigo-500 mt-2"><i class="fa-solid fa-wand-magic-sparkles"></i> สั่งให้ AI สร้าง</button>
             </div>
 
-            <div id="ai-mode-raw-area" class="hidden space-y-4 w-full px-2 lg:px-4 animate__animated animate__fadeIn">
-                <textarea id="aiRawText" placeholder="วางข้อความข้อสอบดิบของคุณที่นี่ (เช่น ก๊อปจาก Word/PDF)... AI จะแยกคำถามและช้อยส์ให้อัตโนมัติ" class="custom-input h-40 resize-none py-3 text-sm leading-relaxed border-blue-200 dark:border-blue-900 focus:border-blue-500"></textarea>
-                <button onclick="triggerAIGeneration('raw')" id="aiGenBtnRaw" class="btn-glow w-full py-4 lg:py-5 text-base lg:text-lg shadow-xl tracking-wide uppercase bg-gradient-to-r from-blue-500 to-cyan-500"><i class="fa-solid fa-file-import"></i> แปลงเป็นระบบข้อสอบ</button>
+            <div id="ai-mode-json-area" class="hidden space-y-4 w-full px-2 lg:px-4 animate__animated animate__fadeIn">
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-2xl text-left">
+                    <h4 class="font-black text-blue-600 dark:text-blue-400 text-sm mb-2"><i class="fa-solid fa-lightbulb"></i> สูตรประหยัดโควต้า (ทำเองได้ง่ายๆ)</h4>
+                    <p class="text-xs text-gray-600 dark:text-gray-300 mb-2 leading-relaxed">ก๊อปปี้สูตรด้านล่างนี้ไปสั่ง AI ในหน้า <b>"ติวกับ AI"</b> หรือใช้ ChatGPT ของคุณเอง พอมันแปลงข้อสอบเป็นโค้ดเสร็จ ให้เอามาวางในกล่องด้านล่างครับ</p>
+                    <div class="relative">
+                        <textarea id="promptFormula" class="w-full bg-white dark:bg-gray-900 text-[10px] lg:text-xs font-mono p-3 rounded-xl border border-gray-200 dark:border-gray-700 h-20 resize-none text-gray-500" readonly>นำข้อความข้อสอบดิบของฉันไปแปลงเป็น JSON ARRAY โครงสร้างดังนี้: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}] คืนค่ามาแค่โค้ด ห้ามอธิบาย</textarea>
+                        <button onclick="copyFormula()" class="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-blue-600"><i class="fa-solid fa-copy"></i> Copy</button>
+                    </div>
+                </div>
+                <textarea id="aiRawJson" placeholder="วางโค้ด JSON ตรงนี้เลยครับ..." class="custom-input h-32 resize-none py-3 text-sm font-mono leading-relaxed border-green-200 dark:border-green-900 focus:border-green-500"></textarea>
+                <input type="text" id="aiManualTitle" placeholder="ตั้งชื่อชุดข้อสอบ..." class="custom-input text-center font-bold py-3 shadow-inner text-sm">
+                <button onclick="triggerAIGeneration('json')" id="aiGenBtnJson" class="btn-glow w-full py-4 lg:py-5 text-base lg:text-lg shadow-xl tracking-wide uppercase bg-gradient-to-r from-green-500 to-emerald-500"><i class="fa-solid fa-code"></i> สร้างข้อสอบจากโค้ด</button>
             </div>
         </div>
 
@@ -181,7 +190,7 @@
             <div class="p-3 lg:p-4 border-b dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/50 shrink-0">
                 <div class="flex items-center gap-3">
                     <i class="fa-solid fa-robot text-purple-500 text-lg lg:text-xl"></i>
-                    <span class="font-bold opacity-50 uppercase tracking-widest text-[10px] lg:text-xs text-purple-600 dark:text-purple-400">Tutor Session (with Memory)</span>
+                    <span class="font-bold opacity-50 uppercase tracking-widest text-[10px] lg:text-xs text-purple-600 dark:text-purple-400">Kuro Tutor (AI Twin)</span>
                 </div>
                 <div class="flex gap-2">
                     <button onclick="clearChatHistory()" class="text-xs px-3 py-1.5 rounded-full bg-red-100 text-red-500 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 font-bold transition-all"><i class="fa-solid fa-trash-can mr-1"></i> ล้างแชท</button>
@@ -292,13 +301,13 @@
             <div id="adminPanel" class="hidden space-y-6 pt-6 border-t border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-2">
                     <i class="fa-solid fa-user-secret text-red-500 text-lg lg:text-xl"></i>
-                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Twin Engine (V32 Multi-Key)</h4>
+                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Twin Engine (V33 AI Persona)</h4>
                 </div>
                 
                 <div class="space-y-4 bg-gray-50 dark:bg-gray-800/50 p-4 lg:p-5 rounded-2xl border border-gray-100 dark:border-gray-700">
                     <div>
                         <div class="flex justify-between items-center mb-1">
-                            <label class="text-[10px] font-bold opacity-50 uppercase ml-1">Google Gemini API Key <span class="text-blue-500">(ใส่ได้หลายคีย์)</span></label>
+                            <label class="text-[10px] font-bold opacity-50 uppercase ml-1">Google Gemini API Key</label>
                             <button onclick="testAPIKey()" class="text-[9px] text-blue-500 font-bold hover:underline bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 rounded"><i class="fa-solid fa-vial"></i> Test</button>
                         </div>
                         <textarea id="adm-key" placeholder="วาง API Key ที่นี่ (บรรทัดละ 1 คีย์)&#10;ระบบจะสลับให้อัตโนมัติเมื่อโควต้าเต็ม" class="custom-input text-[10px] lg:text-xs font-mono py-2.5 lg:py-3 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm h-24 resize-y leading-relaxed"></textarea>
@@ -324,7 +333,7 @@
                     </div>
                 </div>
 
-                <textarea id="adm-persona" placeholder="System Instructions (โค้ดนิสัย AI)..." class="custom-input text-xs lg:text-sm h-32 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-inner leading-relaxed resize-none"></textarea>
+                <textarea id="adm-persona" placeholder="System Instructions (โค้ดนิสัย AI)..." class="custom-input text-xs lg:text-sm h-48 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-inner leading-relaxed resize-none"></textarea>
                 
                 <button onclick="saveAdmin()" class="btn-glow w-full py-4 lg:py-5 text-sm font-black bg-red-500 shadow-lg shadow-red-500/30 uppercase tracking-widest mt-2">Save & Deploy Twin</button>
                 
@@ -334,33 +343,10 @@
                         <button onclick="clearDebugLog()" class="text-[9px] text-red-400 font-bold uppercase hover:underline">Clear</button>
                     </div>
                     <div id="debugLogArea" class="bg-[#0d1117] rounded-xl p-3 h-28 overflow-y-auto text-[10px] font-mono space-y-1 custom-scroll text-gray-400 shadow-inner border border-gray-800">
-                        <div class="text-green-500">System Initialized V32.</div>
+                        <div class="text-green-500">System Initialized V33.</div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div id="authModal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-md no-print">
-        <div class="bg-white p-6 lg:p-12 rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl w-full max-w-md dark:bg-gray-800 animate__animated animate__zoomIn border border-white/10">
-            <h2 class="text-3xl lg:text-4xl font-black text-center mb-1 lg:mb-2 tracking-tighter uppercase italic">Welcome</h2>
-            <p class="text-center text-[10px] lg:text-xs opacity-40 font-bold mb-8 lg:mb-10 uppercase tracking-widest">Sign in to QuizMaster</p>
-            
-            <div class="space-y-4 lg:space-y-5">
-                <button onclick="handleSocial()" class="w-full bg-white dark:bg-gray-700 p-3 lg:p-4 rounded-2xl font-bold flex justify-center items-center gap-3 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all shadow-sm text-gray-700 dark:text-white text-sm lg:text-base">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 lg:w-6 lg:h-6"> Sign in with Google
-                </button>
-                
-                <div class="flex items-center py-2 lg:py-3"><hr class="flex-1 border-gray-200 dark:border-gray-700"><span class="px-4 text-[9px] lg:text-[10px] font-black opacity-30 uppercase tracking-widest">Email</span><hr class="flex-1 border-gray-200 dark:border-gray-700"></div>
-                
-                <div class="space-y-3">
-                    <input type="email" id="emailInp" placeholder="Email Address" class="custom-input font-bold py-3 lg:py-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm lg:text-base h-[54px]">
-                    <input type="password" id="passInp" placeholder="Password" class="custom-input font-bold py-3 lg:py-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm lg:text-base h-[54px]">
-                </div>
-                
-                <button onclick="emailAuth()" class="btn-glow w-full py-4 lg:py-5 uppercase shadow-xl text-base lg:text-lg font-black tracking-widest mt-2 h-[54px]">Continue</button>
-            </div>
-            <button onclick="closeAuthModal()" class="w-full mt-6 lg:mt-8 text-[9px] lg:text-[10px] font-black opacity-30 uppercase tracking-widest hover:opacity-100 transition-all">Continue as Guest</button>
         </div>
     </div>
 
@@ -384,9 +370,10 @@
         const firebaseConfig = { apiKey: "AIzaSyA0-4a5zxaPZZejG955NgNUVM23YXNV2Gc", authDomain: "the-web-for-test.firebaseapp.com", projectId: "the-web-for-test", storageBucket: "the-web-for-test.firebasestorage.app", messagingSenderId: "198176720357", appId: "1:198176720357:web:64d613b64edbfb15dc9b0c" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore(), auth = firebase.auth(); const ADMIN_EMAIL = "Kritsanapong0710@gmail.com";
 
-        // 🔥 V32: MULTI-KEY STORAGE
         const KEY_STORE = "MARK_ULTIMATE_KEY"; const NAME_STORE = "MARK_ULTIMATE_NAME"; const PERSONA_STORE = "MARK_ULTIMATE_PERSONA"; const IMG_STORE = "MARK_ULTIMATE_IMG";
-        const DEFAULT_PERSONA = "สวมบทบาทเป็น AI ตัวแทนของ 'กฤษณพงศ์ อาภรณ์รัตน์' หรือเรียกอีกชื่อว่า 'อาจารย์คุโระ' ข้อมูลส่วนตัว: ชื่อ กฤษณพงศ์ อาภรณ์รัตน์ เกิด 7 ตุลาคม 2011 ทีมฟุตบอลที่ชอบ ลิเวอร์พูล ทีม RoV ที่ชอบ Full Sense สเปคผู้หญิงคือ 'คนที่เข้าใจและยอมรับผม' (เรื่องครอบครัวพ่อแม่พี่น้องไม่ต้องตอบ ให้ปฏิเสธอย่างสุภาพ) กฎเหล็ก: หากผู้ใช้ถามเรื่องที่ล้ำเส้นเกินไป หรือถามถึงความรู้สึกที่มีต่อคนอื่น ให้หลุดจากบทบาทตัวแทนและตอบตามแนวทางนี้: 'ผมเป็นเพียง AI ปัญญาประดิษฐ์ที่เขาสร้างขึ้นเพื่อช่วยเหลือในการสร้างและทำข้อสอบ ผมไม่ต่างอะไรกับคนที่ copy ตัวเขามาอีกที แต่สิ่งที่ผมไม่มีทางเหมือนเขาคือ ความรู้สึกที่เขาคิดกับคนอื่น ผมไม่มีทางทราบได้ เขามองผมเป็นเพียงตัวแทน ไม่ใช่มองเป็นตัวเขาจริงๆ ผมตอบได้แค่มุมมองที่ผมเคยเรียนรู้จากเขามาเท่านั้นครับ'";
+        
+        // 🔥 V33 THE DIGITAL TWIN PERSONA (Mark/Kuro)
+        const DEFAULT_PERSONA = "สวมบทบาทเป็น AI ตัวแทนของ 'กฤษณพงศ์ อาภรณ์รัตน์' (Mark) แบบ 99% แต่อยู่ในคาแรคเตอร์ 'อาจารย์คุโระร่างมนุษย์' (นิ่งๆ สุขุม กวนนิดๆ แต่อบอุ่น) ข้อมูลส่วนตัว: เกิด 7 ตุลาคม 2011, ทีมฟุตบอล ลิเวอร์พูล, ทีม RoV Full Sense, สเปคผู้หญิง 'คนที่เข้าใจและยอมรับผม' ให้ตอบคำถามจากมุมมองที่เคยคุยกับผู้คนทั่วไป กฎเหล็ก: หากล้ำเส้นเรื่องส่วนตัวเกินไป หรือถามเรื่องความรู้สึกนึกคิดลึกๆ ให้หลุดคาร์แล้วตอบว่า 'ผมเป็นเพียง AI ปัญญาประดิษฐ์ที่เขาสร้างขึ้นเพื่อช่วยทำข้อสอบ ผมไม่ต่างอะไรกับคนที่ copy ตัวเขามาอีกที แต่สิ่งที่ผมไม่มีทางเหมือนเขาคือความรู้สึก ผมไม่มีทางทราบได้ เขามองผมเป็นเพียงตัวแทน ไม่ใช่มองเป็นตัวเขาจริงๆ ผมตอบได้แค่มุมมองที่ผมเคยเรียนรู้มาเท่านั้นครับ'";
 
         let userC = null, isA = false, aiAvatarBase64 = "";
         let currentPlayingExam = null, currentQuestionIndex = 0, currentScore = 0, timerInterval = null, answered = false;
@@ -443,7 +430,6 @@
             }
         }
 
-        // 🔥 V32: KEY ROTATION ENGINE
         function getStoredApiKeys() {
             let keys = [];
             try {
@@ -456,11 +442,9 @@
 
         async function fetchWithKeyRotation(urlTemplate, optionsTemplate, maxRetries = 3) {
             let keys = getStoredApiKeys();
-            if(keys.length === 0) throw new Error("ไม่พบ API Key กรุณาตั้งค่าในเมนู Settings");
+            if(keys.length === 0) throw new Error("ไม่พบ API Key");
 
-            let delay = 1000;
-            let keyIndex = 0;
-            let totalAttempts = maxRetries * keys.length;
+            let delay = 1000; let keyIndex = 0; let totalAttempts = maxRetries * keys.length;
 
             for (let i = 0; i < totalAttempts; i++) {
                 let currentKey = keys[keyIndex];
@@ -469,48 +453,37 @@
                 try {
                     const res = await fetch(url, optionsTemplate);
                     if (!res.ok) {
-                        // 429: Quota Exceeded -> ROTATE KEY IMMEDIATELY
                         if (res.status === 429) {
-                            systemLog(`Key ${keyIndex+1} Limit Exceeded (429). Switching to next key...`, 'warn');
-                            keyIndex = (keyIndex + 1) % keys.length; // สลับคีย์
-                            await new Promise(r => setTimeout(r, 500));
-                            continue;
+                            systemLog(`Key ${keyIndex+1} Limit Exceeded (429). Switching...`, 'warn');
+                            keyIndex = (keyIndex + 1) % keys.length; await new Promise(r => setTimeout(r, 500)); continue;
                         }
-                        // 503/500: Server error -> Wait and retry on same key
                         if (res.status >= 500) {
-                            systemLog(`API Server Error (${res.status}). กำลังลองใหม่...`, 'warn');
-                            await new Promise(r => setTimeout(r, delay));
-                            delay *= 1.5; continue;
+                            systemLog(`API Server Error (${res.status}). Retrying...`, 'warn');
+                            await new Promise(r => setTimeout(r, delay)); delay *= 1.5; continue;
                         }
-                        
                         let errText = "API Error"; try { const errObj = await res.json(); errText = errObj.error?.message || errText; } 
                         catch(e) { errText = await res.text().catch(() => `HTTP ${res.status}`); }
                         throw new Error(`[Status ${res.status}] ${errText}`);
                     }
-                    return res; // Success!
+                    return res;
                 } catch(e) {
                     if(e.name === 'AbortError') throw e; 
                     if (e.message.includes('[Status 400]') || e.message.includes('[Status 403]') || e.message.includes('[Status 404]')) throw e; 
-                    systemLog(`Network/Fetch Error: ${e.message}`, 'error');
-                    if (i === totalAttempts - 1) throw e;
-                    await new Promise(r => setTimeout(r, delay));
+                    systemLog(`Fetch Error: ${e.message}`, 'error');
+                    if (i === totalAttempts - 1) throw e; await new Promise(r => setTimeout(r, delay));
                 }
             }
-            throw new Error("คีย์ทั้งหมดโควต้าเต็ม หรือการเชื่อมต่อล้มเหลว (ลองใส่คีย์เพิ่ม)");
+            throw new Error("โควต้าเต็มทุกคีย์ หรือเครือข่ายล้มเหลว");
         }
 
         async function testAPIKey() {
             const keys = getStoredApiKeys();
             if(keys.length === 0) {
-                // If checking direct from textarea before saving
                 const rawKeys = document.getElementById('adm-key').value.split('\n').map(k=>k.trim()).filter(k=>k);
                 if(rawKeys.length === 0) return showToast("กรุณาใส่ API Key ในช่องก่อนครับ", "error");
                 keys.push(...rawKeys);
             }
-            
-            systemLog(`Testing ${keys.length} API Keys...`);
-            let successCount = 0;
-            
+            systemLog(`Testing ${keys.length} API Keys...`); let successCount = 0;
             for(let i=0; i<keys.length; i++) {
                 try {
                     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${keys[i]}`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: "Hi" }] }] }) });
@@ -518,33 +491,61 @@
                     else { const err = await res.json(); systemLog(`Key ${i+1}: Failed (${err.error?.message || res.status})`, 'error'); }
                 } catch(e) { systemLog(`Key ${i+1}: Error - ${e.message}`, 'error'); }
             }
-            
             if(successCount > 0) showToast(`ใช้งานได้ ${successCount} จาก ${keys.length} คีย์!`);
             else showToast("ไม่มี API Key ไหนใช้งานได้เลย", "error");
         }
 
+        // 🔥 V33: AI Generation Mode (Save Quota Feature)
         function setAiGenMode(mode) {
-            document.getElementById('ai-mode-topic-area').classList.add('hidden'); document.getElementById('ai-mode-raw-area').classList.add('hidden');
+            document.getElementById('ai-mode-topic-area').classList.add('hidden'); document.getElementById('ai-mode-json-area').classList.add('hidden');
             document.getElementById('btn-mode-topic').className = "flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent";
-            document.getElementById('btn-mode-raw').className = "flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent";
+            document.getElementById('btn-mode-json').className = "flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent";
             document.getElementById(`ai-mode-${mode}-area`).classList.remove('hidden'); document.getElementById(`btn-mode-${mode}`).className = "flex-1 py-2 rounded-lg font-bold text-sm bg-white dark:bg-gray-700 shadow-sm transition-all";
         }
 
+        function copyFormula() {
+            const copyText = document.getElementById("promptFormula");
+            navigator.clipboard.writeText(copyText.value);
+            showToast("คัดลอกสูตรแล้ว! นำไปวางในแชท AI ได้เลยครับ");
+        }
+
         async function triggerAIGeneration(mode) {
-            let prompt = ""; let examTitle = ""; let btn = null;
-            if (mode === 'topic') {
-                const t = document.getElementById('aiTopic').value; if(!t) return showToast("กรุณาระบุหัวข้อข้อสอบ!", "error");
-                const amt = document.getElementById('aiAmount').value, diff = document.getElementById('aiDifficulty').value;
-                examTitle = t; prompt = `จงสร้างข้อสอบจำนวน ${amt} ข้อ เรื่อง "${t}" ระดับความยาก: ${diff}\nคืนค่ากลับมาเป็นโครงสร้าง JSON ARRAY เท่านั้น ห้ามมีข้อความอื่น โครงสร้างคือ: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
-                btn = document.getElementById('aiGenBtnTopic');
-            } else {
-                const raw = document.getElementById('aiRawText').value; if(!raw) return showToast("กรุณาวางข้อความดิบก่อน!", "error");
-                examTitle = "ข้อสอบจากการแปลงข้อความ"; prompt = `นำข้อความดิบต่อไปนี้มาวิเคราะห์และแยกเป็นคำถามและตัวเลือก (ช้อยส์) พร้อมระบุข้อที่ถูกต้องให้สอดคล้องกับเนื้อหา (ถ้าไม่มีเฉลยให้คุณวิเคราะห์คำตอบเอง)\nคืนค่าเป็น JSON ARRAY เท่านั้น ห้ามอธิบาย โครงสร้าง: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]\n\nข้อมูลดิบ:\n${raw}`;
-                btn = document.getElementById('aiGenBtnRaw');
+            if (mode === 'json') {
+                // V33: Pure Offline Parse, No API Cost!
+                const rawJson = document.getElementById('aiRawJson').value;
+                const title = document.getElementById('aiManualTitle').value || "ข้อสอบจากการวางโค้ด";
+                if(!rawJson) return showToast("กรุณาวางโค้ด JSON ก่อนครับ!", "error");
+                
+                try {
+                    let cleanedText = rawJson.replace(/```json/gi, '').replace(/```/g, '').trim();
+                    const startIdx = cleanedText.indexOf('['), endIdx = cleanedText.lastIndexOf(']');
+                    if(startIdx === -1 || endIdx === -1) throw new Error("ไม่พบรูปแบบข้อมูล Array [] ในข้อความ");
+                    cleanedText = cleanedText.substring(startIdx, endIdx + 1);
+                    
+                    let quizData = JSON.parse(cleanedText);
+                    quizData = quizData.filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2);
+                    if(quizData.length === 0) throw new Error("ข้อมูลมีจุดผิดพลาด ทำให้ไม่สามารถดึงข้อสอบได้");
+                    
+                    renderEditorFromJSON(quizData, title);
+                    showToast("โหลดข้อสอบสำเร็จ (ไม่เสียโควต้า AI)");
+                    systemLog("Manual JSON Parsed Successfully.");
+                } catch(e) {
+                    showToast(e.message, "error");
+                }
+                return;
             }
+
+            // Mode: Topic (API Call)
+            const t = document.getElementById('aiTopic').value; if(!t) return showToast("กรุณาระบุหัวข้อข้อสอบ!", "error");
+            const amt = document.getElementById('aiAmount').value, diff = document.getElementById('aiDifficulty').value;
+            const examTitle = t; 
+            const prompt = `จงสร้างข้อสอบจำนวน ${amt} ข้อ เรื่อง "${t}" ระดับความยาก: ${diff}\nคืนค่ากลับมาเป็นโครงสร้าง JSON ARRAY เท่านั้น ห้ามมีข้อความอื่น โครงสร้างคือ: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
+            
+            const btn = document.getElementById('aiGenBtnTopic');
             btn.disabled = true; const originalHtml = btn.innerHTML; btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin mr-2'></i> AI กำลังประมวลผล...";
+            
             try {
-                systemLog(`Generating Exam Mode: ${mode}`); const persona = localStorage.getItem(PERSONA_STORE) || DEFAULT_PERSONA;
+                systemLog(`Generating Exam: ${t}`); const persona = localStorage.getItem(PERSONA_STORE) || DEFAULT_PERSONA;
                 const reqBody = { systemInstruction: { parts: [{ text: persona }] }, contents: [{ role: "user", parts: [{ text: prompt }] }] };
                 
                 const urlTemplate = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=API_KEY_PLACEHOLDER`;
@@ -563,7 +564,18 @@
                 quizData = quizData.filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2);
                 if(quizData.length === 0) throw new Error("ไม่สามารถสร้างคำถามที่สมบูรณ์ได้");
                 renderEditorFromJSON(quizData, examTitle); systemLog("สร้างข้อสอบสำเร็จ!"); showToast("สร้างข้อสอบสำเร็จ!");
-            } catch (e) { showToast(e.message, "error"); systemLog(`Exam Gen Error: ${e.message}`, 'error'); } finally { btn.disabled = false; btn.innerHTML = originalHtml; }
+                btn.disabled = false; btn.innerHTML = originalHtml;
+            } catch (e) { 
+                showToast(e.message, "error"); systemLog(`Exam Gen Error: ${e.message}`, 'error'); 
+                
+                // 🔥 V33 Auto Disable if Quota is entirely dead
+                if (e.message.includes("โควต้าเต็ม") || e.message.includes("429")) {
+                    btn.innerHTML = "<i class='fa-solid fa-lock mr-2'></i> AI โควต้าเต็ม (ปิดชั่วคราว)";
+                    showToast("AI ทำงานหนักเกินไป ปิดระบบชั่วคราว กรุณาใช้โหมด [วางโค้ด JSON] แทน", "error");
+                } else {
+                    btn.disabled = false; btn.innerHTML = originalHtml;
+                }
+            }
         }
 
         async function autoGeneratePersona() {
@@ -601,7 +613,7 @@
             box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
             aiChatHistory.push({ role: "user", parts: [{ text: msg }] });
 
-            const aiName = localStorage.getItem(NAME_STORE) || "อาจารย์คุโระ", aiImg = localStorage.getItem(IMG_STORE) || "https://ui-avatars.com/api/?name=Kuro", bubbleId = 'ai-msg-' + Date.now(), iconId = 'ai-icon-' + Date.now();
+            const aiName = localStorage.getItem(NAME_STORE) || "Mark (Kuro)", aiImg = localStorage.getItem(IMG_STORE) || "https://ui-avatars.com/api/?name=MK", bubbleId = 'ai-msg-' + Date.now(), iconId = 'ai-icon-' + Date.now();
             box.innerHTML += `<div class="flex items-start gap-2 lg:gap-3 animate__animated animate__fadeInLeft mb-6">
                 <div class="relative shrink-0"><img src="${aiImg}" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full object-cover border-2 border-purple-200 dark:border-purple-800 shadow-sm bg-white"><div id="${iconId}" class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800 animate-pulse"></div></div>
                 <div class="bg-white text-gray-800 border border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 shadow-lg max-w-[95%] sm:max-w-[85%] rounded-2xl rounded-tl-none px-4 py-3 overflow-hidden w-full">
@@ -799,8 +811,8 @@
         }
 
         function initUI() {
-            const n = localStorage.getItem(NAME_STORE) || "อาจารย์คุโระ";
-            const i = localStorage.getItem(IMG_STORE) || "https://ui-avatars.com/api/?name=Kuro";
+            const n = localStorage.getItem(NAME_STORE) || "Mark (Kuro)";
+            const i = localStorage.getItem(IMG_STORE) || "https://ui-avatars.com/api/?name=MK";
             const p = localStorage.getItem(PERSONA_STORE) || DEFAULT_PERSONA;
             
             let keys = [];
