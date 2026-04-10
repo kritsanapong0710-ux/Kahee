@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizPro ULTIMATE V25</title>
+    <title>QuizPro ULTIMATE V26</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
@@ -34,7 +37,7 @@
 
         .tab-bar { display: flex; overflow-x: auto; gap: 10px; padding: 10px; scrollbar-width: none; background: rgba(148, 163, 184, 0.1); border-radius: 1.5rem; }
         .tab-bar::-webkit-scrollbar { display: none; }
-        .tab-item { flex: 0 0 auto; padding: 12px 24px; border-radius: 1rem; font-weight: 700; font-size: 0.9rem; color: #94a3b8; transition: 0.3s; cursor: pointer; }
+        .tab-item { flex: 0 0 auto; padding: 12px 24px; border-radius: 1rem; font-weight: 700; font-size: 0.9rem; color: #94a3b8; transition: 0.3s; cursor: pointer; white-space: nowrap; }
         .tab-item.active { background-color: var(--accent); color: var(--btn-txt) !important; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
         @media (min-width: 768px) { .tab-bar { justify-content: center; } }
 
@@ -47,39 +50,60 @@
         #timer-bar { transition: width 0.1s linear; }
 
         /* Custom Scrollbar for PC */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
 
         /* Premium Toast Notification */
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; align-items: center; pointer-events: none; }
-        .toast { background: #1e293b; color: white; padding: 12px 24px; border-radius: 1rem; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; items-center; gap: 10px; animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .toast { background: #1e293b; color: white; padding: 12px 24px; border-radius: 1rem; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .toast.success { border-left: 4px solid #22c55e; }
         .toast.error { border-left: 4px solid #ef4444; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-        @media (max-width: 640px) { .btn-glow { min-height: 54px; width: 100%; } }
+        /* AI Markdown Formatting */
+        .markdown-body { font-size: 0.95rem; line-height: 1.6; }
+        .markdown-body p { margin-bottom: 0.75rem; }
+        .markdown-body p:last-child { margin-bottom: 0; }
+        .markdown-body strong { font-weight: 800; color: inherit; }
+        .markdown-body ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .markdown-body ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .markdown-body pre { background: rgba(0, 0, 0, 0.05); padding: 1rem; border-radius: 0.75rem; overflow-x: auto; margin: 0.75rem 0; font-size: 0.85rem; }
+        .dark .markdown-body pre { background: rgba(255, 255, 255, 0.05); }
+        .markdown-body code { background: rgba(0, 0, 0, 0.05); padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.85em; color: var(--accent); }
+        .dark .markdown-body code { background: rgba(255, 255, 255, 0.1); }
+        .markdown-body pre code { background: transparent; padding: 0; color: inherit; }
+        
+        .blinking-cursor { display: inline-block; width: 8px; height: 1em; background-color: var(--accent); vertical-align: text-bottom; animation: blink 1s step-end infinite; margin-left: 2px; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 640px) { 
+            .btn-glow { min-height: 54px; width: 100%; }
+            #view-chat { height: calc(100vh - 180px); } /* Safe area for mobile keyboard */
+            .chat-bubble { max-width: 90%; }
+        }
     </style>
 </head>
-<body class="min-h-screen relative">
+<body class="min-h-screen relative flex flex-col">
 
     <div id="toast-container"></div>
 
     <nav class="sticky top-0 z-[60] bg-white/80 backdrop-blur-lg border-b border-gray-100 px-4 py-4 lg:px-10 dark:bg-gray-900/90 dark:border-gray-800 transition-colors">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-4 cursor-pointer" onclick="switchView('db')">
-                <div style="background-color: var(--accent);" class="w-12 h-12 flex items-center justify-center rounded-2xl text-white shadow-lg"><i class="fa-solid fa-graduation-cap text-xl"></i></div>
-                <h1 class="text-2xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span></h1>
+            <div class="flex items-center gap-3 lg:gap-4 cursor-pointer" onclick="switchView('db')">
+                <div style="background-color: var(--accent);" class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl lg:rounded-2xl text-white shadow-lg"><i class="fa-solid fa-graduation-cap text-lg lg:text-xl"></i></div>
+                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter">QUIZ<span style="color: var(--accent);">MASTER</span></h1>
             </div>
             <div id="navAuthSlot">
-                <button onclick="openAuthModal()" class="btn-glow px-6 py-2.5 text-xs uppercase tracking-widest shadow-md">Login</button>
+                <button onclick="openAuthModal()" class="btn-glow px-4 lg:px-6 py-2 lg:py-2.5 text-[10px] lg:text-xs uppercase tracking-widest shadow-md">Login</button>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 lg:px-8 mt-8">
-        <div class="tab-bar mb-10 dark:bg-gray-800/50 backdrop-blur-sm">
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-8 mt-6 lg:mt-8 pb-10">
+        <div class="tab-bar mb-8 lg:mb-10 dark:bg-gray-800/50 backdrop-blur-sm">
             <button onclick="switchView('db')" id="btn-db" class="tab-item active"><i class="fa-solid fa-book-open mr-2"></i> คลังข้อสอบ</button>
             <button onclick="switchView('rank')" id="btn-rank" class="tab-item"><i class="fa-solid fa-trophy mr-2"></i> จัดอันดับ</button>
             <button onclick="switchView('ai')" id="btn-ai" class="tab-item"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> สร้างโจทย์ AI</button>
@@ -87,57 +111,60 @@
         </div>
 
         <div id="view-db" class="animate__animated animate__fadeIn">
-            <div class="flex justify-between items-center mb-8 px-2">
-                <h2 class="text-3xl font-black italic uppercase tracking-widest opacity-80">Library</h2>
+            <div class="flex justify-between items-center mb-6 lg:mb-8 px-2">
+                <h2 class="text-2xl lg:text-3xl font-black italic uppercase tracking-widest opacity-80">Library</h2>
                 <button onclick="fetchExamsFromCloud(true)" class="text-green-500 font-bold hover:rotate-180 transition-all duration-500 text-xl"><i class="fa-solid fa-rotate"></i></button>
             </div>
-            <div id="examsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"></div>
+            <div id="examsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8"></div>
         </div>
 
         <div id="view-rank" class="hidden animate__animated animate__fadeIn max-w-4xl mx-auto">
-            <h2 class="text-3xl font-black italic mb-8 uppercase text-center tracking-widest text-yellow-500"><i class="fa-solid fa-crown"></i> Hall of Fame</h2>
-            <div id="rankingsArea" class="space-y-4"></div>
+            <h2 class="text-2xl lg:text-3xl font-black italic mb-6 lg:mb-8 uppercase text-center tracking-widest text-yellow-500"><i class="fa-solid fa-crown"></i> Hall of Fame</h2>
+            <div id="rankingsArea" class="space-y-3 lg:space-y-4"></div>
         </div>
 
-        <div id="view-ai" class="hidden app-card text-center animate__animated animate__fadeIn py-12 lg:py-20 max-w-3xl mx-auto">
-            <div class="relative w-32 h-32 mx-auto mb-8">
+        <div id="view-ai" class="hidden app-card text-center animate__animated animate__fadeIn py-10 lg:py-20 max-w-3xl mx-auto">
+            <div class="relative w-24 h-24 lg:w-32 lg:h-32 mx-auto mb-6 lg:mb-8">
                 <img id="ai-img-gen" src="" class="w-full h-full rounded-full shadow-2xl border-4 border-white object-cover bg-gray-100 dark:border-gray-700">
-                <div style="background-color: var(--accent);" class="absolute bottom-0 right-0 w-8 h-8 rounded-full border-4 border-white dark:border-gray-800 flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check"></i></div>
+                <div style="background-color: var(--accent);" class="absolute bottom-0 right-0 w-6 h-6 lg:w-8 lg:h-8 rounded-full border-[3px] border-white dark:border-gray-800 flex items-center justify-center text-white text-[10px] lg:text-xs"><i class="fa-solid fa-check"></i></div>
             </div>
-            <h2 id="ai-name-gen" class="text-4xl font-black mb-10 tracking-tighter">AI Mark Twin</h2>
-            <div class="space-y-6 w-full px-4">
-                <input type="text" id="aiTopic" placeholder="พิมพ์เนื้อหาที่อยากออกสอบ (เช่น ประวัติศาสตร์ไทย ม.3)..." class="custom-input text-center font-bold text-xl py-5 shadow-inner">
-                <button onclick="triggerAIGeneration()" id="aiGenBtn" class="btn-glow w-full py-5 text-xl shadow-xl tracking-wide uppercase"><i class="fa-solid fa-bolt"></i> สร้างข้อสอบด้วย AI</button>
-            </div>
-        </div>
-
-        <div id="view-chat" class="hidden app-card flex flex-col h-[70vh] lg:h-[75vh] animate__animated animate__fadeIn max-w-4xl mx-auto p-0 overflow-hidden">
-            <div class="p-4 border-b dark:border-gray-800 flex items-center gap-3 bg-gray-50/50 dark:bg-gray-800/50">
-                <i class="fa-solid fa-robot text-gray-400 text-xl"></i>
-                <span class="font-bold opacity-50 uppercase tracking-widest text-xs">Tutor Session (Gemini)</span>
-            </div>
-            <div id="chatArea" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
-            <div class="p-4 lg:p-6 bg-gray-50 dark:bg-gray-800/50 border-t dark:border-gray-700">
-                <div class="flex gap-3">
-                    <input type="text" id="chatIn" class="custom-input flex-1 text-lg shadow-inner" placeholder="พิมพ์คุยกับ AI..." onkeypress="if(event.key=='Enter')sendChatToAI()">
-                    <button onclick="sendChatToAI()" id="btnChatSend" class="btn-glow w-16 h-16 shadow-lg rounded-2xl"><i class="fa-solid fa-paper-plane text-2xl"></i></button>
-                </div>
+            <h2 id="ai-name-gen" class="text-3xl lg:text-4xl font-black mb-8 lg:mb-10 tracking-tighter">AI Mark Twin</h2>
+            <div class="space-y-4 lg:space-y-6 w-full px-2 lg:px-4">
+                <input type="text" id="aiTopic" placeholder="พิมพ์เนื้อหาที่อยากออกสอบ (เช่น ประวัติศาสตร์ไทย ม.3)..." class="custom-input text-center font-bold text-lg lg:text-xl py-4 lg:py-5 shadow-inner">
+                <button onclick="triggerAIGeneration()" id="aiGenBtn" class="btn-glow w-full py-4 lg:py-5 text-lg lg:text-xl shadow-xl tracking-wide uppercase"><i class="fa-solid fa-bolt"></i> สร้างข้อสอบด้วย AI</button>
             </div>
         </div>
 
-        <div id="view-editor" class="hidden mt-8 space-y-6 pb-40 max-w-4xl mx-auto">
-            <div class="flex items-center justify-between mb-8 px-4">
-                <h2 class="text-3xl font-black italic">ตรวจสอบข้อสอบ</h2>
-                <span class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-xs font-bold uppercase border border-blue-200">AI Generated</span>
+        <div id="view-chat" class="hidden app-card flex flex-col h-[75vh] animate__animated animate__fadeIn max-w-4xl mx-auto p-0 overflow-hidden relative">
+            <div class="p-3 lg:p-4 border-b dark:border-gray-800 flex items-center gap-3 bg-gray-50/50 dark:bg-gray-800/50 shrink-0">
+                <i class="fa-solid fa-robot text-gray-400 text-lg lg:text-xl"></i>
+                <span class="font-bold opacity-50 uppercase tracking-widest text-[10px] lg:text-xs">Tutor Session (Streaming)</span>
             </div>
-            <div id="editorCards" class="space-y-8"></div>
             
-            <div class="fixed bottom-6 left-4 right-4 max-w-3xl mx-auto bg-white/95 backdrop-blur-xl p-4 lg:p-6 rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.15)] border flex flex-col sm:flex-row gap-4 z-40 dark:bg-gray-800/95 dark:border-gray-700 transition-all">
-                <div class="flex gap-4 w-full">
-                    <select id="examVisibility" class="custom-input w-32 font-black text-xs uppercase cursor-pointer border-gray-200 dark:border-gray-600"><option value="public">🌍 Public</option><option value="private">🔒 Private</option></select>
-                    <input type="text" id="saveExamTitle" placeholder="ตั้งชื่อชุดข้อสอบนี้" class="custom-input flex-1 font-bold text-center border-gray-200 dark:border-gray-600">
+            <div id="chatArea" class="flex-1 overflow-y-auto p-4 lg:p-6 space-y-6 custom-scroll">
                 </div>
-                <button onclick="saveExamToCloud()" id="btnSaveExam" class="btn-glow px-12 py-4 uppercase font-black tracking-widest whitespace-nowrap"><i class="fa-solid fa-cloud-arrow-up mr-2"></i> บันทึก</button>
+            
+            <div class="p-3 lg:p-6 bg-gray-50 dark:bg-gray-800/50 border-t dark:border-gray-700 shrink-0">
+                <div class="flex gap-2 lg:gap-3 items-center">
+                    <input type="text" id="chatIn" class="custom-input flex-1 text-base lg:text-lg shadow-inner py-3 lg:py-4" placeholder="พิมพ์คุยกับ AI..." onkeypress="if(event.key=='Enter')sendChatToAI()">
+                    <button onclick="sendChatToAI()" id="btnChatSend" class="btn-glow w-14 h-14 lg:w-16 lg:h-16 shadow-lg rounded-xl lg:rounded-2xl shrink-0 transition-all duration-300"><i class="fa-solid fa-paper-plane text-xl lg:text-2xl"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-editor" class="hidden mt-6 lg:mt-8 space-y-6 pb-40 max-w-4xl mx-auto">
+            <div class="flex items-center justify-between mb-6 lg:mb-8 px-2 lg:px-4">
+                <h2 class="text-2xl lg:text-3xl font-black italic">ตรวจสอบข้อสอบ</h2>
+                <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[10px] lg:text-xs font-bold uppercase border border-blue-200">AI Generated</span>
+            </div>
+            <div id="editorCards" class="space-y-6 lg:space-y-8"></div>
+            
+            <div class="fixed bottom-4 lg:bottom-6 left-4 right-4 max-w-3xl mx-auto bg-white/95 backdrop-blur-xl p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.15)] border flex flex-col sm:flex-row gap-3 lg:gap-4 z-40 dark:bg-gray-800/95 dark:border-gray-700 transition-all">
+                <div class="flex gap-3 lg:gap-4 w-full">
+                    <select id="examVisibility" class="custom-input w-28 lg:w-32 p-3 font-black text-[10px] lg:text-xs uppercase cursor-pointer border-gray-200 dark:border-gray-600"><option value="public">🌍 Public</option><option value="private">🔒 Private</option></select>
+                    <input type="text" id="saveExamTitle" placeholder="ตั้งชื่อชุดข้อสอบนี้" class="custom-input p-3 flex-1 font-bold text-sm lg:text-base text-center border-gray-200 dark:border-gray-600">
+                </div>
+                <button onclick="saveExamToCloud()" id="btnSaveExam" class="btn-glow px-8 lg:px-12 py-3 lg:py-4 uppercase font-black text-sm tracking-widest whitespace-nowrap"><i class="fa-solid fa-cloud-arrow-up mr-2"></i> บันทึก</button>
             </div>
         </div>
     </main>
@@ -145,56 +172,55 @@
     <div id="quizPlayerModal" class="fixed inset-0 z-[100] bg-[#0f172a] hidden flex flex-col animate__animated animate__fadeIn">
         <div class="w-full h-1.5 bg-white/10"><div id="timer-bar" class="h-full bg-green-500 w-full rounded-r-full shadow-[0_0_10px_#22c55e]"></div></div>
         
-        <div class="p-6 lg:p-8 flex justify-between items-center text-white border-b border-white/5 bg-black/20">
-            <h3 id="quizPlayTitle" class="font-bold uppercase opacity-50 tracking-widest text-xs lg:text-sm truncate max-w-[50%]">Loading</h3>
-            <div class="flex items-center gap-6">
-                <span id="scoreCounter" class="text-sm lg:text-base font-black bg-white/10 px-5 py-2 rounded-full border border-white/10 shadow-inner">SCORE: <span class="text-yellow-400">0</span></span>
-                <button onclick="closeQuizPlayer()" class="text-3xl opacity-40 hover:opacity-100 hover:text-red-400 transition-all">&times;</button>
+        <div class="p-4 lg:p-8 flex justify-between items-center text-white border-b border-white/5 bg-black/20">
+            <h3 id="quizPlayTitle" class="font-bold uppercase opacity-50 tracking-widest text-[10px] lg:text-sm truncate max-w-[50%]">Loading</h3>
+            <div class="flex items-center gap-4 lg:gap-6">
+                <span id="scoreCounter" class="text-xs lg:text-base font-black bg-white/10 px-4 py-2 rounded-full border border-white/10 shadow-inner">SCORE: <span class="text-yellow-400">0</span></span>
+                <button onclick="closeQuizPlayer()" class="text-2xl lg:text-3xl w-10 h-10 flex items-center justify-center opacity-40 hover:opacity-100 hover:bg-white/10 rounded-full transition-all">&times;</button>
             </div>
         </div>
         
-        <div class="flex-1 overflow-y-auto p-6 lg:p-10 flex items-center justify-center relative">
-            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
-            
+        <div class="flex-1 overflow-y-auto p-4 lg:p-10 flex items-center justify-center relative">
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 lg:w-96 lg:h-96 bg-blue-500/10 rounded-full blur-[80px] lg:blur-[100px] pointer-events-none"></div>
             <div id="quizPlayArea" class="w-full max-w-3xl relative z-10"></div>
         </div>
     </div>
 
     <div id="sideMenu" class="fixed right-0 top-0 h-full w-full sm:w-[400px] bg-white shadow-[0_0_60px_rgba(0,0,0,0.3)] translate-x-full transition-transform duration-500 z-[100] border-l dark:bg-gray-900 dark:border-gray-800 flex flex-col">
-        <div class="p-8 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
-            <h3 class="font-black text-2xl uppercase tracking-tighter"><i class="fa-solid fa-gear mr-2"></i> Settings</h3>
-            <button onclick="toggleSidebar()" class="text-3xl opacity-40 hover:opacity-100 w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">&times;</button>
+        <div class="p-6 lg:p-8 border-b dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
+            <h3 class="font-black text-xl lg:text-2xl uppercase tracking-tighter"><i class="fa-solid fa-gear mr-2"></i> Settings</h3>
+            <button onclick="toggleSidebar()" class="text-2xl lg:text-3xl opacity-40 hover:opacity-100 w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">&times;</button>
         </div>
         
-        <div class="flex-1 overflow-y-auto p-8 space-y-10 custom-scroll">
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8 space-y-8 lg:space-y-10 custom-scroll">
             <div>
                 <label class="text-[10px] font-black opacity-40 uppercase tracking-widest block mb-4">Color Palette</label>
                 <div class="flex gap-4">
-                    <button onclick="updateTheme('green')" class="w-12 h-12 rounded-2xl bg-[#10b981] border-4 border-white dark:border-gray-800 shadow-lg transform hover:scale-110 transition-all"></button>
-                    <button onclick="updateTheme('blue')" class="w-12 h-12 rounded-2xl bg-[#3b82f6] border-4 border-white dark:border-gray-800 shadow-lg transform hover:scale-110 transition-all"></button>
-                    <button onclick="updateTheme('dark')" class="w-12 h-12 rounded-2xl bg-black border-4 border-white dark:border-gray-800 shadow-lg transform hover:scale-110 transition-all"></button>
+                    <button onclick="updateTheme('green')" class="w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl bg-[#10b981] border-[3px] lg:border-4 border-white dark:border-gray-800 shadow-lg transform hover:scale-110 transition-all"></button>
+                    <button onclick="updateTheme('blue')" class="w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl bg-[#3b82f6] border-[3px] lg:border-4 border-white dark:border-gray-800 shadow-lg transform hover:scale-110 transition-all"></button>
+                    <button onclick="updateTheme('dark')" class="w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl bg-black border-[3px] lg:border-4 border-white dark:border-gray-800 shadow-lg transform hover:scale-110 transition-all"></button>
                 </div>
             </div>
             
-            <div id="adminPanel" class="hidden space-y-6 pt-8 border-t border-gray-100 dark:border-gray-800">
+            <div id="adminPanel" class="hidden space-y-6 pt-6 lg:pt-8 border-t border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-2">
-                    <i class="fa-solid fa-user-secret text-red-500 text-xl"></i>
-                    <h4 class="font-black text-red-500 uppercase tracking-widest text-sm">Twin Engine (V25)</h4>
+                    <i class="fa-solid fa-user-secret text-red-500 text-lg lg:text-xl"></i>
+                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Twin Engine (V26 Streaming)</h4>
                 </div>
                 
-                <div class="space-y-4 bg-gray-50 dark:bg-gray-800/50 p-5 rounded-2xl border border-gray-100 dark:border-gray-700">
+                <div class="space-y-4 bg-gray-50 dark:bg-gray-800/50 p-4 lg:p-5 rounded-2xl border border-gray-100 dark:border-gray-700">
                     <div>
                         <label class="text-[10px] font-bold opacity-50 uppercase ml-1">Google Gemini API Key</label>
-                        <input type="password" id="adm-key" placeholder="AIzaSy..." class="custom-input text-xs font-mono py-3 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <input type="password" id="adm-key" placeholder="AIzaSy..." class="custom-input text-xs font-mono py-2.5 lg:py-3 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm">
                     </div>
                     <div>
                         <label class="text-[10px] font-bold opacity-50 uppercase ml-1">Digital Twin Name</label>
-                        <input type="text" id="adm-name" placeholder="ชื่อ AI (เช่น Mark)" class="custom-input text-sm py-3 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <input type="text" id="adm-name" placeholder="ชื่อ AI (เช่น Mark)" class="custom-input text-xs lg:text-sm py-2.5 lg:py-3 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm">
                     </div>
                     <div>
                         <label class="text-[10px] font-bold opacity-50 uppercase ml-1">Avatar Image</label>
-                        <label class="mt-1 flex items-center justify-center cursor-pointer bg-white dark:bg-gray-900 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
-                            <span class="text-xs font-bold opacity-50"><i class="fa-solid fa-upload mr-2"></i> อัปโหลดรูปภาพ</span>
+                        <label class="mt-1 flex items-center justify-center cursor-pointer bg-white dark:bg-gray-900 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-3 lg:p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
+                            <span class="text-[10px] lg:text-xs font-bold opacity-50"><i class="fa-solid fa-upload mr-2"></i> อัปโหลดรูปภาพ</span>
                             <input type="file" id="adm-file-input" onchange="handleImgUpload(this)" class="hidden" accept="image/*">
                         </label>
                     </div>
@@ -203,38 +229,38 @@
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-blue-500 uppercase tracking-widest"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Build Persona</label>
                     <div class="flex gap-2">
-                        <input type="text" id="adm-persona-chat" placeholder="พิมพ์นิสัยที่อยากได้ (เช่น กวนตีน เก่งเลข)" class="custom-input text-xs py-3 border border-blue-100 dark:border-blue-900 shadow-inner">
-                        <button onclick="autoGeneratePersona()" id="btn-auto-persona" class="btn-glow w-12 h-12 rounded-xl bg-blue-500 shadow-lg shadow-blue-500/30"><i class="fa-solid fa-magic"></i></button>
+                        <input type="text" id="adm-persona-chat" placeholder="พิมพ์นิสัย (เช่น กวนตีน เก่งเลข)" class="custom-input text-[10px] lg:text-xs py-2.5 lg:py-3 border border-blue-100 dark:border-blue-900 shadow-inner">
+                        <button onclick="autoGeneratePersona()" id="btn-auto-persona" class="btn-glow w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-blue-500 shadow-lg shadow-blue-500/30 shrink-0"><i class="fa-solid fa-magic"></i></button>
                     </div>
                 </div>
 
-                <textarea id="adm-persona" placeholder="System Instructions (โค้ดนิสัย AI)..." class="custom-input text-xs h-32 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-inner leading-relaxed"></textarea>
+                <textarea id="adm-persona" placeholder="System Instructions (โค้ดนิสัย AI)..." class="custom-input text-[10px] lg:text-xs h-24 lg:h-32 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-inner leading-relaxed"></textarea>
                 
-                <button onclick="saveAdmin()" class="btn-glow w-full py-5 text-sm font-black bg-red-500 shadow-lg shadow-red-500/30 uppercase tracking-widest mt-4">Save & Deploy Twin</button>
+                <button onclick="saveAdmin()" class="btn-glow w-full py-4 lg:py-5 text-xs lg:text-sm font-black bg-red-500 shadow-lg shadow-red-500/30 uppercase tracking-widest mt-2 lg:mt-4">Save & Deploy Twin</button>
             </div>
         </div>
     </div>
 
     <div id="authModal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="bg-white p-8 lg:p-12 rounded-[2.5rem] shadow-2xl w-full max-w-md dark:bg-gray-800 animate__animated animate__zoomIn border border-white/10">
-            <h2 class="text-4xl font-black text-center mb-2 tracking-tighter uppercase italic">Welcome</h2>
-            <p class="text-center text-xs opacity-40 font-bold mb-10 uppercase tracking-widest">Sign in to QuizMaster</p>
+        <div class="bg-white p-6 lg:p-12 rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl w-full max-w-md dark:bg-gray-800 animate__animated animate__zoomIn border border-white/10">
+            <h2 class="text-3xl lg:text-4xl font-black text-center mb-1 lg:mb-2 tracking-tighter uppercase italic">Welcome</h2>
+            <p class="text-center text-[10px] lg:text-xs opacity-40 font-bold mb-8 lg:mb-10 uppercase tracking-widest">Sign in to QuizMaster</p>
             
-            <div class="space-y-5">
-                <button onclick="handleSocial()" class="w-full bg-white dark:bg-gray-700 p-4 rounded-2xl font-bold flex justify-center items-center gap-3 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all shadow-sm text-gray-700 dark:text-white">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6"> Sign in with Google
+            <div class="space-y-4 lg:space-y-5">
+                <button onclick="handleSocial()" class="w-full bg-white dark:bg-gray-700 p-3 lg:p-4 rounded-2xl font-bold flex justify-center items-center gap-3 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all shadow-sm text-gray-700 dark:text-white text-sm lg:text-base">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 lg:w-6 lg:h-6"> Sign in with Google
                 </button>
                 
-                <div class="flex items-center py-3"><hr class="flex-1 border-gray-200 dark:border-gray-700"><span class="px-4 text-[10px] font-black opacity-30 uppercase tracking-widest">Email</span><hr class="flex-1 border-gray-200 dark:border-gray-700"></div>
+                <div class="flex items-center py-2 lg:py-3"><hr class="flex-1 border-gray-200 dark:border-gray-700"><span class="px-4 text-[9px] lg:text-[10px] font-black opacity-30 uppercase tracking-widest">Email</span><hr class="flex-1 border-gray-200 dark:border-gray-700"></div>
                 
                 <div class="space-y-3">
-                    <input type="email" id="emailInp" placeholder="Email Address" class="custom-input font-bold py-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-                    <input type="password" id="passInp" placeholder="Password" class="custom-input font-bold py-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+                    <input type="email" id="emailInp" placeholder="Email Address" class="custom-input font-bold py-3 lg:py-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm lg:text-base">
+                    <input type="password" id="passInp" placeholder="Password" class="custom-input font-bold py-3 lg:py-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm lg:text-base">
                 </div>
                 
-                <button onclick="emailAuth()" class="btn-glow w-full py-5 uppercase shadow-xl text-lg font-black tracking-widest mt-2">Continue</button>
+                <button onclick="emailAuth()" class="btn-glow w-full py-4 lg:py-5 uppercase shadow-xl text-base lg:text-lg font-black tracking-widest mt-2">Continue</button>
             </div>
-            <button onclick="closeAuthModal()" class="w-full mt-8 text-[10px] font-black opacity-30 uppercase tracking-widest hover:opacity-100 transition-all">Continue as Guest</button>
+            <button onclick="closeAuthModal()" class="w-full mt-6 lg:mt-8 text-[9px] lg:text-[10px] font-black opacity-30 uppercase tracking-widest hover:opacity-100 transition-all">Continue as Guest</button>
         </div>
     </div>
 
@@ -277,11 +303,11 @@
             if (user) {
                 isA = (user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
                 const badge = isA ? '<i class="fa-solid fa-crown text-yellow-400 mr-1"></i> ' : '';
-                slot.innerHTML = `<button onclick="toggleSidebar()" class="bg-gray-100 border border-gray-200 px-4 py-2 rounded-xl text-[10px] font-black dark:bg-gray-800 dark:border-gray-700 dark:text-white shadow-sm hover:scale-105 transition-all">${badge}${user.email.split('@')[0].toUpperCase()}</button>`;
+                slot.innerHTML = `<button onclick="toggleSidebar()" class="bg-gray-100 border border-gray-200 px-3 lg:px-4 py-1.5 lg:py-2 rounded-xl text-[9px] lg:text-[10px] font-black dark:bg-gray-800 dark:border-gray-700 dark:text-white shadow-sm hover:scale-105 transition-all">${badge}${user.email.split('@')[0].toUpperCase()}</button>`;
                 if(isA) document.getElementById('adminPanel').classList.remove('hidden');
                 closeAuthModal(); fetchExamsFromCloud(true);
             } else {
-                slot.innerHTML = `<button onclick="openAuthModal()" class="btn-glow px-6 py-2.5 text-[10px] uppercase tracking-widest shadow-md">Login</button>`;
+                slot.innerHTML = `<button onclick="openAuthModal()" class="btn-glow px-4 lg:px-6 py-2 lg:py-2.5 text-[10px] lg:text-xs uppercase tracking-widest shadow-md">Login</button>`;
                 document.getElementById('adminPanel').classList.add('hidden');
                 fetchExamsFromCloud(true);
             }
@@ -299,10 +325,10 @@
         function handleImgUpload(i) { if (i.files && i.files[0]) { const r = new FileReader(); r.onload = e => { aiAvatarBase64 = e.target.result; showToast("อัปโหลดรูปสำเร็จ โหลดชั่วคราว"); }; r.readAsDataURL(i.files[0]); } }
 
         // ==========================================
-        // 🤖 UNBREAKABLE AI ENGINE (V25)
+        // 🤖 AI ENGINE (Legacy JSON Fetcher for Quiz)
         // ==========================================
         async function callGemini(promptText) {
-            if (Date.now() - lastCall < 1500) throw new Error("⚠️ AI กำลังพักประมวลผล กรุณารอ 1-2 วินาทีแล้วลองใหม่ครับ");
+            if (Date.now() - lastCall < 1500) throw new Error("⚠️ AI กำลังพักประมวลผล กรุณารอ 1-2 วินาที");
             lastCall = Date.now();
             
             const key = localStorage.getItem(KEY_STORE) || "";
@@ -311,9 +337,7 @@
             const persona = localStorage.getItem(PERSONA_STORE) || "คุณคือ AI อัจฉริยะ ตอบสั้น กระชับ ตรงไปตรงมา";
             const reqBody = { contents: [{ parts: [{ text: `[System Instruction: ${persona}]\n\nUser: ${promptText}` }] }] };
 
-            // 🔥 Fallback 3 ก๊อก (2.5 -> 1.5 -> 1.5-8b)
             const models = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-flash-8b"];
-
             let lastErrorMsg = "";
             for (let model of models) {
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
@@ -321,14 +345,10 @@
                     const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
                     const data = await res.json();
                     
-                    // 🛡️ Ultimate API Error Handling
                     if (!res.ok) { 
                         lastErrorMsg = data.error?.message || "Unknown API Error"; 
-                        if(res.status === 429 || res.status === 503 || lastErrorMsg.includes("quota")) {
-                            console.warn(`[${model}] ไม่ว่าง สลับโมเดล...`);
-                            continue; // ข้ามไปใช้โมเดลตัวถัดไป
-                        }
-                        throw new Error(lastErrorMsg); // ถ้าพังเรื่องอื่น (เช่น คีย์ผิด) โยน Error ทันที
+                        if(res.status === 429 || res.status === 503 || lastErrorMsg.includes("quota")) continue;
+                        throw new Error(lastErrorMsg); 
                     }
                     if (data.candidates && data.candidates[0]?.content) return data.candidates[0].content.parts[0].text;
                 } catch (e) { 
@@ -373,45 +393,149 @@
                 const prompt = `จงสร้างข้อสอบ 5 ข้อ เรื่อง "${t}" คืนค่ากลับมาเป็นโครงสร้าง JSON ARRAY เท่านั้น ห้ามมีข้อความอื่นหรือคำอธิบายเด็ดขาด โครงสร้างคือ: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
                 const res = await callGemini(prompt);
                 
-                // 🛡️ Indestructible JSON Parser
                 const match = res.match(/\[[\s\S]*\]/);
                 if(!match) throw new Error("AI ส่งข้อมูลมาผิดรูปแบบ (ไม่มี JSON Array)");
                 
                 let quizData;
-                try {
-                    quizData = JSON.parse(match[0]);
-                } catch { throw new Error("ข้อมูล JSON ที่ AI สร้างมีจุดผิดพลาด (Syntax Error)"); }
+                try { quizData = JSON.parse(match[0]); } catch { throw new Error("ข้อมูล JSON ที่ AI สร้างมีจุดผิดพลาด (Syntax Error)"); }
 
-                // Filter valid questions
                 quizData = quizData.filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2);
                 if(quizData.length === 0) throw new Error("AI ไม่สามารถสร้างคำถามที่สมบูรณ์ได้ ลองเปลี่ยนหัวข้อดูครับ");
 
                 renderEditorFromJSON(quizData, t);
                 showToast("สร้างข้อสอบสำเร็จ!");
             } catch (e) { showToast(e.message, "error"); } 
-            finally { btn.disabled = false; btn.innerHTML = "สร้างข้อสอบด้วย AI"; }
-        }
-
-        async function sendChatToAI() {
-            const inp = document.getElementById('chatIn'), box = document.getElementById('chatArea'), btn = document.getElementById('btnChatSend');
-            if(!inp.value || btn.disabled) return; 
-            const msg = inp.value; inp.value = ''; btn.disabled = true;
-            
-            box.innerHTML += `<div class="flex justify-end animate__animated animate__fadeInRight"><div style="background-color:var(--accent); color:var(--btn-txt)" class="chat-bubble shadow-md">${escapeHTML(msg)}</div></div>`;
-            box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
-
-            try {
-                const res = await callGemini(msg);
-                const aiName = localStorage.getItem(NAME_STORE) || "AI Mark";
-                const aiImg = localStorage.getItem(IMG_STORE) || "https://ui-avatars.com/api/?name=AI";
-                box.innerHTML += `<div class="flex items-start gap-3 animate__animated animate__fadeInLeft"><img src="${aiImg}" class="w-10 h-10 rounded-2xl object-cover border-2 border-gray-100 shadow-sm bg-white"><div class="bg-white text-gray-800 chat-bubble border dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 shadow-sm"><p class="text-[10px] font-black text-blue-500 mb-1 uppercase tracking-widest">${aiName}</p>${escapeHTML(res).replace(/\n/g, '<br>')}</div></div>`;
-                box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
-            } catch(e) { showToast(e.message, "error"); } 
-            finally { btn.disabled = false; }
+            finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-bolt"></i> สร้างข้อสอบด้วย AI'; }
         }
 
         // ==========================================
-        // 🎮 PERFECT QUIZ PLAYER (v25 Sync)
+        // 🚀 NEW: STREAMING AI CHAT & MARKDOWN
+        // ==========================================
+        let chatAbortController = null;
+
+        async function sendChatToAI() {
+            const inp = document.getElementById('chatIn');
+            const box = document.getElementById('chatArea');
+            const btn = document.getElementById('btnChatSend');
+            
+            // If already chatting, act as STOP button
+            if (chatAbortController) {
+                chatAbortController.abort();
+                return;
+            }
+            
+            if(!inp.value.trim()) return;
+            const msg = inp.value.trim(); 
+            inp.value = ''; 
+            
+            // Render User Message
+            box.innerHTML += `<div class="flex justify-end animate__animated animate__fadeInRight mb-4"><div style="background-color:var(--accent); color:var(--btn-txt)" class="chat-bubble shadow-md rounded-2xl rounded-tr-none px-4 py-3 max-w-[85%] break-words text-sm lg:text-base">${escapeHTML(msg)}</div></div>`;
+            box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+
+            // Prepare AI Bubble UI
+            const aiName = localStorage.getItem(NAME_STORE) || "AI Mark";
+            const aiImg = localStorage.getItem(IMG_STORE) || "https://ui-avatars.com/api/?name=AI";
+            const bubbleId = 'ai-msg-' + Date.now();
+            
+            box.innerHTML += `<div class="flex items-start gap-2 lg:gap-3 animate__animated animate__fadeInLeft mb-6">
+                <img src="${aiImg}" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full object-cover border-2 border-gray-100 shadow-sm bg-white shrink-0">
+                <div class="bg-white text-gray-800 border dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 shadow-sm max-w-[85%] rounded-2xl rounded-tl-none px-4 py-3 overflow-hidden">
+                    <p class="text-[9px] lg:text-[10px] font-black text-blue-500 mb-1.5 uppercase tracking-widest">${escapeHTML(aiName)}</p>
+                    <div id="${bubbleId}" class="markdown-body"><span class="blinking-cursor"></span></div>
+                </div>
+            </div>`;
+            box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+
+            // Change button state to Stop
+            btn.innerHTML = '<i class="fa-solid fa-stop text-xl lg:text-2xl text-white"></i>';
+            btn.classList.replace('btn-glow', 'bg-red-500');
+            btn.style.boxShadow = '0 10px 25px rgba(239, 68, 68, 0.4)';
+            btn.style.color = 'white';
+
+            chatAbortController = new AbortController();
+
+            try {
+                const key = localStorage.getItem(KEY_STORE) || "";
+                if(!key) throw new Error("ไม่พบ API Key กรุณาตั้งค่าในเมนู Settings");
+                const persona = localStorage.getItem(PERSONA_STORE) || "คุณคือ AI อัจฉริยะ ตอบสั้น กระชับ ตรงไปตรงมา";
+                
+                const reqBody = { contents: [{ role: "user", parts: [{ text: `[System Instruction: ${persona}]\n\nUser: ${msg}` }] }] };
+                
+                // Using Streaming Endpoint
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${key}`;
+                
+                const res = await fetch(url, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(reqBody),
+                    signal: chatAbortController.signal
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.error?.message || "API Server Error");
+                }
+
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                let fullResponse = "";
+                const bubbleEl = document.getElementById(bubbleId);
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const dataStr = line.replace('data: ', '');
+                            if (dataStr.trim() === '[DONE]') continue;
+                            try {
+                                const dataObj = JSON.parse(dataStr);
+                                const textPart = dataObj.candidates[0]?.content?.parts[0]?.text || "";
+                                fullResponse += textPart;
+                                
+                                // Render Markdown securely
+                                const rawHtml = marked.parse(fullResponse);
+                                const safeHtml = DOMPurify.sanitize(rawHtml);
+                                bubbleEl.innerHTML = safeHtml + '<span class="blinking-cursor"></span>';
+                                
+                                // Auto scroll only if near bottom
+                                if (box.scrollHeight - box.scrollTop - box.clientHeight < 150) {
+                                    box.scrollTo({ top: box.scrollHeight });
+                                }
+                            } catch(err) { /* ignore parse error for incomplete JSON chunk */ }
+                        }
+                    }
+                }
+                
+                // Final render (Remove cursor)
+                bubbleEl.innerHTML = DOMPurify.sanitize(marked.parse(fullResponse));
+                
+            } catch (e) {
+                const bubbleEl = document.getElementById(bubbleId);
+                if (e.name === 'AbortError') {
+                    // User clicked stop
+                    const currentHtml = bubbleEl.innerHTML.replace('<span class="blinking-cursor"></span>', '');
+                    bubbleEl.innerHTML = currentHtml + '<br><span class="text-[10px] text-red-500 font-bold uppercase mt-2 block opacity-70">[ Stopped by User ]</span>';
+                } else {
+                    showToast(e.message, "error");
+                    bubbleEl.innerHTML = `<span class="text-red-500 font-bold text-sm">Error: ${e.message}</span>`;
+                }
+            } finally {
+                // Restore button state
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane text-xl lg:text-2xl"></i>';
+                btn.classList.replace('bg-red-500', 'btn-glow');
+                btn.style.boxShadow = '';
+                chatAbortController = null;
+                setTimeout(() => box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' }), 100);
+            }
+        }
+
+        // ==========================================
+        // 🎮 QUIZ PLAYER (v26)
         // ==========================================
         async function openQuizById(id, btnEl) {
             if(btnEl.disabled) return; btnEl.disabled = true;
@@ -445,13 +569,13 @@
             startTimer();
             
             area.innerHTML = `
-                <div class="animate__animated animate__fadeInRight text-center w-full">
-                    <div class="inline-block bg-white/5 border border-white/10 px-4 py-1.5 rounded-full mb-8">
-                        <p class="text-white/40 text-[10px] font-black uppercase tracking-[0.3em]">Question ${currentQuestionIndex+1} / ${currentPlayingExam.questions.length}</p>
+                <div class="animate__animated animate__fadeInRight text-center w-full px-2">
+                    <div class="inline-block bg-white/5 border border-white/10 px-4 py-1.5 rounded-full mb-6 lg:mb-8">
+                        <p class="text-white/40 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.3em]">Question ${currentQuestionIndex+1} / ${currentPlayingExam.questions.length}</p>
                     </div>
-                    <h2 class="text-2xl md:text-4xl text-white font-black mb-12 leading-relaxed tracking-tight">${escapeHTML(q.q)}</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        ${shuffledOptions.map((opt) => `<button onclick="checkAnswer(${opt.isCorrect}, this)" data-correct="${opt.isCorrect}" class="quiz-btn w-full p-6 md:p-8 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 hover:border-white/30 transition-all text-left flex justify-between items-center text-lg"><span>${escapeHTML(opt.text)}</span><i class="fa-solid fa-circle-notch opacity-0 transition-opacity duration-300"></i></button>`).join('')}
+                    <h2 class="text-xl md:text-3xl lg:text-4xl text-white font-black mb-8 lg:mb-12 leading-relaxed tracking-tight break-words">${escapeHTML(q.q)}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
+                        ${shuffledOptions.map((opt) => `<button onclick="checkAnswer(${opt.isCorrect}, this)" data-correct="${opt.isCorrect}" class="quiz-btn w-full p-4 lg:p-6 rounded-xl lg:rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 hover:border-white/30 transition-all text-left flex justify-between items-center text-sm lg:text-lg"><span>${escapeHTML(opt.text)}</span><i class="fa-solid fa-circle-notch opacity-0 transition-opacity duration-300"></i></button>`).join('')}
                     </div>
                 </div>
             `;
@@ -521,13 +645,13 @@
 
             confetti({ particleCount: 300, spread: 120, origin: {y:0.5} });
             area.innerHTML = `
-                <div class="text-center animate__animated animate__zoomIn">
-                    <div class="w-32 h-32 bg-gradient-to-tr from-yellow-400 to-yellow-200 rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_60px_rgba(250,204,21,0.3)]">
-                        <i class="fa-solid fa-trophy text-6xl text-yellow-800"></i>
+                <div class="text-center animate__animated animate__zoomIn px-4">
+                    <div class="w-24 h-24 lg:w-32 lg:h-32 bg-gradient-to-tr from-yellow-400 to-yellow-200 rounded-full flex items-center justify-center mx-auto mb-6 lg:mb-8 shadow-[0_0_60px_rgba(250,204,21,0.3)]">
+                        <i class="fa-solid fa-trophy text-4xl lg:text-6xl text-yellow-800"></i>
                     </div>
-                    <h2 class="text-5xl md:text-6xl text-white font-black mb-4 uppercase italic tracking-tighter">Completed</h2>
-                    <p class="text-white/60 mb-12 text-xl md:text-2xl font-bold tracking-widest">Final Score: <span class="text-yellow-400">${currentScore}</span></p>
-                    <button onclick="closeQuizPlayer()" class="btn-glow px-16 py-6 mx-auto text-sm uppercase font-black tracking-widest">Return to Base</button>
+                    <h2 class="text-4xl md:text-5xl lg:text-6xl text-white font-black mb-2 lg:mb-4 uppercase italic tracking-tighter">Completed</h2>
+                    <p class="text-white/60 mb-8 lg:mb-12 text-lg md:text-xl lg:text-2xl font-bold tracking-widest">Final Score: <span class="text-yellow-400">${currentScore}</span></p>
+                    <button onclick="closeQuizPlayer()" class="btn-glow w-full sm:w-auto px-10 lg:px-16 py-4 lg:py-5 mx-auto text-xs lg:text-sm uppercase font-black tracking-widest">Return to Base</button>
                 </div>
             `;
         }
@@ -539,12 +663,12 @@
         // ==========================================
         async function fetchExamsFromCloud(isRefresh = true) {
             const grid = document.getElementById('examsGrid'); 
-            if(isRefresh) grid.innerHTML = '<div class="col-span-full py-20 text-center"><div class="dot-flashing mx-auto"></div></div>';
+            if(isRefresh) grid.innerHTML = '<div class="col-span-full py-20 text-center"><i class="fa-solid fa-circle-notch fa-spin text-3xl opacity-50"></i></div>';
             
             try {
                 const snap = await db.collection('exams').orderBy('createdAt','desc').limit(15).get();
                 grid.innerHTML = '';
-                if(snap.empty) { grid.innerHTML = "<div class='col-span-full py-20 text-center opacity-30 font-black italic text-xl'>ไม่มีข้อสอบในระบบเลยครับ</div>"; return; }
+                if(snap.empty) { grid.innerHTML = "<div class='col-span-full py-16 text-center opacity-30 font-black italic text-lg lg:text-xl'>ไม่มีข้อสอบในระบบเลยครับ</div>"; return; }
                 
                 snap.forEach(doc => {
                     const x = doc.data();
@@ -553,52 +677,52 @@
                         grid.innerHTML += `
                             <div class="app-card flex flex-col justify-between hover:scale-[1.02] transition-all relative group overflow-hidden">
                                 <div class="absolute top-0 left-0 w-full h-1" style="background-color: var(--accent);"></div>
-                                ${(isA || (userC && x.uid === userC.uid)) ? `<button onclick="deleteEx('${doc.id}')" class="absolute top-5 right-5 text-gray-300 dark:text-gray-600 hover:text-red-500 transition-colors z-10"><i class="fa-solid fa-trash"></i></button>` : ''}
-                                <div class="mb-8 pt-2">
-                                    <div class="flex items-center gap-2 mb-4">
-                                        <span style="color:var(--accent)" class="text-[9px] font-black uppercase border border-gray-100 dark:border-gray-700 px-3 py-1 rounded-full tracking-widest">${x.visibility}</span>
-                                        <span class="text-[9px] font-bold opacity-40 uppercase bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">${qCount} Qs</span>
+                                ${(isA || (userC && x.uid === userC.uid)) ? `<button onclick="deleteEx('${doc.id}')" class="absolute top-4 right-4 text-gray-300 dark:text-gray-600 hover:text-red-500 transition-colors z-10 p-2"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                <div class="mb-6 lg:mb-8 pt-2">
+                                    <div class="flex items-center gap-2 mb-3 lg:mb-4">
+                                        <span style="color:var(--accent)" class="text-[8px] lg:text-[9px] font-black uppercase border border-gray-100 dark:border-gray-700 px-2 lg:px-3 py-1 rounded-full tracking-widest">${x.visibility}</span>
+                                        <span class="text-[8px] lg:text-[9px] font-bold opacity-40 uppercase bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">${qCount} Qs</span>
                                     </div>
-                                    <h3 class="font-black text-xl md:text-2xl dark:text-white leading-tight tracking-tight line-clamp-2">${escapeHTML(x.title)}</h3>
-                                    <p class="text-[10px] mt-3 opacity-40 font-bold uppercase"><i class="fa-solid fa-user mr-1"></i> ${escapeHTML(x.owner.split('@')[0])}</p>
+                                    <h3 class="font-black text-lg md:text-xl lg:text-2xl dark:text-white leading-tight tracking-tight line-clamp-2 pr-6">${escapeHTML(x.title)}</h3>
+                                    <p class="text-[9px] lg:text-[10px] mt-2 lg:mt-3 opacity-40 font-bold uppercase truncate"><i class="fa-solid fa-user mr-1"></i> ${escapeHTML(x.owner.split('@')[0])}</p>
                                 </div>
-                                <button onclick="openQuizById('${doc.id}', this)" class="w-full py-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-black uppercase text-gray-600 dark:text-gray-300 group-hover:bg-[#10b981] group-hover:text-white group-hover:border-[#10b981] transition-all shadow-sm"><i class="fa-solid fa-play mr-2"></i> Play Now</button>
+                                <button onclick="openQuizById('${doc.id}', this)" class="w-full py-3 lg:py-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-[10px] lg:text-xs font-black uppercase text-gray-600 dark:text-gray-300 group-hover:bg-[#10b981] group-hover:text-white group-hover:border-[#10b981] transition-all shadow-sm"><i class="fa-solid fa-play mr-2"></i> Play Now</button>
                             </div>`;
                     }
                 });
-            } catch (e) { grid.innerHTML = `<div class='col-span-full py-10 text-center text-red-500 font-bold'><i class="fa-solid fa-triangle-exclamation text-3xl mb-2 block"></i> Database Rules Error.<br><span class="text-xs opacity-60">กรุณาเช็ค Firestore Rules ให้เป็น Test Mode</span><br><button onclick="fetchExamsFromCloud(true)" class="mt-4 underline">ลองใหม่</button></div>`; }
+            } catch (e) { grid.innerHTML = `<div class='col-span-full py-10 text-center text-red-500 font-bold'><i class="fa-solid fa-triangle-exclamation text-2xl lg:text-3xl mb-2 block"></i> Database Rules Error.<br><span class="text-[10px] lg:text-xs opacity-60">กรุณาเช็ค Firestore Rules ให้เป็น Test Mode</span><br><button onclick="fetchExamsFromCloud(true)" class="mt-4 underline text-sm">ลองใหม่</button></div>`; }
         }
 
         async function fetchRankings() {
-            const area = document.getElementById('rankingsArea'); area.innerHTML = '<div class="py-20 text-center"><div class="dot-flashing mx-auto"></div></div>';
+            const area = document.getElementById('rankingsArea'); area.innerHTML = '<div class="py-20 text-center"><i class="fa-solid fa-circle-notch fa-spin text-3xl opacity-50"></i></div>';
             try {
                 const snap = await db.collection('scores').orderBy('score','desc').limit(10).get(); area.innerHTML = '';
                 let rank = 1;
-                if(snap.empty) { area.innerHTML = "<div class='text-center opacity-30 font-bold italic py-10'>ยังไม่มีใครเล่นข้อสอบเลยครับ</div>"; return; }
+                if(snap.empty) { area.innerHTML = "<div class='text-center opacity-30 font-bold italic py-10 text-sm lg:text-base'>ยังไม่มีใครเล่นข้อสอบเลยครับ</div>"; return; }
                 
                 snap.forEach(doc => {
                     const s = doc.data();
-                    let medal = rank === 1 ? 'text-yellow-400' : rank === 2 ? 'text-gray-300' : rank === 3 ? 'text-orange-400' : 'text-gray-400 opacity-30';
+                    let medal = rank === 1 ? 'text-yellow-400 scale-110' : rank === 2 ? 'text-gray-300' : rank === 3 ? 'text-orange-400' : 'text-gray-400 opacity-40';
                     area.innerHTML += `
-                        <div class="app-card flex items-center justify-between mb-3 hover:scale-[1.01] transition-all py-4 px-6">
-                            <div class="flex items-center gap-5">
-                                <span class="text-3xl font-black italic ${medal} w-10 text-center">${rank++}</span>
+                        <div class="app-card flex items-center justify-between mb-3 hover:scale-[1.01] transition-all py-3 lg:py-4 px-4 lg:px-6">
+                            <div class="flex items-center gap-4 lg:gap-5">
+                                <span class="text-2xl lg:text-3xl font-black italic ${medal} w-8 lg:w-10 text-center">${rank++}</span>
                                 <div>
-                                    <h4 class="font-black text-sm uppercase tracking-wider">${escapeHTML(s.username)}</h4>
-                                    <p class="text-[9px] opacity-50 uppercase font-bold truncate max-w-[150px] md:max-w-[300px]">${escapeHTML(s.examTitle)}</p>
+                                    <h4 class="font-black text-xs lg:text-sm uppercase tracking-wider">${escapeHTML(s.username)}</h4>
+                                    <p class="text-[8px] lg:text-[9px] opacity-50 uppercase font-bold truncate max-w-[120px] sm:max-w-[150px] md:max-w-[300px]">${escapeHTML(s.examTitle)}</p>
                                 </div>
                             </div>
-                            <span style="color:var(--accent)" class="text-2xl md:text-3xl font-black tracking-tighter">${s.score}</span>
+                            <span style="color:var(--accent)" class="text-xl md:text-2xl lg:text-3xl font-black tracking-tighter">${s.score}</span>
                         </div>`;
                 });
-            } catch (e) { area.innerHTML = '<div class="text-center text-red-500 font-bold">Failed to load rankings.</div>'; }
+            } catch (e) { area.innerHTML = '<div class="text-center text-red-500 font-bold text-sm">Failed to load rankings.</div>'; }
         }
 
         function renderEditorFromJSON(data, title) {
             const container = document.getElementById('editorCards'); container.innerHTML = '';
             data.forEach((b, i) => {
-                let oH = b.options.map((o, idx) => `<div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-xl transition-all hover:border-green-300"><input type="radio" name="g_${i}" ${o.isCorrect?'checked':''} class="w-5 h-5 accent-green-500 cursor-pointer"><input type="text" value="${escapeHTML(o.text)}" class="v-opt-val flex-1 bg-transparent font-medium outline-none focus:border-b border-green-500"></div>`).join('');
-                container.innerHTML += `<div class="q-item app-card mb-6 animate__animated animate__fadeInUp"><textarea class="v-q-val w-full bg-transparent font-black text-xl md:text-2xl border-b border-gray-200 dark:border-gray-700 mb-6 resize-none h-auto leading-relaxed focus:border-green-500 outline-none transition-colors">${escapeHTML(b.q)}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-4">${oH}</div></div>`;
+                let oH = b.options.map((o, idx) => `<div class="flex items-center gap-3 lg:gap-4 p-3 lg:p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-xl transition-all hover:border-green-300"><input type="radio" name="g_${i}" ${o.isCorrect?'checked':''} class="w-4 h-4 lg:w-5 lg:h-5 accent-green-500 cursor-pointer"><input type="text" value="${escapeHTML(o.text)}" class="v-opt-val flex-1 bg-transparent font-medium outline-none focus:border-b border-green-500 text-sm lg:text-base"></div>`).join('');
+                container.innerHTML += `<div class="q-item app-card mb-4 lg:mb-6 animate__animated animate__fadeInUp"><textarea class="v-q-val w-full bg-transparent font-black text-lg md:text-xl lg:text-2xl border-b border-gray-200 dark:border-gray-700 mb-4 lg:mb-6 resize-none h-auto leading-relaxed focus:border-green-500 outline-none transition-colors">${escapeHTML(b.q)}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">${oH}</div></div>`;
             });
             document.getElementById('saveExamTitle').value = title; switchView('editor');
         }
