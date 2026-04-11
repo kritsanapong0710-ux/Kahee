@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizPro ULTIMATE V37</title>
+    <title>QuizPro ULTIMATE V38</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -106,7 +106,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 lg:gap-4 cursor-pointer" onclick="switchView('db')">
                 <div style="background-color: var(--accent);" class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl lg:rounded-2xl text-white shadow-lg transform hover:rotate-12 transition-transform"><i class="fa-solid fa-bolt text-lg lg:text-xl"></i></div>
-                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-500 dark:from-white dark:to-gray-400">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80 shadow-md">V37</span></h1>
+                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-500 dark:from-white dark:to-gray-400">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80 shadow-md">V38</span></h1>
             </div>
             <div id="navAuthSlot" class="flex gap-2">
                 <button onclick="openAuthModal()" class="btn-glow px-4 lg:px-6 py-2 lg:py-2.5 text-[10px] lg:text-xs uppercase tracking-widest shadow-md h-[40px]"><i class="fa-solid fa-user mr-1"></i> Login</button>
@@ -142,6 +142,10 @@
         </div>
 
         <div id="view-ai" class="hidden app-card text-center animate__animated animate__fadeIn py-8 lg:py-16 max-w-3xl mx-auto border-t-4 border-t-purple-500">
+            <div id="ai-disabled-banner" class="hidden bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-4 rounded-2xl mb-8 border border-red-200 dark:border-red-800 text-sm font-bold flex items-center justify-center gap-3">
+                <i class="fa-solid fa-power-off text-xl"></i> ระบบ AI อัตโนมัติถูกปิดชั่วคราว คุณสามารถสร้างข้อสอบเอง หรือแปลงข้อสอบจากโค้ดได้ด้านล่างครับ
+            </div>
+
             <div id="ai-avatar-container" class="relative w-20 h-20 lg:w-28 lg:h-28 mx-auto mb-6">
                 <img id="ai-img-gen" src="" class="w-full h-full rounded-full shadow-2xl border-4 border-white object-cover bg-gray-100 dark:border-gray-700">
                 <div style="background-color: var(--accent);" class="absolute bottom-0 right-0 w-6 h-6 lg:w-8 lg:h-8 rounded-full border-[3px] border-white dark:border-gray-800 flex items-center justify-center text-white text-[10px] lg:text-xs"><i class="fa-solid fa-check"></i></div>
@@ -236,7 +240,10 @@
         <div id="view-editor" class="hidden mt-6 lg:mt-8 space-y-6 pb-40 max-w-4xl mx-auto relative">
             <div class="flex items-center justify-between mb-6 lg:mb-8 px-2 lg:px-4">
                 <h2 class="text-2xl lg:text-3xl font-black italic">ตรวจสอบข้อสอบ</h2>
-                <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[10px] lg:text-xs font-bold uppercase border border-blue-200 shadow-sm">Editor Mode</span>
+                <div class="flex gap-2">
+                    <button onclick="switchView('db')" class="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full text-xs font-bold uppercase"><i class="fa-solid fa-xmark mr-1"></i> ยกเลิก</button>
+                    <span id="editorStatusBadge" class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[10px] lg:text-xs font-bold uppercase border border-blue-200 shadow-sm">Editor Mode</span>
+                </div>
             </div>
             
             <div id="editorCards" class="space-y-6 lg:space-y-8"></div>
@@ -342,7 +349,13 @@
             <div id="adminPanel" class="hidden space-y-6 pt-6 border-t border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-4">
                     <i class="fa-solid fa-user-secret text-red-500 text-lg lg:text-xl"></i>
-                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Admin Controls (V37)</h4>
+                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Admin Controls (V38)</h4>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800 mb-4">
+                    <h4 class="text-xs font-black text-blue-600 dark:text-blue-400 uppercase mb-2"><i class="fa-solid fa-database"></i> Database Initializer</h4>
+                    <p class="text-[10px] text-gray-600 dark:text-gray-400 mb-3">สร้างข้อสอบตัวอย่าง TEDET, สอวน. และ ราชสีมาวิทยาลัย เข้าสู่ระบบอัตโนมัติ (Mockup 3 ชุด)</p>
+                    <button onclick="seedMockExams()" class="w-full py-2 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors shadow-sm">ติดตั้งข้อสอบตัวอย่าง</button>
                 </div>
 
                 <div class="flex items-center justify-between bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800">
@@ -395,7 +408,7 @@
                         <button onclick="clearDebugLog()" class="text-[9px] text-red-400 font-bold uppercase hover:underline">Clear</button>
                     </div>
                     <div id="debugLogArea" class="bg-[#0d1117] rounded-xl p-3 h-28 overflow-y-auto text-[10px] font-mono space-y-1 custom-scroll text-gray-400 shadow-inner border border-gray-800">
-                        <div class="text-green-500">System Initialized V37.</div>
+                        <div class="text-green-500">System Initialized V38.</div>
                     </div>
                 </div>
             </div>
@@ -428,7 +441,6 @@
     <script>
         marked.setOptions({ highlight: function(code, lang) { const language = hljs.getLanguage(lang) ? lang : 'plaintext'; return hljs.highlight(code, { language }).value; }, breaks: true });
 
-        // V37: Sound Effects
         const sfxClick = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
         const sfxSuccess = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
         function playSfx(type) { try { if(type==='click') sfxClick.play(); if(type==='success') sfxSuccess.play(); } catch(e){} }
@@ -461,55 +473,37 @@
         let quizPlayMode = 'tutor'; let examAnswers = {}; 
         let globalQIndex = 0; 
         let isAiGloballyEnabled = true;
+        let editingExamId = null; // V38: Track if we are editing an existing exam
 
-        // V37 Stealth Mode 100%
         function applyAiState(enabled) {
             isAiGloballyEnabled = enabled;
-            const btnTopic = document.getElementById('btn-mode-topic');
-            const tabChat = document.getElementById('btn-chat');
-            const avatarContainer = document.getElementById('ai-avatar-container');
-            const headerTitle = document.getElementById('ai-name-gen');
-            const subTitle = document.getElementById('ai-sub-title');
-            const tabAiButton = document.getElementById('btn-ai');
+            const btnTopic = document.getElementById('btn-mode-topic'); const tabChat = document.getElementById('btn-chat');
+            const avatarContainer = document.getElementById('ai-avatar-container'); const headerTitle = document.getElementById('ai-name-gen');
+            const subTitle = document.getElementById('ai-sub-title'); const tabAiButton = document.getElementById('btn-ai');
 
             if(!enabled) {
-                if(btnTopic) btnTopic.classList.add('hidden');
-                if(tabChat) tabChat.classList.add('hidden');
-                if(avatarContainer) avatarContainer.classList.add('hidden');
-                if(headerTitle) headerTitle.innerText = "Exam Builder";
-                if(subTitle) subTitle.innerText = "สร้างข้อสอบแบบมืออาชีพ";
+                if(btnTopic) btnTopic.classList.add('hidden'); if(tabChat) tabChat.classList.add('hidden'); if(avatarContainer) avatarContainer.classList.add('hidden');
+                if(headerTitle) headerTitle.innerText = "Exam Builder"; if(subTitle) subTitle.innerText = "สร้างข้อสอบแบบมืออาชีพ";
                 if(tabAiButton) tabAiButton.innerHTML = '<i class="fa-solid fa-pen-nib mr-2"></i> สร้างข้อสอบ';
-                
                 if(!document.getElementById('ai-mode-topic-area').classList.contains('hidden')) setAiGenMode('manual'); 
                 if(!document.getElementById('view-chat').classList.contains('hidden')) switchView('ai'); 
             } else {
-                if(btnTopic) btnTopic.classList.remove('hidden');
-                if(tabChat) tabChat.classList.remove('hidden');
-                if(avatarContainer) avatarContainer.classList.remove('hidden');
-                const n = localStorage.getItem(NAME_STORE) || "Mark (Kuro)";
-                if(headerTitle) headerTitle.innerText = n + " Generator"; 
-                if(subTitle) subTitle.innerText = "Powered by Gemini 2.5 Flash";
-                if(tabAiButton) tabAiButton.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles mr-2"></i> สร้างโจทย์ AI';
+                if(btnTopic) btnTopic.classList.remove('hidden'); if(tabChat) tabChat.classList.remove('hidden'); if(avatarContainer) avatarContainer.classList.remove('hidden');
+                const n = localStorage.getItem(NAME_STORE) || "Mark (Kuro)"; if(headerTitle) headerTitle.innerText = n + " Generator"; 
+                if(subTitle) subTitle.innerText = "Powered by Gemini 2.5 Flash"; if(tabAiButton) tabAiButton.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles mr-2"></i> สร้างโจทย์ AI';
             }
         }
 
         db.collection('system').doc('config').onSnapshot((doc) => {
-            if(doc.exists) {
-                const data = doc.data(); const enabled = data.aiEnabled !== false; 
-                applyAiState(enabled);
-                if(document.getElementById('adm-ai-switch')) document.getElementById('adm-ai-switch').checked = enabled;
-            } else { applyAiState(true); }
+            if(doc.exists) { const data = doc.data(); const enabled = data.aiEnabled !== false; applyAiState(enabled); if(document.getElementById('adm-ai-switch')) document.getElementById('adm-ai-switch').checked = enabled; } 
+            else { applyAiState(true); }
         }, (err) => { systemLog("อ่านสถานะ AI ไม่ได้", "warn"); });
 
         async function toggleMasterAI(isEnabled) {
             try {
                 await db.collection('system').doc('config').set({ aiEnabled: isEnabled }, { merge: true });
-                systemLog(`Master AI Switch set to: ${isEnabled ? "ON" : "OFF"}`);
-                showToast(isEnabled ? "เปิดระบบ AI สำเร็จ" : "ซ่อนระบบ AI เรียบร้อย 100%");
-            } catch(e) {
-                showToast("เปลี่ยนสถานะไม่ได้ เช็ค Rules ของ Firestore", "error");
-                document.getElementById('adm-ai-switch').checked = !isEnabled; 
-            }
+                systemLog(`Master AI Switch set to: ${isEnabled ? "ON" : "OFF"}`); showToast(isEnabled ? "เปิดระบบ AI สำเร็จ" : "ซ่อนระบบ AI เรียบร้อย 100%");
+            } catch(e) { showToast("เปลี่ยนสถานะไม่ได้ เช็ค Rules ของ Firestore", "error"); document.getElementById('adm-ai-switch').checked = !isEnabled; }
         }
 
         function escapeHTML(str){ return str ? str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) : ""; }
@@ -519,46 +513,24 @@
             userC = user; const slot = document.getElementById('navAuthSlot'); const sideUser = document.getElementById('sideUserSection');
             if (user) {
                 isA = (user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
-                const badge = isA ? '<i class="fa-solid fa-crown text-yellow-400 mr-1"></i> ' : '';
-                const uName = user.email.split('@')[0].toUpperCase();
+                const badge = isA ? '<i class="fa-solid fa-crown text-yellow-400 mr-1"></i> ' : ''; const uName = user.email.split('@')[0].toUpperCase();
                 slot.innerHTML = `<button onclick="toggleSidebar()" class="bg-gray-100 border border-gray-200 px-3 lg:px-4 py-1.5 lg:py-2 rounded-xl text-[9px] lg:text-[10px] font-black dark:bg-gray-800 dark:border-gray-700 dark:text-white shadow-sm hover:scale-105 transition-all h-[40px]">${badge}${uName}</button>`;
                 
-                // Update Sidebar User Panel
-                if(sideUser) {
-                    sideUser.classList.remove('hidden');
-                    document.getElementById('sideUserInitial').innerText = uName.charAt(0);
-                    document.getElementById('sideUserEmail').innerHTML = `${badge}${uName}`;
-                }
-
+                if(sideUser) { sideUser.classList.remove('hidden'); document.getElementById('sideUserInitial').innerText = uName.charAt(0); document.getElementById('sideUserEmail').innerHTML = `${badge}${uName}`; }
                 if(isA) document.getElementById('adminPanel').classList.remove('hidden');
                 closeAuthModal(); fetchExamsFromCloud(true);
             } else {
                 slot.innerHTML = `<button onclick="openAuthModal()" class="btn-glow px-4 lg:px-6 py-2 lg:py-2.5 text-[10px] lg:text-xs uppercase tracking-widest shadow-md h-[40px]"><i class="fa-solid fa-user mr-1"></i> Login</button>`;
-                if(sideUser) sideUser.classList.add('hidden');
-                document.getElementById('adminPanel').classList.add('hidden');
+                if(sideUser) sideUser.classList.add('hidden'); document.getElementById('adminPanel').classList.add('hidden');
                 fetchExamsFromCloud(true);
             }
         });
 
-        // V37 Logout Function
-        function logoutUser() {
-            auth.signOut().then(() => {
-                showToast("ออกจากระบบเรียบร้อยแล้ว");
-                toggleSidebar();
-            }).catch((error) => {
-                showToast("ล้มเหลว: " + error.message, "error");
-            });
-        }
-
+        function logoutUser() { auth.signOut().then(() => { showToast("ออกจากระบบเรียบร้อยแล้ว"); toggleSidebar(); }).catch((error) => { showToast("ล้มเหลว: " + error.message, "error"); }); }
         function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
         function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
         async function handleSocial() { try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); showToast("เข้าสู่ระบบสำเร็จ!"); } catch (e) { showToast(e.message, 'error'); } }
-        async function emailAuth() { 
-            const e = document.getElementById('emailInp').value, p = document.getElementById('passInp').value;
-            if(!e || !p) return showToast("กรุณากรอกข้อมูลให้ครบ", 'error');
-            try { await auth.signInWithEmailAndPassword(e, p); showToast("เข้าสู่ระบบสำเร็จ!"); } 
-            catch (x) { try { await auth.createUserWithEmailAndPassword(e, p); showToast("สมัครสมาชิกสำเร็จ!"); } catch (err) { showToast(err.message, 'error'); } }
-        }
+        async function emailAuth() { const e = document.getElementById('emailInp').value, p = document.getElementById('passInp').value; if(!e || !p) return showToast("กรุณากรอกข้อมูลให้ครบ", 'error'); try { await auth.signInWithEmailAndPassword(e, p); showToast("เข้าสู่ระบบสำเร็จ!"); } catch (x) { try { await auth.createUserWithEmailAndPassword(e, p); showToast("สมัครสมาชิกสำเร็จ!"); } catch (err) { showToast(err.message, 'error'); } } }
 
         function handleImgUpload(input, isAvatar = false, qIndex = -1) {
             if (input.files && input.files[0]) {
@@ -574,12 +546,7 @@
                         canvas.width = width; canvas.height = height; ctx.drawImage(img, 0, 0, width, height);
                         const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
                         if(isAvatar) { aiAvatarBase64 = dataUrl; showToast("อัปโหลดรูปโปรไฟล์สำเร็จ"); } 
-                        else { 
-                            document.getElementById(`q-img-data-${qIndex}`).value = dataUrl; 
-                            const imgPreview = document.getElementById(`q-img-preview-${qIndex}`); 
-                            imgPreview.src = dataUrl; imgPreview.classList.remove('hidden'); 
-                            document.getElementById(`q-img-clear-${qIndex}`).classList.remove('hidden');
-                        }
+                        else { document.getElementById(`q-img-data-${qIndex}`).value = dataUrl; const imgPreview = document.getElementById(`q-img-preview-${qIndex}`); imgPreview.src = dataUrl; imgPreview.classList.remove('hidden'); document.getElementById(`q-img-clear-${qIndex}`).classList.remove('hidden'); }
                     }
                     img.src = e.target.result;
                 }
@@ -588,54 +555,30 @@
         }
 
         function clearQuestionImage(i) {
-            document.getElementById(`q-img-data-${i}`).value = '';
-            const imgPreview = document.getElementById(`q-img-preview-${i}`);
-            imgPreview.src = ''; imgPreview.classList.add('hidden');
-            document.getElementById(`q-img-clear-${i}`).classList.add('hidden');
+            document.getElementById(`q-img-data-${i}`).value = ''; const imgPreview = document.getElementById(`q-img-preview-${i}`); imgPreview.src = ''; imgPreview.classList.add('hidden'); document.getElementById(`q-img-clear-${i}`).classList.add('hidden');
         }
 
-        function getStoredApiKeys() {
-            let keys = [];
-            try {
-                let stored = localStorage.getItem(KEY_STORE) || "[]";
-                if(stored.startsWith("[")) keys = JSON.parse(stored);
-                else keys = [stored];
-            } catch(e) { keys = []; }
-            return keys.filter(k => k.trim() !== "");
-        }
+        function getStoredApiKeys() { let keys = []; try { let stored = localStorage.getItem(KEY_STORE) || "[]"; if(stored.startsWith("[")) keys = JSON.parse(stored); else keys = [stored]; } catch(e) { keys = []; } return keys.filter(k => k.trim() !== ""); }
 
         async function fetchWithKeyRotation(urlTemplate, optionsTemplate, maxRetries = 3) {
             if(!isAiGloballyEnabled) throw new Error("ระบบ AI ถูกซ่อนและปิดใช้งานโดยแอดมิน");
-            let keys = getStoredApiKeys();
-            if(keys.length === 0) throw new Error("ไม่พบ API Key");
-
+            let keys = getStoredApiKeys(); if(keys.length === 0) throw new Error("ไม่พบ API Key");
             let delay = 1000; let keyIndex = 0; let totalAttempts = maxRetries * keys.length;
 
             for (let i = 0; i < totalAttempts; i++) {
-                let currentKey = keys[keyIndex];
-                let url = urlTemplate.replace('API_KEY_PLACEHOLDER', currentKey);
-
+                let currentKey = keys[keyIndex]; let url = urlTemplate.replace('API_KEY_PLACEHOLDER', currentKey);
                 try {
                     const res = await fetch(url, optionsTemplate);
                     if (!res.ok) {
-                        if (res.status === 429) {
-                            systemLog(`Key ${keyIndex+1} Limit Exceeded (429). Switching...`, 'warn');
-                            keyIndex = (keyIndex + 1) % keys.length; await new Promise(r => setTimeout(r, 500)); continue;
-                        }
-                        if (res.status >= 500) {
-                            systemLog(`API Server Error (${res.status}). Retrying...`, 'warn');
-                            await new Promise(r => setTimeout(r, delay)); delay *= 1.5; continue;
-                        }
-                        let errText = "API Error"; try { const errObj = await res.json(); errText = errObj.error?.message || errText; } 
-                        catch(e) { errText = await res.text().catch(() => `HTTP ${res.status}`); }
+                        if (res.status === 429) { systemLog(`Key ${keyIndex+1} Limit Exceeded (429). Switching...`, 'warn'); keyIndex = (keyIndex + 1) % keys.length; await new Promise(r => setTimeout(r, 500)); continue; }
+                        if (res.status >= 500) { systemLog(`API Server Error (${res.status}). Retrying...`, 'warn'); await new Promise(r => setTimeout(r, delay)); delay *= 1.5; continue; }
+                        let errText = "API Error"; try { const errObj = await res.json(); errText = errObj.error?.message || errText; } catch(e) { errText = await res.text().catch(() => `HTTP ${res.status}`); }
                         throw new Error(`[Status ${res.status}] ${errText}`);
                     }
                     return res;
                 } catch(e) {
-                    if(e.name === 'AbortError') throw e; 
-                    if (e.message.includes('[Status 400]') || e.message.includes('[Status 403]') || e.message.includes('[Status 404]')) throw e; 
-                    systemLog(`Fetch Error: ${e.message}`, 'error');
-                    if (i === totalAttempts - 1) throw e; await new Promise(r => setTimeout(r, delay));
+                    if(e.name === 'AbortError') throw e; if (e.message.includes('[Status 400]') || e.message.includes('[Status 403]') || e.message.includes('[Status 404]')) throw e; 
+                    systemLog(`Fetch Error: ${e.message}`, 'error'); if (i === totalAttempts - 1) throw e; await new Promise(r => setTimeout(r, delay));
                 }
             }
             throw new Error("โควต้าเต็มทุกคีย์ หรือเครือข่ายล้มเหลว");
@@ -652,156 +595,80 @@
             for(let i=0; i<keys.length; i++) {
                 try {
                     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${keys[i]}`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: "Hi" }] }] }) });
-                    if(res.ok) { successCount++; systemLog(`Key ${i+1}: Success`, 'info'); } 
-                    else { const err = await res.json(); systemLog(`Key ${i+1}: Failed (${err.error?.message || res.status})`, 'error'); }
+                    if(res.ok) { successCount++; systemLog(`Key ${i+1}: Success`, 'info'); } else { const err = await res.json(); systemLog(`Key ${i+1}: Failed (${err.error?.message || res.status})`, 'error'); }
                 } catch(e) { systemLog(`Key ${i+1}: Error - ${e.message}`, 'error'); }
             }
-            if(successCount > 0) showToast(`ใช้งานได้ ${successCount} จาก ${keys.length} คีย์!`);
-            else showToast("ไม่มี API Key ไหนใช้งานได้เลย", "error");
+            if(successCount > 0) showToast(`ใช้งานได้ ${successCount} จาก ${keys.length} คีย์!`); else showToast("ไม่มี API Key ไหนใช้งานได้เลย", "error");
         }
 
         function setAiGenMode(mode) {
             playSfx('click');
-            document.getElementById('ai-mode-topic-area').classList.add('hidden'); 
-            document.getElementById('ai-mode-json-area').classList.add('hidden');
-            document.getElementById('ai-mode-manual-area').classList.add('hidden');
-            
+            document.getElementById('ai-mode-topic-area').classList.add('hidden'); document.getElementById('ai-mode-json-area').classList.add('hidden'); document.getElementById('ai-mode-manual-area').classList.add('hidden');
             document.getElementById('btn-mode-topic').className = "flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent";
             document.getElementById('btn-mode-json').className = "flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent";
             document.getElementById('btn-mode-manual').className = "flex-1 py-2 rounded-lg font-bold text-sm text-gray-500 hover:text-gray-800 dark:hover:text-white transition-all bg-transparent";
-            
-            document.getElementById(`ai-mode-${mode}-area`).classList.remove('hidden'); 
-            document.getElementById(`btn-mode-${mode}`).className = "flex-1 py-2 rounded-lg font-bold text-sm bg-white dark:bg-gray-700 shadow-sm transition-all";
+            document.getElementById(`ai-mode-${mode}-area`).classList.remove('hidden'); document.getElementById(`btn-mode-${mode}`).className = "flex-1 py-2 rounded-lg font-bold text-sm bg-white dark:bg-gray-700 shadow-sm transition-all";
         }
 
-        function copyFormula() {
-            playSfx('click');
-            const copyText = document.getElementById("promptFormula");
-            navigator.clipboard.writeText(copyText.value);
-            showToast("คัดลอกสูตรแล้ว! นำไปวางในแชท AI ได้เลยครับ");
-        }
+        function copyFormula() { playSfx('click'); navigator.clipboard.writeText(document.getElementById("promptFormula").value); showToast("คัดลอกสูตรแล้ว! นำไปวางในแชท AI ได้เลยครับ"); }
 
         function startManualEditor() {
-            playSfx('click');
-            const title = document.getElementById('manualExamTitle').value || "ข้อสอบสร้างใหม่";
-            document.getElementById('editorCards').innerHTML = ''; 
-            globalQIndex = 0; 
-            addBlankQuestion(); 
-            document.getElementById('saveExamTitle').value = title;
-            switchView('editor');
-            showToast("เข้าสู่โหมดสร้างข้อสอบเองเรียบร้อย");
+            playSfx('click'); const title = document.getElementById('manualExamTitle').value || "ข้อสอบสร้างใหม่";
+            document.getElementById('editorCards').innerHTML = ''; globalQIndex = 0; editingExamId = null; document.getElementById('editorStatusBadge').innerText = "สร้างข้อสอบใหม่";
+            addBlankQuestion(); document.getElementById('saveExamTitle').value = title; switchView('editor'); showToast("เข้าสู่โหมดสร้างข้อสอบเองเรียบร้อย");
         }
 
         function addBlankQuestion() {
-            playSfx('click');
-            const container = document.getElementById('editorCards');
-            const i = globalQIndex++;
-            
-            let oH = '';
-            for(let j=0; j<4; j++) { 
-                oH += `<div class="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl transition-all hover:border-green-300 shadow-sm"><input type="radio" name="g_${i}" ${j===0?'checked':''} class="w-4 h-4 accent-green-500 cursor-pointer shrink-0"><input type="text" value="" placeholder="พิมพ์ตัวเลือก ${j+1}..." class="v-opt-val flex-1 bg-transparent font-medium outline-none focus:border-b border-green-500 text-sm lg:text-base px-2 py-1"></div>`;
-            }
-            
-            const qHtml = `
-                <div class="q-item app-card mb-4 lg:mb-6 animate__animated animate__fadeInUp relative border-l-4 border-l-accent">
-                    <button onclick="this.closest('.q-item').remove(); playSfx('click');" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/30 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm" title="ลบข้อนี้"><i class="fa-solid fa-trash text-xs"></i></button>
-                    <span class="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center font-black text-xs shadow-lg border-2 border-white"><i class="fa-solid fa-pen"></i></span>
-                    <div class="mb-4 pr-8">
-                        <label class="cursor-pointer bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors inline-block border border-blue-200 dark:border-blue-800 shadow-sm">
-                            <i class="fa-solid fa-image mr-1"></i> แทรกรูปภาพโจทย์
-                            <input type="file" class="hidden" accept="image/*" onchange="handleImgUpload(this, false, ${i})">
-                        </label>
-                        <button onclick="clearQuestionImage(${i})" class="hidden ml-2 text-[10px] text-red-500 font-bold hover:underline bg-red-50 px-2 py-1 rounded" id="q-img-clear-${i}"><i class="fa-solid fa-xmark"></i> ลบรูป</button>
-                        <input type="hidden" class="v-q-img" id="q-img-data-${i}" value="">
-                        <img id="q-img-preview-${i}" class="hidden mt-3 max-h-40 rounded-lg border border-gray-200 shadow-md object-contain">
-                    </div>
-                    <textarea class="v-q-val w-full bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl font-black text-lg md:text-xl border border-gray-200 dark:border-gray-700 mb-4 resize-none h-auto leading-relaxed focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none transition-all min-h-[80px]" placeholder="พิมพ์คำถามที่นี่..."></textarea>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${oH}</div>
-                </div>`;
-            
-            container.insertAdjacentHTML('beforeend', qHtml);
-            window.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+            playSfx('click'); const container = document.getElementById('editorCards'); const i = globalQIndex++;
+            let oH = ''; for(let j=0; j<4; j++) { oH += `<div class="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl transition-all hover:border-green-300 shadow-sm"><input type="radio" name="g_${i}" ${j===0?'checked':''} class="w-4 h-4 accent-green-500 cursor-pointer shrink-0"><input type="text" value="" placeholder="พิมพ์ตัวเลือก ${j+1}..." class="v-opt-val flex-1 bg-transparent font-medium outline-none focus:border-b border-green-500 text-sm lg:text-base px-2 py-1"></div>`; }
+            const qHtml = `<div class="q-item app-card mb-4 lg:mb-6 animate__animated animate__fadeInUp relative border-l-4 border-l-accent"><button onclick="this.closest('.q-item').remove(); playSfx('click');" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/30 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm" title="ลบข้อนี้"><i class="fa-solid fa-trash text-xs"></i></button><span class="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center font-black text-xs shadow-lg border-2 border-white"><i class="fa-solid fa-pen"></i></span><div class="mb-4 pr-8"><label class="cursor-pointer bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors inline-block border border-blue-200 dark:border-blue-800 shadow-sm"><i class="fa-solid fa-image mr-1"></i> แทรกรูปภาพโจทย์<input type="file" class="hidden" accept="image/*" onchange="handleImgUpload(this, false, ${i})"></label><button onclick="clearQuestionImage(${i})" class="hidden ml-2 text-[10px] text-red-500 font-bold hover:underline bg-red-50 px-2 py-1 rounded" id="q-img-clear-${i}"><i class="fa-solid fa-xmark"></i> ลบรูป</button><input type="hidden" class="v-q-img" id="q-img-data-${i}" value=""><img id="q-img-preview-${i}" class="hidden mt-3 max-h-40 rounded-lg border border-gray-200 shadow-md object-contain"></div><textarea class="v-q-val w-full bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl font-black text-lg md:text-xl border border-gray-200 dark:border-gray-700 mb-4 resize-none h-auto leading-relaxed focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none transition-all min-h-[80px]" placeholder="พิมพ์คำถามที่นี่..."></textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${oH}</div></div>`;
+            container.insertAdjacentHTML('beforeend', qHtml); window.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
         }
 
         async function triggerAIGeneration(mode) {
             playSfx('click');
             if (mode === 'json') {
-                const rawJson = document.getElementById('aiRawJson').value;
-                const title = document.getElementById('aiManualTitle').value || "ข้อสอบจากการวางโค้ด";
+                const rawJson = document.getElementById('aiRawJson').value; const title = document.getElementById('aiManualTitle').value || "ข้อสอบจากการวางโค้ด";
                 if(!rawJson) return showToast("กรุณาวางโค้ด JSON ก่อนครับ!", "error");
-                
                 try {
                     const startIdx = rawJson.indexOf('['); const endIdx = rawJson.lastIndexOf(']');
                     if(startIdx === -1 || endIdx === -1) throw new Error("ไม่พบรูปแบบข้อมูล Array [...] ในข้อความที่คุณวาง");
-                    
-                    let cleanedText = rawJson.substring(startIdx, endIdx + 1);
-                    cleanedText = cleanedText.replace(/[\u0000-\u001F]+/g,""); 
-                    
-                    let quizData = JSON.parse(cleanedText);
-                    quizData = quizData.filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2);
+                    let cleanedText = rawJson.substring(startIdx, endIdx + 1).replace(/[\u0000-\u001F]+/g,""); 
+                    let quizData = JSON.parse(cleanedText); quizData = quizData.filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2);
                     if(quizData.length === 0) throw new Error("ข้อมูลมีจุดผิดพลาด ทำให้ไม่สามารถดึงข้อสอบได้");
-                    
-                    renderEditorFromJSON(quizData, title);
-                    showToast("โหลดข้อสอบสำเร็จ (ไม่เสียโควต้า AI)");
-                    systemLog("Manual JSON Parsed Successfully.");
-                } catch(e) {
-                    showToast(e.message, "error");
-                    systemLog("JSON Parse Error: " + e.message, "error");
-                }
-                return;
+                    editingExamId = null; document.getElementById('editorStatusBadge').innerText = "สร้างข้อสอบใหม่";
+                    renderEditorFromJSON(quizData, title); showToast("โหลดข้อสอบสำเร็จ (ไม่เสียโควต้า AI)"); systemLog("Manual JSON Parsed Successfully.");
+                } catch(e) { showToast(e.message, "error"); systemLog("JSON Parse Error: " + e.message, "error"); } return;
             }
 
             if(!isAiGloballyEnabled) return showToast("ระบบ AI ถูกซ่อนอยู่ กรุณาใช้โหมดอื่น", "error");
 
             const t = document.getElementById('aiTopic').value; if(!t) return showToast("กรุณาระบุหัวข้อข้อสอบ!", "error");
-            const amt = document.getElementById('aiAmount').value, diff = document.getElementById('aiDifficulty').value;
-            const examTitle = t; 
+            const amt = document.getElementById('aiAmount').value, diff = document.getElementById('aiDifficulty').value; const examTitle = t; 
             const prompt = `จงสร้างข้อสอบจำนวน ${amt} ข้อ เรื่อง "${t}" ระดับความยาก: ${diff}\nคืนค่ากลับมาเป็นโครงสร้าง JSON ARRAY เท่านั้น ห้ามมีข้อความอื่น โครงสร้างคือ: [{"q":"คำถาม","options":[{"text":"ช้อย","isCorrect":true},{"text":"ช้อยผิด","isCorrect":false}]}]`;
-            
-            const btn = document.getElementById('aiGenBtnTopic');
-            btn.disabled = true; const originalHtml = btn.innerHTML; btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin mr-2'></i> AI กำลังประมวลผล...";
-            
+            const btn = document.getElementById('aiGenBtnTopic'); btn.disabled = true; const originalHtml = btn.innerHTML; btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin mr-2'></i> AI กำลังประมวลผล...";
             try {
                 systemLog(`Generating Exam: ${t}`); const persona = localStorage.getItem(PERSONA_STORE) || DEFAULT_PERSONA;
                 const reqBody = { systemInstruction: { parts: [{ text: persona }] }, contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                
                 const urlTemplate = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=API_KEY_PLACEHOLDER`;
                 const res = await fetchWithKeyRotation(urlTemplate, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody) });
-                
                 let data; try { data = await res.json(); } catch { throw new Error("Parse Error response"); }
-                
                 const resText = data.candidates[0]?.content?.parts[0]?.text || "";
                 let cleanedText = resText.replace(/```json/gi, '').replace(/```/g, '').trim();
                 const startIdx = cleanedText.indexOf('['), endIdx = cleanedText.lastIndexOf(']');
-                
                 if(startIdx === -1 || endIdx === -1) throw new Error("AI ส่งข้อมูลผิดรูปแบบ JSON");
                 cleanedText = cleanedText.substring(startIdx, endIdx + 1);
-                
                 let quizData; try { quizData = JSON.parse(cleanedText); } catch { throw new Error("JSON Error"); }
                 quizData = quizData.filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2);
                 if(quizData.length === 0) throw new Error("ไม่สามารถสร้างคำถามที่สมบูรณ์ได้");
+                editingExamId = null; document.getElementById('editorStatusBadge').innerText = "สร้างข้อสอบใหม่";
                 renderEditorFromJSON(quizData, examTitle); systemLog("สร้างข้อสอบสำเร็จ!"); showToast("สร้างข้อสอบสำเร็จ!");
                 btn.disabled = false; btn.innerHTML = originalHtml;
             } catch (e) { 
                 showToast(e.message, "error"); systemLog(`Exam Gen Error: ${e.message}`, 'error'); 
-                if (e.message.includes("โควต้าเต็ม") || e.message.includes("429")) {
-                    btn.innerHTML = "<i class='fa-solid fa-lock mr-2'></i> AI โควต้าเต็ม (แอดมินปิดได้)";
-                    showToast("AI คิวเต็ม แนะนำให้ใช้โหมด [วางโค้ด JSON] แทน", "error");
-                } else {
-                    btn.disabled = false; btn.innerHTML = originalHtml;
-                }
+                if (e.message.includes("โควต้าเต็ม") || e.message.includes("429")) { btn.innerHTML = "<i class='fa-solid fa-lock mr-2'></i> AI โควต้าเต็ม"; showToast("AI คิวเต็ม แนะนำให้ใช้โหมด [วางโค้ด JSON] แทน", "error"); } 
+                else { btn.disabled = false; btn.innerHTML = originalHtml; }
             }
-        }
-
-        async function autoGeneratePersona() {
-            const input = document.getElementById('adm-persona-chat').value; if(!input) return showToast("พิมพ์ลักษณะนิสัยก่อน", "error");
-            const btn = document.getElementById('btn-auto-persona'); btn.disabled = true; btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i>";
-            try {
-                const prompt = `แปลงคำสั่งต่อไปนี้เป็น 'System Instruction' สั่งการ AI พิมพ์แค่คำสั่งล้วนๆ ห้ามมีคำอธิบาย: "${input}"`;
-                const urlTemplate = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=API_KEY_PLACEHOLDER`;
-                const res = await fetchWithKeyRotation(urlTemplate, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
-                const data = await res.json(); document.getElementById('adm-persona').value = data.candidates[0].content.parts[0].text.trim(); showToast("สำเร็จ!");
-            } catch(e) { showToast("ล้มเหลว", "error"); } finally { btn.disabled = false; btn.innerHTML = "<i class='fa-solid fa-magic'></i>"; }
         }
 
         function toggleVoice() {
@@ -821,7 +688,6 @@
         let chatAbortController = null;
         async function sendChatToAI() {
             if(!isAiGloballyEnabled) return showToast("ระบบ Chat ถูกซ่อนและปิดใช้งานชั่วคราว", "error");
-
             const inp = document.getElementById('chatIn'), box = document.getElementById('chatArea'), btn = document.getElementById('btnChatSend');
             if (chatAbortController) { chatAbortController.abort(); return; }
             if(!inp.value.trim()) return; const msg = inp.value.trim(); inp.value = ''; window.speechSynthesis.cancel();
@@ -831,12 +697,7 @@
             aiChatHistory.push({ role: "user", parts: [{ text: msg }] });
 
             const aiName = localStorage.getItem(NAME_STORE) || "Mark (Kuro)", aiImg = localStorage.getItem(IMG_STORE) || "https://ui-avatars.com/api/?name=MK", bubbleId = 'ai-msg-' + Date.now(), iconId = 'ai-icon-' + Date.now();
-            box.innerHTML += `<div class="flex items-start gap-2 lg:gap-3 animate__animated animate__fadeInLeft mb-6">
-                <div class="relative shrink-0"><img src="${aiImg}" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full object-cover border-2 border-purple-200 dark:border-purple-800 shadow-sm bg-white"><div id="${iconId}" class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800 animate-pulse"></div></div>
-                <div class="bg-white text-gray-800 border border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 shadow-lg max-w-[95%] sm:max-w-[85%] rounded-2xl rounded-tl-none px-4 py-3 overflow-hidden w-full">
-                    <p class="text-[9px] lg:text-[10px] font-black text-purple-500 mb-1.5 uppercase tracking-widest">${escapeHTML(aiName)}</p>
-                    <div id="${bubbleId}" class="markdown-body"><span class="blinking-cursor"></span></div>
-                </div></div>`;
+            box.innerHTML += `<div class="flex items-start gap-2 lg:gap-3 animate__animated animate__fadeInLeft mb-6"><div class="relative shrink-0"><img src="${aiImg}" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full object-cover border-2 border-purple-200 dark:border-purple-800 shadow-sm bg-white"><div id="${iconId}" class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800 animate-pulse"></div></div><div class="bg-white text-gray-800 border border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 shadow-lg max-w-[95%] sm:max-w-[85%] rounded-2xl rounded-tl-none px-4 py-3 overflow-hidden w-full"><p class="text-[9px] lg:text-[10px] font-black text-purple-500 mb-1.5 uppercase tracking-widest">${escapeHTML(aiName)}</p><div id="${bubbleId}" class="markdown-body"><span class="blinking-cursor"></span></div></div></div>`;
             box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
 
             btn.innerHTML = '<i class="fa-solid fa-stop text-xl"></i>'; btn.classList.replace('btn-glow', 'bg-red-500'); btn.style.boxShadow = '0 10px 25px rgba(239, 68, 68, 0.4)'; btn.style.color = 'white';
@@ -845,7 +706,6 @@
             try {
                 const persona = localStorage.getItem(PERSONA_STORE) || DEFAULT_PERSONA;
                 const reqBody = { systemInstruction: { parts: [{ text: persona }] }, contents: aiChatHistory };
-                
                 const urlTemplate = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=API_KEY_PLACEHOLDER`;
                 const res = await fetchWithKeyRotation(urlTemplate, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody), signal: chatAbortController.signal });
                 
@@ -858,16 +718,14 @@
                     for (const line of lines) {
                         if (line.startsWith('data: ') && !line.includes('[DONE]')) {
                             try {
-                                const dataObj = JSON.parse(line.replace('data: ', ''));
-                                fullResponse += dataObj.candidates[0]?.content?.parts[0]?.text || "";
+                                const dataObj = JSON.parse(line.replace('data: ', '')); fullResponse += dataObj.candidates[0]?.content?.parts[0]?.text || "";
                                 bubbleEl.innerHTML = DOMPurify.sanitize(marked.parse(fullResponse)) + '<span class="blinking-cursor"></span>';
                                 if (box.scrollHeight - box.scrollTop - box.clientHeight < 150) box.scrollTo({ top: box.scrollHeight });
                             } catch(err) {}
                         }
                     }
                 }
-                bubbleEl.innerHTML = DOMPurify.sanitize(marked.parse(fullResponse));
-                aiChatHistory.push({ role: "model", parts: [{ text: fullResponse }] }); speakText(fullResponse);
+                bubbleEl.innerHTML = DOMPurify.sanitize(marked.parse(fullResponse)); aiChatHistory.push({ role: "model", parts: [{ text: fullResponse }] }); speakText(fullResponse);
             } catch (e) {
                 const bubbleEl = document.getElementById(bubbleId); aiChatHistory.pop(); 
                 if (e.name === 'AbortError') bubbleEl.innerHTML = bubbleEl.innerHTML.replace('<span class="blinking-cursor"></span>', '') + '<br><span class="text-[10px] text-red-500 font-bold uppercase mt-2 block opacity-70">[ หยุด ]</span>';
@@ -879,22 +737,15 @@
             }
         }
 
-        async function copyExamLink(id) {
-            playSfx('click');
-            const url = window.location.href.split('?')[0] + "?exam=" + id;
-            navigator.clipboard.writeText(url);
-            showToast("คัดลอกลิงก์ข้อสอบแล้ว ส่งให้เพื่อนได้เลย!");
-        }
+        async function copyExamLink(id) { playSfx('click'); const url = window.location.href.split('?')[0] + "?exam=" + id; navigator.clipboard.writeText(url); showToast("คัดลอกลิงก์ข้อสอบแล้ว ส่งให้เพื่อนได้เลย!"); }
 
         async function prepQuizStart(id, btnEl) {
-            playSfx('click');
-            if(!userC && document.getElementById('btn-rank').classList.contains('hidden')) return showToast("โปรด Login", "error");
+            playSfx('click'); if(!userC && document.getElementById('btn-rank').classList.contains('hidden')) return showToast("โปรด Login ก่อนทำข้อสอบ", "error");
             document.getElementById('quizModeModal').dataset.examId = id; document.getElementById('quizModeModal').classList.remove('hidden');
         }
 
         async function startQuizEngine(mode) {
-            playSfx('click');
-            document.getElementById('quizModeModal').classList.add('hidden'); const id = document.getElementById('quizModeModal').dataset.examId; quizPlayMode = mode;
+            playSfx('click'); document.getElementById('quizModeModal').classList.add('hidden'); const id = document.getElementById('quizModeModal').dataset.examId; quizPlayMode = mode;
             try {
                 const doc = await db.collection('exams').doc(id).get(); if(!doc.exists) throw new Error("ไม่พบข้อสอบ"); currentPlayingExam = { ...doc.data(), id: id };
                 currentPlayingExam.questions = shuffle(currentPlayingExam.questions).map(q => { return { ...q, options: shuffle(q.options) }; });
@@ -907,11 +758,7 @@
             } catch (e) { showToast(e.message, "error"); } 
         }
 
-        function toggleFullScreen() {
-            playSfx('click');
-            if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { showToast(`Error full-screen: ${err.message}`, "error"); }); } 
-            else { document.exitFullscreen(); }
-        }
+        function toggleFullScreen() { playSfx('click'); if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { showToast(`Error full-screen: ${err.message}`, "error"); }); } else { document.exitFullscreen(); } }
 
         function renderCurrentQuestion() {
             answered = false; const area = document.getElementById('quizPlayArea'); const q = currentPlayingExam.questions[currentQuestionIndex]; if(!q) { finishQuiz(); return; }
@@ -935,14 +782,7 @@
         function startTimer() { 
             clearInterval(timerInterval); const bar = document.getElementById('timer-bar'); bar.style.transition = "none"; bar.style.width = "100%"; bar.classList.remove('pulse-red');
             setTimeout(() => { bar.style.transition = "width 0.1s linear"; }, 10); 
-            let msLeft = 15000; 
-            timerInterval = setInterval(() => { 
-                msLeft -= 100; 
-                let pct = (msLeft / 15000 * 100);
-                bar.style.width = pct + "%"; 
-                if(pct < 25 && !bar.classList.contains('pulse-red')) bar.classList.add('pulse-red');
-                if(msLeft <= 0 && !answered) { clearInterval(timerInterval); checkAnswerTutor(false, null); } 
-            }, 100); 
+            let msLeft = 15000; timerInterval = setInterval(() => { msLeft -= 100; let pct = (msLeft / 15000 * 100); bar.style.width = pct + "%"; if(pct < 25 && !bar.classList.contains('pulse-red')) bar.classList.add('pulse-red'); if(msLeft <= 0 && !answered) { clearInterval(timerInterval); checkAnswerTutor(false, null); } }, 100); 
         }
 
         function checkAnswerTutor(isCorrect, btn) {
@@ -965,46 +805,68 @@
         }
 
         function reviewAnswers() {
-            playSfx('click');
-            const reviewArea = document.getElementById('reviewArea');
+            playSfx('click'); const reviewArea = document.getElementById('reviewArea');
             let html = `<div class="mb-6"><h2 class="text-2xl font-black text-white text-center italic">เฉลยข้อสอบ</h2><p class="text-center text-gray-400 text-sm">ตรวจสอบข้อที่ผิดพลาดเพื่อนำไปปรับปรุง</p></div>`;
-            
             currentPlayingExam.questions.forEach((q, idx) => {
-                const userAnsIdx = examAnswers[idx];
-                const isCorrect = userAnsIdx !== undefined && q.options[userAnsIdx].isCorrect;
-                const correctIdx = q.options.findIndex(o => o.isCorrect);
-                
+                const userAnsIdx = examAnswers[idx]; const isCorrect = userAnsIdx !== undefined && q.options[userAnsIdx].isCorrect; const correctIdx = q.options.findIndex(o => o.isCorrect);
                 let icon = isCorrect ? `<i class="fa-solid fa-circle-check text-green-500 text-xl"></i>` : `<i class="fa-solid fa-circle-xmark text-red-500 text-xl"></i>`;
                 let border = isCorrect ? `border-green-500/50 bg-green-500/10` : `border-red-500/50 bg-red-500/10`;
-                
-                html += `<div class="mb-4 p-5 rounded-2xl border ${border} text-white relative">
-                    <div class="flex items-start gap-3">
-                        <div class="mt-1">${icon}</div>
-                        <div class="flex-1">
-                            <p class="font-bold text-lg mb-3">${idx+1}. ${escapeHTML(q.q)}</p>
-                            <div class="space-y-2">`;
-                
+                html += `<div class="mb-4 p-5 rounded-2xl border ${border} text-white relative"><div class="flex items-start gap-3"><div class="mt-1">${icon}</div><div class="flex-1"><p class="font-bold text-lg mb-3">${idx+1}. ${escapeHTML(q.q)}</p><div class="space-y-2">`;
                 q.options.forEach((opt, oIdx) => {
-                    let optStyle = "text-gray-400";
-                    let prefix = "○";
-                    if(opt.isCorrect) { optStyle = "text-green-400 font-bold"; prefix = "✓"; }
-                    else if(oIdx === userAnsIdx) { optStyle = "text-red-400 line-through"; prefix = "✗"; }
+                    let optStyle = "text-gray-400"; let prefix = "○";
+                    if(opt.isCorrect) { optStyle = "text-green-400 font-bold"; prefix = "✓"; } else if(oIdx === userAnsIdx) { optStyle = "text-red-400 line-through"; prefix = "✗"; }
                     html += `<div class="${optStyle} text-sm flex items-center gap-2"><span>${prefix}</span> <span>${escapeHTML(opt.text)}</span></div>`;
                 });
                 html += `</div></div></div></div>`;
             });
-            reviewArea.innerHTML = html;
-            document.getElementById('reviewModal').classList.remove('hidden');
+            reviewArea.innerHTML = html; document.getElementById('reviewModal').classList.remove('hidden');
         }
 
         async function finishQuiz() {
-            playSfx('success');
-            const area = document.getElementById('quizPlayArea'); const maxScore = currentPlayingExam.questions.length * 10; if(currentScore > maxScore) currentScore = maxScore;
-            if(userC) { try { const scoresRef = db.collection('scores'); const existing = await scoresRef.where('uid','==',userC.uid).where('examId','==',currentPlayingExam.id).get(); if(existing.empty || existing.docs[0].data().score < currentScore) { if(!existing.empty) await scoresRef.doc(existing.docs[0].id).delete(); await scoresRef.add({ uid: userC.uid, username: userC.email.split('@')[0], examId: currentPlayingExam.id, examTitle: currentPlayingExam.title, score: currentScore, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); } } catch { } }
-            confetti({ particleCount: 300, spread: 120, origin: {y:0.5} });
+            playSfx('success'); const area = document.getElementById('quizPlayArea'); const maxScore = currentPlayingExam.questions.length * 10; if(currentScore > maxScore) currentScore = maxScore;
             
-            let reviewBtn = '';
-            if(quizPlayMode === 'exam') reviewBtn = `<button onclick="reviewAnswers()" class="btn-glow px-8 py-4 text-xs font-black tracking-widest bg-blue-600 shadow-blue-500/30 uppercase mt-4 w-full sm:w-auto"><i class="fa-solid fa-list-check"></i> ตรวจสอบเฉลย</button>`;
+            // V38 Percentile & Average Calculation
+            let avgScore = currentScore;
+            let beatCount = 0;
+            let totalPlayers = 1;
+            let percentile = 100;
+
+            if(userC) { 
+                try { 
+                    const scoresRef = db.collection('scores'); 
+                    const allSnap = await scoresRef.where('examId','==',currentPlayingExam.id).get();
+                    
+                    let allScores = [];
+                    let hasExisting = false;
+                    let existingDocId = null;
+
+                    allSnap.forEach(d => {
+                        const sData = d.data();
+                        allScores.push(sData.score);
+                        if(sData.uid === userC.uid) { hasExisting = true; existingDocId = d.id; }
+                    });
+
+                    // Add current if new
+                    if(!hasExisting) allScores.push(currentScore);
+
+                    totalPlayers = allScores.length;
+                    if(totalPlayers > 0) {
+                        avgScore = Math.round(allScores.reduce((a,b)=>a+b, 0) / totalPlayers);
+                        beatCount = allScores.filter(s => s < currentScore).length;
+                        percentile = totalPlayers > 1 ? Math.round((beatCount / (totalPlayers - 1)) * 100) : 100;
+                    }
+
+                    // Save score logic
+                    const existing = await scoresRef.where('uid','==',userC.uid).where('examId','==',currentPlayingExam.id).get(); 
+                    if(existing.empty || existing.docs[0].data().score < currentScore) { 
+                        if(!existing.empty) await scoresRef.doc(existing.docs[0].id).delete(); 
+                        await scoresRef.add({ uid: userC.uid, username: userC.email.split('@')[0], examId: currentPlayingExam.id, examTitle: currentPlayingExam.title, score: currentScore, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); 
+                    } 
+                } catch(e) { systemLog("Score calculation error: " + e.message, "warn"); } 
+            }
+
+            confetti({ particleCount: 300, spread: 120, origin: {y:0.5} });
+            let reviewBtn = ''; if(quizPlayMode === 'exam') reviewBtn = `<button onclick="reviewAnswers()" class="btn-glow px-8 py-4 text-xs font-black tracking-widest bg-blue-600 shadow-blue-500/30 uppercase mt-4 w-full sm:w-auto"><i class="fa-solid fa-list-check"></i> ตรวจสอบเฉลย</button>`;
 
             area.innerHTML = `
                 <div class="text-center animate__animated animate__zoomIn px-4">
@@ -1012,7 +874,13 @@
                         <i class="fa-solid fa-trophy text-4xl lg:text-6xl text-yellow-800"></i>
                     </div>
                     <h2 class="text-4xl md:text-5xl lg:text-6xl text-white font-black mb-2 lg:mb-4 uppercase italic tracking-tighter">Completed</h2>
-                    <p class="text-white/60 mb-8 lg:mb-12 text-lg md:text-xl lg:text-2xl font-bold tracking-widest">Final Score: <span class="text-yellow-400">${currentScore}</span> / ${maxScore}</p>
+                    <p class="text-white/60 mb-2 text-lg md:text-xl lg:text-2xl font-bold tracking-widest">Final Score: <span class="text-yellow-400">${currentScore}</span> / ${maxScore}</p>
+                    
+                    <div class="flex justify-center gap-4 mb-8 text-xs lg:text-sm text-gray-400">
+                        <div class="bg-white/5 px-4 py-2 rounded-xl">คะแนนเฉลี่ย<br><span class="text-white font-bold">${avgScore}</span></div>
+                        <div class="bg-white/5 px-4 py-2 rounded-xl">เปอร์เซ็นไทล์<br><span class="text-green-400 font-bold">Top ${100-percentile}%</span></div>
+                    </div>
+
                     <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
                         <button onclick="closeQuizPlayer()" class="btn-glow px-10 lg:px-16 py-4 mx-auto text-xs uppercase font-black tracking-widest w-full sm:w-auto">Return</button>
                         ${reviewBtn}
@@ -1023,15 +891,11 @@
 
         function closeQuizPlayer() { playSfx('click'); clearInterval(timerInterval); document.getElementById('quizPlayerModal').classList.add('hidden'); if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }
 
-        // Search Filter (V37)
+        // Search Filter
         function filterExams(keyword) {
             const lowerKeyword = keyword.toLowerCase();
             const cards = document.querySelectorAll('#examsGrid > div');
-            cards.forEach(card => {
-                const text = card.innerText.toLowerCase();
-                if(text.includes(lowerKeyword)) card.style.display = 'flex';
-                else card.style.display = 'none';
-            });
+            cards.forEach(card => { const text = card.innerText.toLowerCase(); if(text.includes(lowerKeyword)) card.style.display = 'flex'; else card.style.display = 'none'; });
         }
 
         async function fetchExamsFromCloud(isRefresh = true) {
@@ -1048,7 +912,7 @@
                                 <div class="absolute top-0 left-0 w-full h-1" style="background-color: var(--accent);"></div>
                                 <div class="absolute top-4 right-4 flex gap-2 z-10">
                                     <button onclick="copyExamLink('${doc.id}')" title="Share" class="text-gray-300 dark:text-gray-600 hover:text-green-500 transition-colors p-2 bg-white/50 dark:bg-black/50 rounded-full backdrop-blur-sm"><i class="fa-solid fa-share-nodes"></i></button>
-                                    <button onclick="printExam('${doc.id}')" title="Print/PDF" class="text-gray-300 dark:text-gray-600 hover:text-blue-500 transition-colors p-2 bg-white/50 dark:bg-black/50 rounded-full backdrop-blur-sm"><i class="fa-solid fa-print"></i></button>
+                                    ${isOwner ? `<button onclick="editExam('${doc.id}')" title="Edit" class="text-gray-300 dark:text-gray-600 hover:text-orange-500 transition-colors p-2 bg-white/50 dark:bg-black/50 rounded-full backdrop-blur-sm"><i class="fa-solid fa-pen"></i></button>` : ''}
                                     ${isOwner ? `<button onclick="deleteEx('${doc.id}')" title="Delete" class="text-gray-300 dark:text-gray-600 hover:text-red-500 transition-colors p-2 bg-white/50 dark:bg-black/50 rounded-full backdrop-blur-sm"><i class="fa-solid fa-trash"></i></button>` : ''}
                                 </div>
                                 <div class="mb-6 lg:mb-8 pt-2">
@@ -1079,9 +943,44 @@
             } catch (e) { area.innerHTML = '<div class="text-center text-red-500 font-bold text-sm">Failed to load rankings.</div>'; }
         }
 
-        // 🔥 V37: Robust Safe Save Editor
+        // 🔥 V38: Editor Load Fix (Edit existing exam)
+        async function editExam(id) {
+            playSfx('click');
+            try {
+                const doc = await db.collection('exams').doc(id).get();
+                if(!doc.exists) throw new Error("ไม่พบข้อสอบ");
+                const exam = doc.data();
+                editingExamId = id; // Set the flag so save knows to update, not create new
+                
+                document.getElementById('editorStatusBadge').innerText = "กำลังแก้ไข: " + exam.title;
+                document.getElementById('saveExamTitle').value = exam.title;
+                document.getElementById('examVisibility').value = exam.visibility || 'public';
+                
+                const container = document.getElementById('editorCards'); container.innerHTML = ''; globalQIndex = 0;
+                exam.questions.forEach((b, i) => {
+                    let currentI = globalQIndex++;
+                    let oH = b.options.map((o, idx) => {
+                        let isCor = (o.isCorrect === true || o.isCorrect === "true" || o.isCorrect === "TRUE");
+                        return `<div class="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl transition-all hover:border-green-300 shadow-sm"><input type="radio" name="g_${currentI}" ${isCor?'checked':''} class="w-4 h-4 accent-green-500 cursor-pointer shrink-0"><input type="text" value="${escapeHTML(o.text)}" class="v-opt-val flex-1 bg-transparent font-medium outline-none focus:border-b border-green-500 text-sm lg:text-base px-2 py-1"></div>`;
+                    }).join('');
+                    
+                    let imgDisplay = b.image ? 'block' : 'hidden';
+                    let imgBtnDisplay = b.image ? 'inline-block' : 'hidden';
+                    let imgSrc = b.image ? b.image : '';
+
+                    container.innerHTML += `<div class="q-item app-card mb-4 lg:mb-6 animate__animated animate__fadeInUp relative border-l-4 border-l-accent"><button onclick="this.closest('.q-item').remove(); playSfx('click');" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/30 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm" title="ลบข้อนี้"><i class="fa-solid fa-trash text-xs"></i></button><span class="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center font-black text-xs shadow-lg border-2 border-white"><i class="fa-solid fa-pen"></i></span><div class="mb-4 pr-8"><label class="cursor-pointer bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors inline-block border border-blue-200 dark:border-blue-800 shadow-sm"><i class="fa-solid fa-image mr-1"></i> แทรกรูปภาพโจทย์<input type="file" class="hidden" accept="image/*" onchange="handleImgUpload(this, false, ${currentI})"></label><button onclick="clearQuestionImage(${currentI})" class="${imgBtnDisplay} ml-2 text-[10px] text-red-500 font-bold hover:underline bg-red-50 px-2 py-1 rounded" id="q-img-clear-${currentI}"><i class="fa-solid fa-xmark"></i> ลบรูป</button><input type="hidden" class="v-q-img" id="q-img-data-${currentI}" value="${imgSrc}"><img id="q-img-preview-${currentI}" src="${imgSrc}" class="${imgDisplay} mt-3 max-h-40 rounded-lg border border-gray-200 shadow-md object-contain"></div><textarea class="v-q-val w-full bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl font-black text-lg md:text-xl border border-gray-200 dark:border-gray-700 mb-4 resize-none h-auto leading-relaxed focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none transition-all min-h-[80px]">${escapeHTML(b.q)}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${oH}</div></div>`;
+                });
+                
+                switchView('editor');
+                showToast("โหลดข้อสอบเพื่อแก้ไขเรียบร้อย");
+            } catch(e) {
+                showToast("ไม่สามารถโหลดข้อสอบเพื่อแก้ไขได้", "error");
+            }
+        }
+
         function renderEditorFromJSON(data, title) {
             const container = document.getElementById('editorCards'); container.innerHTML = ''; globalQIndex = 0;
+            editingExamId = null; document.getElementById('editorStatusBadge').innerText = "สร้างข้อสอบใหม่";
             data.forEach((b, i) => {
                 let currentI = globalQIndex++;
                 let oH = b.options.map((o, idx) => {
@@ -1096,58 +995,81 @@
         async function saveExamToCloud() {
             playSfx('click');
             if(!userC) return showToast("กรุณาล็อกอินก่อนบันทึกข้อสอบครับ", "error"); 
-            const btn = document.getElementById('btnSaveExam'); 
-            btn.disabled = true;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> กำลังบันทึก...";
+            const btn = document.getElementById('btnSaveExam'); btn.disabled = true; const originalText = btn.innerHTML; btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> กำลังบันทึก...";
             
             try {
-                const titleEl = document.getElementById('saveExamTitle');
-                const visEl = document.getElementById('examVisibility');
-                const data = { 
-                    title: titleEl ? (titleEl.value || "ข้อสอบไม่มีชื่อ") : "ข้อสอบไม่มีชื่อ", 
-                    uid: userC.uid, 
-                    owner: userC.email, 
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(), 
-                    visibility: visEl ? visEl.value : 'public', 
-                    questions: [] 
-                };
+                const titleEl = document.getElementById('saveExamTitle'); const visEl = document.getElementById('examVisibility');
+                const data = { title: titleEl ? (titleEl.value || "ข้อสอบไม่มีชื่อ") : "ข้อสอบไม่มีชื่อ", uid: userC.uid, owner: userC.email, visibility: visEl ? visEl.value : 'public', questions: [] };
                 
-                const qItems = document.querySelectorAll('.q-item');
-                qItems.forEach(c => {
-                    const qTextEl = c.querySelector('.v-q-val');
-                    const qImgEl = c.querySelector('.v-q-img');
-                    const qText = qTextEl ? qTextEl.value.trim() : ""; 
-                    const qImg = qImgEl ? qImgEl.value : ""; 
-                    
+                document.querySelectorAll('.q-item').forEach(c => {
+                    const qTextEl = c.querySelector('.v-q-val'), qImgEl = c.querySelector('.v-q-img');
+                    const qText = qTextEl ? qTextEl.value.trim() : "", qImg = qImgEl ? qImgEl.value : ""; 
                     const opts = []; 
                     c.querySelectorAll('.flex.items-center').forEach(r => { 
-                        const optTextEl = r.querySelector('.v-opt-val');
-                        const radioEl = r.querySelector('input[type="radio"]');
+                        const optTextEl = r.querySelector('.v-opt-val'), radioEl = r.querySelector('input[type="radio"]');
                         const optText = optTextEl ? optTextEl.value.trim() : ""; 
                         if(optText) opts.push({ text: optText, isCorrect: radioEl ? radioEl.checked : false }); 
                     });
-                    
-                    if(qText && opts.length >= 2) { 
-                        let qObj = { q: qText, options: opts }; 
-                        if(qImg) qObj.image = qImg; 
-                        data.questions.push(qObj); 
-                    }
+                    if(qText && opts.length >= 2) { let qObj = { q: qText, options: opts }; if(qImg) qObj.image = qImg; data.questions.push(qObj); }
                 });
 
                 if(data.questions.length === 0) throw new Error("ข้อสอบว่างเปล่า กรุณาใส่คำถามและช้อยส์ให้ครบ");
 
-                await db.collection('exams').add(data); 
-                confetti({ particleCount: 200 }); 
-                showToast("บันทึกข้อสอบสำเร็จ!"); 
-                switchView('db'); 
+                if (editingExamId) {
+                    await db.collection('exams').doc(editingExamId).update(data);
+                    editingExamId = null;
+                } else {
+                    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('exams').add(data); 
+                }
+
+                confetti({ particleCount: 200 }); showToast("บันทึกข้อสอบสำเร็จ!"); switchView('db'); 
             } catch (e) { 
-                showToast("บันทึกไม่สำเร็จ: " + e.message, "error"); 
-                systemLog("Save Error: " + e.message, "error");
+                showToast("บันทึกไม่สำเร็จ: " + e.message, "error"); systemLog("Save Error: " + e.message, "error");
                 if(e.message.includes("permissions")) showToast("Firestore ล็อค กรุณาปลดล็อก Rules แบบที่แอดมินแจ้ง", "error");
-            } finally { 
-                btn.disabled = false; 
-                btn.innerHTML = originalText;
+            } finally { btn.disabled = false; btn.innerHTML = originalText; }
+        }
+
+        // 🔥 V38: SEED DATABASE MOCKUP EXAMS
+        async function seedMockExams() {
+            if(!userC) return showToast("แอดมินต้อง Login ก่อนครับ", "error");
+            if(!confirm("การสร้างข้อสอบตัวอย่างจะเพิ่มข้อสอบ 3 ชุดเข้าไปในฐานข้อมูล คุณแน่ใจหรือไม่?")) return;
+            
+            const seedData = [
+                {
+                    title: "เตรียมสอบ TEDET ม.3 (คณิต-วิทย์ ประยุกต์)",
+                    uid: userC.uid, owner: userC.email, visibility: "public", createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    questions: [
+                        { q: "ถ้าลูกบาศก์ถูกทาสีแดงทุกด้าน แล้วถูกตัดเป็นลูกบาศก์ขนาดเล็กเท่าๆ กัน 27 ลูก จะมีลูกบาศก์ขนาดเล็กกี่ลูกที่ไม่มีสีแดงทาอยู่เลย?", options: [{text:"1 ลูก", isCorrect:true}, {text:"3 ลูก", isCorrect:false}, {text:"8 ลูก", isCorrect:false}, {text:"9 ลูก", isCorrect:false}] },
+                        { q: "รถยนต์คันหนึ่งวิ่งด้วยความเร็ว 60 กม./ชม. ในครึ่งทางแรก และ 40 กม./ชม. ในครึ่งทางหลัง ความเร็วเฉลี่ยตลอดการเดินทางคือเท่าใด?", options: [{text:"48 กม./ชม.", isCorrect:true}, {text:"50 กม./ชม.", isCorrect:false}, {text:"52 กม./ชม.", isCorrect:false}, {text:"45 กม./ชม.", isCorrect:false}] },
+                        { q: "รหัสลับ: หาก APPLE ถูกเข้ารหัสเป็น XKKIV คำว่า GRAPE จะถูกเข้ารหัสว่าอะไร?", options: [{text:"UIXKV", isCorrect:true}, {text:"TJWJW", isCorrect:false}, {text:"UJWKV", isCorrect:false}, {text:"UIYLV", isCorrect:false}] }
+                    ]
+                },
+                {
+                    title: "แนวข้อสอบ สอวน. (ตรรกะและอัลกอริทึม)",
+                    uid: userC.uid, owner: userC.email, visibility: "public", createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    questions: [
+                        { q: "พิจารณาซูโดโค้ด: \nx = 5\ny = 10\nx = x + y\ny = x - y\nx = x - y\nผลลัพธ์สุดท้ายของ x และ y คืออะไร?", options: [{text:"x = 10, y = 5", isCorrect:true}, {text:"x = 5, y = 10", isCorrect:false}, {text:"x = 15, y = 5", isCorrect:false}, {text:"x = 0, y = 0", isCorrect:false}] },
+                        { q: "จงหาจำนวนวิธีจัดเรียงตัวอักษรในคำว่า 'PROGRAM' โดยที่ตัวอักษร R ต้องไม่อยู่ติดกัน", options: [{text:"1800 วิธี", isCorrect:true}, {text:"2520 วิธี", isCorrect:false}, {text:"1200 วิธี", isCorrect:false}, {text:"720 วิธี", isCorrect:false}] }
+                    ]
+                },
+                {
+                    title: "ติวสอบเข้า ม.4 ราชสีมาวิทยาลัย (วิทย์-คณิต)",
+                    uid: userC.uid, owner: userC.email, visibility: "public", createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    questions: [
+                        { q: "ปฏิกิริยาระหว่างกรดไฮโดรคลอริก (HCl) กับ แคลเซียมคาร์บอเนต (CaCO3) จะเกิดก๊าซใดขึ้น?", options: [{text:"ก๊าซคาร์บอนไดออกไซด์", isCorrect:true}, {text:"ก๊าซไฮโดรเจน", isCorrect:false}, {text:"ก๊าซออกซิเจน", isCorrect:false}, {text:"ก๊าซคลอรีน", isCorrect:false}] },
+                        { q: "สมการ 2x^2 - 5x + c = 0 มีรากที่เท่ากันสองราก จงหาค่าของ c", options: [{text:"25/8", isCorrect:true}, {text:"25/4", isCorrect:false}, {text:"-25/8", isCorrect:false}, {text:"5/2", isCorrect:false}] },
+                        { q: "Choose the correct sentence:", options: [{text:"If I had known, I would have gone.", isCorrect:true}, {text:"If I know, I would have gone.", isCorrect:false}, {text:"If I had know, I will go.", isCorrect:false}, {text:"If I knew, I would had gone.", isCorrect:false}] }
+                    ]
+                }
+            ];
+
+            try {
+                for (let exam of seedData) { await db.collection('exams').add(exam); }
+                showToast("สร้างชุดข้อสอบตัวอย่างเรียบร้อย");
+                fetchExamsFromCloud(true);
+            } catch(e) {
+                showToast("สร้างไม่สำเร็จ: " + e.message, "error");
             }
         }
 
@@ -1190,12 +1112,9 @@
             document.getElementById('adm-persona').value = p;
             document.getElementById('adm-key').value = keys.join('\n');
             
-            // Check for direct exam link
             const urlParams = new URLSearchParams(window.location.search);
             const directExamId = urlParams.get('exam');
-            if(directExamId) {
-                setTimeout(() => prepQuizStart(directExamId, document.createElement('button')), 1000);
-            }
+            if(directExamId) { setTimeout(() => prepQuizStart(directExamId, document.createElement('button')), 1000); }
         }
 
         window.onload = () => {
