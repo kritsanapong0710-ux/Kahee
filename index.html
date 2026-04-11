@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuizPro ULTIMATE V38</title>
+    <title>QuizPro ULTIMATE V39</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -13,6 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 
@@ -21,6 +22,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 
     <style>
+        /* 🎨 Master Themes */
         :root { --accent: #10b981; --bg-site: #f8fafc; --text-main: #1e293b; --card-bg: #ffffff; --btn-txt: #ffffff; }
         body.theme-blue { --accent: #3b82f6; --bg-site: #020617; --text-main: #ffffff; --card-bg: #0f172a; --btn-txt: #ffffff; }
         body.theme-dark { --accent: #ffffff; --bg-site: #000000; --text-main: #f8fafc; --card-bg: #111827; --btn-txt: #000000; }
@@ -106,7 +108,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 lg:gap-4 cursor-pointer" onclick="switchView('db')">
                 <div style="background-color: var(--accent);" class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl lg:rounded-2xl text-white shadow-lg transform hover:rotate-12 transition-transform"><i class="fa-solid fa-bolt text-lg lg:text-xl"></i></div>
-                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-500 dark:from-white dark:to-gray-400">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80 shadow-md">V38</span></h1>
+                <h1 class="text-xl lg:text-3xl font-black uppercase tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-500 dark:from-white dark:to-gray-400">QUIZ<span style="color: var(--accent);">MASTER</span> <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded-full ml-1 align-middle opacity-80 shadow-md">V39</span></h1>
             </div>
             <div id="navAuthSlot" class="flex gap-2">
                 <button onclick="openAuthModal()" class="btn-glow px-4 lg:px-6 py-2 lg:py-2.5 text-[10px] lg:text-xs uppercase tracking-widest shadow-md h-[40px]"><i class="fa-solid fa-user mr-1"></i> Login</button>
@@ -204,11 +206,12 @@
                 <div class="p-6 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border border-orange-200 dark:border-orange-800 mb-4">
                     <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-lg"><i class="fa-solid fa-pen-nib"></i></div>
                     <h3 class="font-black text-xl text-orange-700 dark:text-orange-400 mb-2">โหมดสร้างข้อสอบเอง</h3>
-                    <p class="text-xs lg:text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">พิมพ์โจทย์ เพิ่มรูปภาพ และกำหนดช้อยส์ด้วยตัวเองทีละข้อ</p>
+                    <p class="text-xs lg:text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">พิมพ์โจทย์ เพิ่มรูปภาพ และกำหนดช้อยส์ด้วยตัวเองทีละข้อ เหมาะสำหรับอาจารย์ที่ต้องการจัดหน้าข้อสอบและคำตอบแบบแม่นยำ 100%</p>
                 </div>
                 <input type="text" id="manualExamTitle" placeholder="ตั้งชื่อชุดข้อสอบ..." class="custom-input text-center font-bold py-4 shadow-inner text-base lg:text-lg border-orange-200 dark:border-orange-900 focus:border-orange-500">
                 <button onclick="startManualEditor()" class="btn-glow w-full py-4 lg:py-5 text-base lg:text-lg shadow-xl tracking-wide uppercase bg-gradient-to-r from-orange-500 to-red-500"><i class="fa-solid fa-plus"></i> เริ่มสร้างข้อสอบเปล่า</button>
             </div>
+
         </div>
 
         <div id="view-chat" class="hidden app-card flex flex-col h-[80vh] lg:h-[75vh] animate__animated animate__fadeIn max-w-4xl mx-auto p-0 overflow-hidden relative">
@@ -349,13 +352,13 @@
             <div id="adminPanel" class="hidden space-y-6 pt-6 border-t border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-4">
                     <i class="fa-solid fa-user-secret text-red-500 text-lg lg:text-xl"></i>
-                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Admin Controls (V38)</h4>
+                    <h4 class="font-black text-red-500 uppercase tracking-widest text-xs lg:text-sm">Admin Controls (V39)</h4>
                 </div>
 
                 <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800 mb-4">
-                    <h4 class="text-xs font-black text-blue-600 dark:text-blue-400 uppercase mb-2"><i class="fa-solid fa-database"></i> Database Initializer</h4>
-                    <p class="text-[10px] text-gray-600 dark:text-gray-400 mb-3">สร้างข้อสอบตัวอย่าง TEDET, สอวน. และ ราชสีมาวิทยาลัย เข้าสู่ระบบอัตโนมัติ (Mockup 3 ชุด)</p>
-                    <button onclick="seedMockExams()" class="w-full py-2 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors shadow-sm">ติดตั้งข้อสอบตัวอย่าง</button>
+                    <h4 class="text-xs font-black text-blue-600 dark:text-blue-400 uppercase mb-2"><i class="fa-solid fa-database"></i> 40-Item Exam Template Builder</h4>
+                    <p class="text-[10px] text-gray-600 dark:text-gray-400 mb-3">สร้างโครงสร้างข้อสอบชุดละ 40 ข้อ (สอวน./TEDET/สอบเข้า) เตรียมไว้ให้คุณเข้าไปกด Edit และแทรกรูปภาพข้อสอบจริงทีหลัง</p>
+                    <button onclick="seedMockExams()" class="w-full py-2 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors shadow-sm">สร้างโครงสร้างข้อสอบ (ชุดละ 40 ข้อ)</button>
                 </div>
 
                 <div class="flex items-center justify-between bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800">
@@ -408,32 +411,9 @@
                         <button onclick="clearDebugLog()" class="text-[9px] text-red-400 font-bold uppercase hover:underline">Clear</button>
                     </div>
                     <div id="debugLogArea" class="bg-[#0d1117] rounded-xl p-3 h-28 overflow-y-auto text-[10px] font-mono space-y-1 custom-scroll text-gray-400 shadow-inner border border-gray-800">
-                        <div class="text-green-500">System Initialized V38.</div>
+                        <div class="text-green-500">System Initialized V39.</div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="authModal" class="fixed inset-0 bg-black/80 hidden z-[200] flex items-center justify-center p-4 backdrop-blur-md no-print">
-        <div class="bg-white p-6 lg:p-12 rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl w-full max-w-md dark:bg-gray-800 animate__animated animate__zoomIn border border-white/10 relative overflow-hidden">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-gray-200"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-3xl lg:text-4xl font-black text-center mb-1 lg:mb-2 tracking-tighter uppercase italic text-gray-800 dark:text-white">Welcome</h2>
-            <p class="text-center text-[10px] lg:text-xs opacity-40 font-bold mb-8 lg:mb-10 uppercase tracking-widest text-gray-800 dark:text-white">Sign in to QuizMaster</p>
-            
-            <div class="space-y-4 lg:space-y-5 relative z-10">
-                <button onclick="handleSocial()" class="w-full bg-white dark:bg-gray-700 p-3 lg:p-4 rounded-2xl font-bold flex justify-center items-center gap-3 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all shadow-sm text-gray-700 dark:text-white text-sm lg:text-base">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 lg:w-6 lg:h-6"> Sign in with Google
-                </button>
-                
-                <div class="flex items-center py-2 lg:py-3"><hr class="flex-1 border-gray-200 dark:border-gray-700"><span class="px-4 text-[9px] lg:text-[10px] font-black opacity-30 uppercase tracking-widest">Email</span><hr class="flex-1 border-gray-200 dark:border-gray-700"></div>
-                
-                <div class="space-y-3">
-                    <input type="email" id="emailInp" placeholder="Email Address" class="custom-input font-bold py-3 lg:py-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm lg:text-base h-[54px]">
-                    <input type="password" id="passInp" placeholder="Password" class="custom-input font-bold py-3 lg:py-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm lg:text-base h-[54px]">
-                </div>
-                
-                <button onclick="emailAuth()" class="btn-glow w-full py-4 lg:py-5 uppercase shadow-xl text-base lg:text-lg font-black tracking-widest mt-2 h-[54px]">Continue</button>
             </div>
         </div>
     </div>
@@ -473,7 +453,7 @@
         let quizPlayMode = 'tutor'; let examAnswers = {}; 
         let globalQIndex = 0; 
         let isAiGloballyEnabled = true;
-        let editingExamId = null; // V38: Track if we are editing an existing exam
+        let editingExamId = null; 
 
         function applyAiState(enabled) {
             isAiGloballyEnabled = enabled;
@@ -546,7 +526,12 @@
                         canvas.width = width; canvas.height = height; ctx.drawImage(img, 0, 0, width, height);
                         const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
                         if(isAvatar) { aiAvatarBase64 = dataUrl; showToast("อัปโหลดรูปโปรไฟล์สำเร็จ"); } 
-                        else { document.getElementById(`q-img-data-${qIndex}`).value = dataUrl; const imgPreview = document.getElementById(`q-img-preview-${qIndex}`); imgPreview.src = dataUrl; imgPreview.classList.remove('hidden'); document.getElementById(`q-img-clear-${qIndex}`).classList.remove('hidden'); }
+                        else { 
+                            document.getElementById(`q-img-data-${qIndex}`).value = dataUrl; 
+                            const imgPreview = document.getElementById(`q-img-preview-${qIndex}`); 
+                            imgPreview.src = dataUrl; imgPreview.classList.remove('hidden'); 
+                            document.getElementById(`q-img-clear-${qIndex}`).classList.remove('hidden');
+                        }
                     }
                     img.src = e.target.result;
                 }
@@ -811,7 +796,9 @@
                 const userAnsIdx = examAnswers[idx]; const isCorrect = userAnsIdx !== undefined && q.options[userAnsIdx].isCorrect; const correctIdx = q.options.findIndex(o => o.isCorrect);
                 let icon = isCorrect ? `<i class="fa-solid fa-circle-check text-green-500 text-xl"></i>` : `<i class="fa-solid fa-circle-xmark text-red-500 text-xl"></i>`;
                 let border = isCorrect ? `border-green-500/50 bg-green-500/10` : `border-red-500/50 bg-red-500/10`;
-                html += `<div class="mb-4 p-5 rounded-2xl border ${border} text-white relative"><div class="flex items-start gap-3"><div class="mt-1">${icon}</div><div class="flex-1"><p class="font-bold text-lg mb-3">${idx+1}. ${escapeHTML(q.q)}</p><div class="space-y-2">`;
+                let imgHtml = q.image ? `<div class="mb-3"><img src="${q.image}" class="max-h-32 object-contain rounded-lg border border-white/20"></div>` : '';
+                
+                html += `<div class="mb-4 p-5 rounded-2xl border ${border} text-white relative"><div class="flex items-start gap-3"><div class="mt-1">${icon}</div><div class="flex-1"><p class="font-bold text-lg mb-3">${idx+1}. ${escapeHTML(q.q)}</p>${imgHtml}<div class="space-y-2">`;
                 q.options.forEach((opt, oIdx) => {
                     let optStyle = "text-gray-400"; let prefix = "○";
                     if(opt.isCorrect) { optStyle = "text-green-400 font-bold"; prefix = "✓"; } else if(oIdx === userAnsIdx) { optStyle = "text-red-400 line-through"; prefix = "✗"; }
@@ -825,38 +812,19 @@
         async function finishQuiz() {
             playSfx('success'); const area = document.getElementById('quizPlayArea'); const maxScore = currentPlayingExam.questions.length * 10; if(currentScore > maxScore) currentScore = maxScore;
             
-            // V38 Percentile & Average Calculation
-            let avgScore = currentScore;
-            let beatCount = 0;
-            let totalPlayers = 1;
-            let percentile = 100;
-
+            let avgScore = currentScore; let beatCount = 0; let totalPlayers = 1; let percentile = 100;
             if(userC) { 
                 try { 
-                    const scoresRef = db.collection('scores'); 
-                    const allSnap = await scoresRef.where('examId','==',currentPlayingExam.id).get();
-                    
-                    let allScores = [];
-                    let hasExisting = false;
-                    let existingDocId = null;
-
-                    allSnap.forEach(d => {
-                        const sData = d.data();
-                        allScores.push(sData.score);
-                        if(sData.uid === userC.uid) { hasExisting = true; existingDocId = d.id; }
-                    });
-
-                    // Add current if new
+                    const scoresRef = db.collection('scores'); const allSnap = await scoresRef.where('examId','==',currentPlayingExam.id).get();
+                    let allScores = []; let hasExisting = false; let existingDocId = null;
+                    allSnap.forEach(d => { const sData = d.data(); allScores.push(sData.score); if(sData.uid === userC.uid) { hasExisting = true; existingDocId = d.id; } });
                     if(!hasExisting) allScores.push(currentScore);
-
                     totalPlayers = allScores.length;
                     if(totalPlayers > 0) {
                         avgScore = Math.round(allScores.reduce((a,b)=>a+b, 0) / totalPlayers);
                         beatCount = allScores.filter(s => s < currentScore).length;
                         percentile = totalPlayers > 1 ? Math.round((beatCount / (totalPlayers - 1)) * 100) : 100;
                     }
-
-                    // Save score logic
                     const existing = await scoresRef.where('uid','==',userC.uid).where('examId','==',currentPlayingExam.id).get(); 
                     if(existing.empty || existing.docs[0].data().score < currentScore) { 
                         if(!existing.empty) await scoresRef.doc(existing.docs[0].id).delete(); 
@@ -891,10 +859,8 @@
 
         function closeQuizPlayer() { playSfx('click'); clearInterval(timerInterval); document.getElementById('quizPlayerModal').classList.add('hidden'); if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }
 
-        // Search Filter
         function filterExams(keyword) {
-            const lowerKeyword = keyword.toLowerCase();
-            const cards = document.querySelectorAll('#examsGrid > div');
+            const lowerKeyword = keyword.toLowerCase(); const cards = document.querySelectorAll('#examsGrid > div');
             cards.forEach(card => { const text = card.innerText.toLowerCase(); if(text.includes(lowerKeyword)) card.style.display = 'flex'; else card.style.display = 'none'; });
         }
 
@@ -943,14 +909,76 @@
             } catch (e) { area.innerHTML = '<div class="text-center text-red-500 font-bold text-sm">Failed to load rankings.</div>'; }
         }
 
-        // 🔥 V38: Editor Load Fix (Edit existing exam)
+        // 🔥 V39: Exam Template Builder (40 Questions per Set)
+        async function seedMockExams() {
+            if(!userC) return showToast("แอดมินต้อง Login ก่อนครับ", "error");
+            if(!confirm("ระบบจะสร้างแม่แบบข้อสอบ 3 ชุด (ชุดละ 40 ข้อ) เข้าสู่คลัง คุณแน่ใจหรือไม่?")) return;
+            
+            showToast("กำลังสร้างข้อสอบ 120 ข้อ... กรุณารอสักครู่");
+            
+            // Function to generate 40 questions per set
+            const generate40Questions = (realQuestionsArray) => {
+                let fullArray = [...realQuestionsArray];
+                let currentLen = fullArray.length;
+                for(let i = currentLen; i < 40; i++) {
+                    fullArray.push({
+                        q: `คำถามข้อที่ ${i+1} (เว้นว่างไว้ให้เพิ่มรูปภาพหรือโจทย์)`,
+                        options: [
+                            {text:"ตัวเลือก A", isCorrect:true},
+                            {text:"ตัวเลือก B", isCorrect:false},
+                            {text:"ตัวเลือก C", isCorrect:false},
+                            {text:"ตัวเลือก D", isCorrect:false}
+                        ]
+                    });
+                }
+                return fullArray;
+            };
+
+            const seedData = [
+                {
+                    title: "เตรียมสอบ TEDET ม.3 (คณิต-วิทย์ ประยุกต์) - 40 ข้อ",
+                    uid: userC.uid, owner: userC.email, visibility: "public", createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    questions: generate40Questions([
+                        { q: "ถ้าลูกบาศก์ถูกทาสีแดงทุกด้าน แล้วถูกตัดเป็นลูกบาศก์ขนาดเล็กเท่าๆ กัน 27 ลูก จะมีลูกบาศก์ขนาดเล็กกี่ลูกที่ไม่มีสีแดงทาอยู่เลย?", options: [{text:"1 ลูก", isCorrect:true}, {text:"3 ลูก", isCorrect:false}, {text:"8 ลูก", isCorrect:false}, {text:"9 ลูก", isCorrect:false}] },
+                        { q: "รถยนต์คันหนึ่งวิ่งด้วยความเร็ว 60 กม./ชม. ในครึ่งทางแรก และ 40 กม./ชม. ในครึ่งทางหลัง ความเร็วเฉลี่ยตลอดการเดินทางคือเท่าใด?", options: [{text:"48 กม./ชม.", isCorrect:true}, {text:"50 กม./ชม.", isCorrect:false}, {text:"52 กม./ชม.", isCorrect:false}, {text:"45 กม./ชม.", isCorrect:false}] },
+                        { q: "รหัสลับ: หาก APPLE ถูกเข้ารหัสเป็น XKKIV คำว่า GRAPE จะถูกเข้ารหัสว่าอะไร?", options: [{text:"UIXKV", isCorrect:true}, {text:"TJWJW", isCorrect:false}, {text:"UJWKV", isCorrect:false}, {text:"UIYLV", isCorrect:false}] }
+                    ])
+                },
+                {
+                    title: "แนวข้อสอบ สอวน. (ตรรกะและอัลกอริทึม) - 40 ข้อ",
+                    uid: userC.uid, owner: userC.email, visibility: "public", createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    questions: generate40Questions([
+                        { q: "พิจารณาซูโดโค้ด: \nx = 5\ny = 10\nx = x + y\ny = x - y\nx = x - y\nผลลัพธ์สุดท้ายของ x และ y คืออะไร?", options: [{text:"x = 10, y = 5", isCorrect:true}, {text:"x = 5, y = 10", isCorrect:false}, {text:"x = 15, y = 5", isCorrect:false}, {text:"x = 0, y = 0", isCorrect:false}] },
+                        { q: "จงหาจำนวนวิธีจัดเรียงตัวอักษรในคำว่า 'PROGRAM' โดยที่ตัวอักษร R ต้องไม่อยู่ติดกัน", options: [{text:"1800 วิธี", isCorrect:true}, {text:"2520 วิธี", isCorrect:false}, {text:"1200 วิธี", isCorrect:false}, {text:"720 วิธี", isCorrect:false}] }
+                    ])
+                },
+                {
+                    title: "ติวสอบเข้า ม.4 ราชสีมาวิทยาลัย (วิทย์-คณิต) - 40 ข้อ",
+                    uid: userC.uid, owner: userC.email, visibility: "public", createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    questions: generate40Questions([
+                        { q: "ปฏิกิริยาระหว่างกรดไฮโดรคลอริก (HCl) กับ แคลเซียมคาร์บอเนต (CaCO3) จะเกิดก๊าซใดขึ้น?", options: [{text:"ก๊าซคาร์บอนไดออกไซด์", isCorrect:true}, {text:"ก๊าซไฮโดรเจน", isCorrect:false}, {text:"ก๊าซออกซิเจน", isCorrect:false}, {text:"ก๊าซคลอรีน", isCorrect:false}] },
+                        { q: "สมการ 2x^2 - 5x + c = 0 มีรากที่เท่ากันสองราก จงหาค่าของ c", options: [{text:"25/8", isCorrect:true}, {text:"25/4", isCorrect:false}, {text:"-25/8", isCorrect:false}, {text:"5/2", isCorrect:false}] },
+                        { q: "Choose the correct sentence:", options: [{text:"If I had known, I would have gone.", isCorrect:true}, {text:"If I know, I would have gone.", isCorrect:false}, {text:"If I had know, I will go.", isCorrect:false}, {text:"If I knew, I would had gone.", isCorrect:false}] }
+                    ])
+                }
+            ];
+
+            try {
+                for (let exam of seedData) { await db.collection('exams').add(exam); }
+                showToast("สร้างข้อสอบแม่แบบสำเร็จ กด Edit เพื่อแก้ไขได้เลยครับ");
+                fetchExamsFromCloud(true);
+            } catch(e) {
+                showToast("สร้างไม่สำเร็จ: " + e.message, "error");
+            }
+        }
+
         async function editExam(id) {
             playSfx('click');
             try {
                 const doc = await db.collection('exams').doc(id).get();
                 if(!doc.exists) throw new Error("ไม่พบข้อสอบ");
                 const exam = doc.data();
-                editingExamId = id; // Set the flag so save knows to update, not create new
+                editingExamId = id; 
                 
                 document.getElementById('editorStatusBadge').innerText = "กำลังแก้ไข: " + exam.title;
                 document.getElementById('saveExamTitle').value = exam.title;
@@ -971,11 +999,8 @@
                     container.innerHTML += `<div class="q-item app-card mb-4 lg:mb-6 animate__animated animate__fadeInUp relative border-l-4 border-l-accent"><button onclick="this.closest('.q-item').remove(); playSfx('click');" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/30 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm" title="ลบข้อนี้"><i class="fa-solid fa-trash text-xs"></i></button><span class="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center font-black text-xs shadow-lg border-2 border-white"><i class="fa-solid fa-pen"></i></span><div class="mb-4 pr-8"><label class="cursor-pointer bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors inline-block border border-blue-200 dark:border-blue-800 shadow-sm"><i class="fa-solid fa-image mr-1"></i> แทรกรูปภาพโจทย์<input type="file" class="hidden" accept="image/*" onchange="handleImgUpload(this, false, ${currentI})"></label><button onclick="clearQuestionImage(${currentI})" class="${imgBtnDisplay} ml-2 text-[10px] text-red-500 font-bold hover:underline bg-red-50 px-2 py-1 rounded" id="q-img-clear-${currentI}"><i class="fa-solid fa-xmark"></i> ลบรูป</button><input type="hidden" class="v-q-img" id="q-img-data-${currentI}" value="${imgSrc}"><img id="q-img-preview-${currentI}" src="${imgSrc}" class="${imgDisplay} mt-3 max-h-40 rounded-lg border border-gray-200 shadow-md object-contain"></div><textarea class="v-q-val w-full bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl font-black text-lg md:text-xl border border-gray-200 dark:border-gray-700 mb-4 resize-none h-auto leading-relaxed focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none transition-all min-h-[80px]">${escapeHTML(b.q)}</textarea><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${oH}</div></div>`;
                 });
                 
-                switchView('editor');
-                showToast("โหลดข้อสอบเพื่อแก้ไขเรียบร้อย");
-            } catch(e) {
-                showToast("ไม่สามารถโหลดข้อสอบเพื่อแก้ไขได้", "error");
-            }
+                switchView('editor'); showToast("โหลดข้อสอบเพื่อแก้ไขเรียบร้อย");
+            } catch(e) { showToast("ไม่สามารถโหลดข้อสอบเพื่อแก้ไขได้", "error"); }
         }
 
         function renderEditorFromJSON(data, title) {
@@ -1028,49 +1053,6 @@
                 showToast("บันทึกไม่สำเร็จ: " + e.message, "error"); systemLog("Save Error: " + e.message, "error");
                 if(e.message.includes("permissions")) showToast("Firestore ล็อค กรุณาปลดล็อก Rules แบบที่แอดมินแจ้ง", "error");
             } finally { btn.disabled = false; btn.innerHTML = originalText; }
-        }
-
-        // 🔥 V38: SEED DATABASE MOCKUP EXAMS
-        async function seedMockExams() {
-            if(!userC) return showToast("แอดมินต้อง Login ก่อนครับ", "error");
-            if(!confirm("การสร้างข้อสอบตัวอย่างจะเพิ่มข้อสอบ 3 ชุดเข้าไปในฐานข้อมูล คุณแน่ใจหรือไม่?")) return;
-            
-            const seedData = [
-                {
-                    title: "เตรียมสอบ TEDET ม.3 (คณิต-วิทย์ ประยุกต์)",
-                    uid: userC.uid, owner: userC.email, visibility: "public", createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    questions: [
-                        { q: "ถ้าลูกบาศก์ถูกทาสีแดงทุกด้าน แล้วถูกตัดเป็นลูกบาศก์ขนาดเล็กเท่าๆ กัน 27 ลูก จะมีลูกบาศก์ขนาดเล็กกี่ลูกที่ไม่มีสีแดงทาอยู่เลย?", options: [{text:"1 ลูก", isCorrect:true}, {text:"3 ลูก", isCorrect:false}, {text:"8 ลูก", isCorrect:false}, {text:"9 ลูก", isCorrect:false}] },
-                        { q: "รถยนต์คันหนึ่งวิ่งด้วยความเร็ว 60 กม./ชม. ในครึ่งทางแรก และ 40 กม./ชม. ในครึ่งทางหลัง ความเร็วเฉลี่ยตลอดการเดินทางคือเท่าใด?", options: [{text:"48 กม./ชม.", isCorrect:true}, {text:"50 กม./ชม.", isCorrect:false}, {text:"52 กม./ชม.", isCorrect:false}, {text:"45 กม./ชม.", isCorrect:false}] },
-                        { q: "รหัสลับ: หาก APPLE ถูกเข้ารหัสเป็น XKKIV คำว่า GRAPE จะถูกเข้ารหัสว่าอะไร?", options: [{text:"UIXKV", isCorrect:true}, {text:"TJWJW", isCorrect:false}, {text:"UJWKV", isCorrect:false}, {text:"UIYLV", isCorrect:false}] }
-                    ]
-                },
-                {
-                    title: "แนวข้อสอบ สอวน. (ตรรกะและอัลกอริทึม)",
-                    uid: userC.uid, owner: userC.email, visibility: "public", createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    questions: [
-                        { q: "พิจารณาซูโดโค้ด: \nx = 5\ny = 10\nx = x + y\ny = x - y\nx = x - y\nผลลัพธ์สุดท้ายของ x และ y คืออะไร?", options: [{text:"x = 10, y = 5", isCorrect:true}, {text:"x = 5, y = 10", isCorrect:false}, {text:"x = 15, y = 5", isCorrect:false}, {text:"x = 0, y = 0", isCorrect:false}] },
-                        { q: "จงหาจำนวนวิธีจัดเรียงตัวอักษรในคำว่า 'PROGRAM' โดยที่ตัวอักษร R ต้องไม่อยู่ติดกัน", options: [{text:"1800 วิธี", isCorrect:true}, {text:"2520 วิธี", isCorrect:false}, {text:"1200 วิธี", isCorrect:false}, {text:"720 วิธี", isCorrect:false}] }
-                    ]
-                },
-                {
-                    title: "ติวสอบเข้า ม.4 ราชสีมาวิทยาลัย (วิทย์-คณิต)",
-                    uid: userC.uid, owner: userC.email, visibility: "public", createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    questions: [
-                        { q: "ปฏิกิริยาระหว่างกรดไฮโดรคลอริก (HCl) กับ แคลเซียมคาร์บอเนต (CaCO3) จะเกิดก๊าซใดขึ้น?", options: [{text:"ก๊าซคาร์บอนไดออกไซด์", isCorrect:true}, {text:"ก๊าซไฮโดรเจน", isCorrect:false}, {text:"ก๊าซออกซิเจน", isCorrect:false}, {text:"ก๊าซคลอรีน", isCorrect:false}] },
-                        { q: "สมการ 2x^2 - 5x + c = 0 มีรากที่เท่ากันสองราก จงหาค่าของ c", options: [{text:"25/8", isCorrect:true}, {text:"25/4", isCorrect:false}, {text:"-25/8", isCorrect:false}, {text:"5/2", isCorrect:false}] },
-                        { q: "Choose the correct sentence:", options: [{text:"If I had known, I would have gone.", isCorrect:true}, {text:"If I know, I would have gone.", isCorrect:false}, {text:"If I had know, I will go.", isCorrect:false}, {text:"If I knew, I would had gone.", isCorrect:false}] }
-                    ]
-                }
-            ];
-
-            try {
-                for (let exam of seedData) { await db.collection('exams').add(exam); }
-                showToast("สร้างชุดข้อสอบตัวอย่างเรียบร้อย");
-                fetchExamsFromCloud(true);
-            } catch(e) {
-                showToast("สร้างไม่สำเร็จ: " + e.message, "error");
-            }
         }
 
         async function deleteEx(id) { playSfx('click'); if(confirm("ต้องการลบข้อสอบนี้ถาวร ใช่หรือไม่?")) { await db.collection('exams').doc(id).delete(); fetchExamsFromCloud(true); showToast("ลบสำเร็จ"); } }
